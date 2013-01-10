@@ -1,0 +1,70 @@
+diff -c -r librat/bpms/src/lib/rat/ratFront.c librat-mingw32/bpms/src/lib/rat/ratFront.c
+*** librat/bpms/src/lib/rat/ratFront.c	2011-07-19 16:20:00.000000000 +0200
+--- librat-mingw32/bpms/src/lib/rat/ratFront.c	2012-01-10 10:15:11.072954950 +0100
+***************
+*** 25,30 ****
+--- 25,33 ----
+  #define strsep(a,b) Strsep(a,b)
+  #endif
+  
++ #ifdef WIN32
++ #define strsep(a,b) Strsep(a,b)
++ #endif
+  
+  
+  /* private functions */
+***************
+*** 1004,1010 ****
+      oToken[0]='\0';
+      Str=&str[0];
+      i++;
+!     if((ind=index(Str,'#'))!=NULL)*ind='\0';
+      /* check for blank string */
+      isBlank=1;
+      for(i=0;i<strlen(Str);i++){
+--- 1007,1013 ----
+      oToken[0]='\0';
+      Str=&str[0];
+      i++;
+!     if((ind=strchr(Str,'#'))!=NULL)*ind='\0';
+      /* check for blank string */
+      isBlank=1;
+      for(i=0;i<strlen(Str);i++){
+***************
+*** 1031,1039 ****
+            while(Str2 && strlen(Str2)>0){
+              while(Str2[0]==' ' || Str2[0] == '\t')Str2++;
+              /* find enclosed quotes */
+!             if(Str2[0] == '"' && (ind1=index(Str2,'"')) != NULL){
+                ind1++;
+!               if((ind2=index(ind1,'"')) != NULL){
+                  k=strlen(ind1)-strlen(ind2);
+                  ind1[k]='\0';
+                  strcpy(&fields[n][0],ind1);
+--- 1034,1042 ----
+            while(Str2 && strlen(Str2)>0){
+              while(Str2[0]==' ' || Str2[0] == '\t')Str2++;
+              /* find enclosed quotes */
+!             if(Str2[0] == '"' && (ind1=strchr(Str2,'"')) != NULL){
+                ind1++;
+!               if((ind2=strchr(ind1,'"')) != NULL){
+                  k=strlen(ind1)-strlen(ind2);
+                  ind1[k]='\0';
+                  strcpy(&fields[n][0],ind1);
+***************
+*** 1046,1052 ****
+  	      return(n);
+              }else{
+  	      /* return rest of string or up to , or # */
+! 	      if((ind1 = index(Str2,',')) != NULL || (ind1 = index(Str2,'#')) != NULL){
+  		k = strlen(Str2)-strlen(ind1);
+  		ind1++;
+  		Str2[k] = '\0';
+--- 1049,1055 ----
+  	      return(n);
+              }else{
+  	      /* return rest of string or up to , or # */
+! 	      if((ind1 = strchr(Str2,',')) != NULL || (ind1 = strchr(Str2,'#')) != NULL){
+  		k = strlen(Str2)-strlen(ind1);
+  		ind1++;
+  		Str2[k] = '\0';

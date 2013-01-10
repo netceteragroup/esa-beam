@@ -1,0 +1,27 @@
+diff -c -r librat/bpms/src/lib/prat.h librat-mingw32/bpms/src/lib/prat.h
+*** librat/bpms/src/lib/prat.h	2011-06-14 14:34:53.000000000 +0200
+--- librat-mingw32/bpms/src/lib/prat.h	2012-01-10 10:57:27.760399247 +0100
+***************
+*** 23,35 ****
+--- 23,43 ----
+  #define SEEK_CUR        1       /* Set file pointer to current plus "offset" */
+  #define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
+  #endif
++ #ifndef WIN32
+  #include <sys/socket.h>
++ #endif
+  #include <sys/time.h>
++ #ifndef WIN32
+  #include <sys/mman.h>
++ #endif
+  #include <sys/file.h>
++ #ifndef WIN32
+  #include <sys/uio.h>
++ #endif
+  #include <sys/stat.h>
++ #ifndef WIN32
+  #include <netdb.h>
++ #endif
+  #include <signal.h>
+  #include <time.h>
+  #include <sys/time.h>

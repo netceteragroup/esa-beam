@@ -1,0 +1,24 @@
+diff -c -r librat/bpms/src/lib/matrix/makefile librat-mingw32/bpms/src/lib/matrix/makefile
+*** librat/bpms/src/lib/matrix/makefile	2009-09-11 11:03:30.000000000 +0200
+--- librat-mingw32/bpms/src/lib/matrix/makefile	2012-01-07 23:00:35.513739562 +0100
+***************
+*** 16,24 ****
+  	mv matrix ${HOME}/bin/${ARCH}
+  
+  libmatrix:	${OBJ}/matrix.o
+! 	ar rcv ${LIBRARY}/libmatrix_${ARCH}.a ${OBJ}/matrix.o
+! 	ranlib ${LIBRARY}/libmatrix_${ARCH}.a
+! 	$(DYN) -o ${LIBRARY}/libmatrix_${ARCH}.so ${OBJ}/matrix.o
+  
+  ${OBJ}/%.o:	%.c
+  	mkdir -p ${OBJ}
+--- 16,24 ----
+  	mv matrix ${HOME}/bin/${ARCH}
+  
+  libmatrix:	${OBJ}/matrix.o
+! 	$(AR) rcv ${LIBRARY}/libmatrix_${ARCH}.a ${OBJ}/matrix.o
+! 	$(RANLIB) ${LIBRARY}/libmatrix_${ARCH}.a
+! #	$(DYN) -o ${LIBRARY}/libmatrix_${ARCH}.so ${OBJ}/matrix.o
+  
+  ${OBJ}/%.o:	%.c
+  	mkdir -p ${OBJ}

@@ -1,0 +1,33 @@
+diff -c -r librat/bpms/src/start/start.c librat-mingw32/bpms/src/start/start.c
+*** librat/bpms/src/start/start.c	2011-07-19 16:18:01.000000000 +0200
+--- librat-mingw32/bpms/src/start/start.c	2012-01-07 23:45:00.572366179 +0100
+***************
+*** 517,530 ****
+--- 517,533 ----
+  
+  void userSignals(){
+  	/* always call RATsignalInterrupt */
++ #ifndef WIN32
+  	signal(SIGUSR1,RATsignalInterrupt);
+  	signal(SIGUSR2,RATsignalInterrupt);
+  	signal(SIGSTOP,RATsignalInterrupt);
++ #endif
+          signal(SIGSEGV,RATsignalInterrupt);
+  }
+  
+  void RATuserInterrupt(RATobj *ratObj,int sig){
+  	switch(sig){
++ #ifndef WIN32
+  		case SIGUSR1:
+  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+  			break;
+***************
+*** 535,540 ****
+--- 538,544 ----
+  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+  			exit(1);
+  			break;
++ #endif
+  		case SIGSEGV:
+  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n(try switching it off and on again ;-) )\n",sig,RATgetPID());
+  			exit(1);

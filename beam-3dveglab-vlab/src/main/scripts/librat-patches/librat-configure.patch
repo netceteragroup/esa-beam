@@ -1,0 +1,199 @@
+*** librat/configure	2010-11-05 21:28:58.000000000 +0100
+--- librat-mingw32/configure	2012-01-11 09:35:14.650770503 +0100
+***************
+*** 23,28 ****
+--- 23,29 ----
+  setenv TMP /tmp
+  setenv HOSTNAME `uname -n`
+  set dodownload = 1
++ set domingw32 = 0
+  set domake = 1
+  #set domain = (`domainname`)
+  set CCS = (gcc cc)
+***************
+*** 30,37 ****
+  set CFLAGSS = (-L. -fPIC)
+  set OPTS = (-g -O4 -O -g)
+  set MAKES = (gmake make)
+! set DIRS = (src/lib src/start bin/csh bin/$ARCH)
+! if (! $?BPMS )set BPMS = $HOME/bpms
+  mkdir -p $BPMS/src/lib
+  echo $BPMS > $BPMS/src/lib/BPMS
+  if (! $?MIRROR )set MIRROR = "www.geog.ucl.ac.uk/~plewis/bpms"
+--- 31,39 ----
+  set CFLAGSS = (-L. -fPIC)
+  set OPTS = (-g -O4 -O -g)
+  set MAKES = (gmake make)
+! set AR = (ar)
+! set RANLIB = (ranlib)
+! if (! $?BPMS )set BPMS = ${HOME}/bpms
+  mkdir -p $BPMS/src/lib
+  echo $BPMS > $BPMS/src/lib/BPMS
+  if (! $?MIRROR )set MIRROR = "www.geog.ucl.ac.uk/~plewis/bpms"
+***************
+*** 103,115 ****
+     set clean = 1
+     shift argv
+     breaksw
+    case -help:
+    default:
+!    echo "$cmd [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-help]"
+     exit 1
+     breaksw
+   endsw
+  end
+  #############
+  # compiler test
+  ############
+--- 105,139 ----
+     set clean = 1
+     shift argv
+     breaksw
++   case -mingw32
++    set domingw32 = 1
++    shift argv
++    breaksw
+    case -help:
+    default:
+!    echo "$cmd [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-mingw32] [-help]"
+     exit 1
+     breaksw
+   endsw
+  end
++ 
++ #############
++ # special case cross-compiling for windows
++ #############
++ 
++ if ($domingw32 == 1 ) then
++ 
++   setenv ARCH "mingw32"
++   set CC      = "i686-w64-mingw32-gcc"
++   set AR      = "i686-w64-mingw32-ar"
++   set DYN     = "i686-w64-mingw32-ld -G" 
++   set RANLIB  = "i686-w64-mingw32-ranlib"
++   set CFLAGS_ = "-fPIC"
++   set OPT     = "-g"
++   set MAKE    = "gmake"
++ 
++ else
++ 
+  #############
+  # compiler test
+  ############
+***************
+*** 222,230 ****
+--- 246,258 ----
+  endif
+  \rm -f $TMP/test.c $TMP/test.o $TMP/test.so $TMP/test
+  
++ endif
++ 
+  ########
+  # mkdir 
+  ########
++ set DIRS = (src/lib src/start bin/csh bin/$ARCH)
++ 
+  @ i = 1
+  while ($i <= $#DIRS)
+    set DIR = $DIRS[$i]
+***************
+*** 318,323 ****
+--- 346,366 ----
+  # chmod
+  ########
+  chmod +x ../../bin/csh/*
++ 
++ ########
++ # patches introduced to compile win32 binaries
++ ########
++ if ($domingw32 == 1 ) then
++   echo "patching ..."
++   cd "$BPMS"/..
++   foreach p (librat-patches/librat-patch-patch*.patch)
++     patch -p 1 < $p
++   end
++   cp -p librat-patches/librat-testMe.bat "$BPMS"/src/start/testMe.bat
++   # "start" is reserved on win32 - rename src to reduce makefile churn
++   mv "$BPMS"/src/start/start.c "$BPMS"/src/start/ratstart.c
++ endif
++ 
+  ########
+  # compile
+  ########
+***************
+*** 329,352 ****
+  set status = 1
+  echo -n "compiling in "
+  echo $cwd
+! ${MAKE} "BPMS=${BPMS}" $CLEAN all "CC=${CC}" "DYN=${DYN}" "MAKE=${MAKE}" "CFLAGS=${CFLAGS_} $OPT" 
+  if ( $status != 0 ) then
+   echo "${MAKE} \"BPMS=${BPMS}\" $CLEAN all \"CC=${CC}\" \"DYN=${DYN}\" \"MAKE=${MAKE}\" \"CFLAGS=${CFLAGS_} $OPT\""
+   echo "failed to compile library ..."
+   exit 1
+  endif
+  
+  ########
+  # start
+  ########
+  
+  cd "$BPMS"/src/start
+! ${MAKE} "BPMS=${BPMS}" "CC=${CC}" "DYN=${DYN}" "MAKE=${MAKE}" "CFLAGS=${CFLAGS_} $OPT"  
+  if ( $status != 0 ) then
+   echo "failed to compile start ..."
+   exit 1
+  endif
+  
+  ########
+  # test start
+  ########
+--- 372,409 ----
+  set status = 1
+  echo -n "compiling in "
+  echo $cwd
+! ${MAKE} "BPMS=${BPMS}" $CLEAN all "CC=${CC}" "DYN=${DYN}" "MAKE=${MAKE}" "RANLIB=${RANLIB}" "AR=${AR}" "CFLAGS=${CFLAGS_} $OPT" 
+  if ( $status != 0 ) then
+   echo "${MAKE} \"BPMS=${BPMS}\" $CLEAN all \"CC=${CC}\" \"DYN=${DYN}\" \"MAKE=${MAKE}\" \"CFLAGS=${CFLAGS_} $OPT\""
+   echo "failed to compile library ..."
+   exit 1
+  endif
+  
++ if ($domingw32 == 1 ) then
++   foreach f ("$BPMS"/bin/${ARCH}/*) 
++     mv $f ${f}.exe
++   end
++ endif
++ 
+  ########
+  # start
+  ########
+  
++ if ($domingw32 == 1 ) then
++   set TARGET = ratstart.exe
++ else
++   set TARGET = ratstart
++ endif
++ 
+  cd "$BPMS"/src/start
+! ${MAKE} "BPMS=${BPMS}" "CC=${CC}" "DYN=${DYN}" "MAKE=${MAKE}" "CFLAGS=${CFLAGS_} $OPT" ${TARGET}  
+  if ( $status != 0 ) then
+   echo "failed to compile start ..."
+   exit 1
+  endif
+  
++ if ($domingw32 == 0 ) then
++ 
+  ########
+  # test start
+  ########
+***************
+*** 360,363 ****
+   exit 1
+  endif
+  
+! 
+--- 417,420 ----
+   exit 1
+  endif
+  
+! endif

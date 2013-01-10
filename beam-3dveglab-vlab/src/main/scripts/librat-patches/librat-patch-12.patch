@@ -1,0 +1,15 @@
+diff -c -r librat/bpms/src/lib/rat/images.c librat-mingw32/bpms/src/lib/rat/images.c
+*** librat/bpms/src/lib/rat/images.c	2007-09-21 18:52:41.000000000 +0200
+--- librat-mingw32/bpms/src/lib/rat/images.c	2012-01-07 23:38:53.653987510 +0100
+***************
+*** 234,240 ****
+--- 234,242 ----
+  	if(!restart_flag){
+          	if((fd=open(imagename,O_CREAT|O_RDWR)) == -1)
+  			error2("cannot open ",imagename);
++ #ifndef WIN32
+  		chmod(imagename,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
++ #endif
+          	fwrite_header(fd,head);	/* write header (no update) */
+        		rows = head->rows;
+         		cols = head->cols;

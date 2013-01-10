@@ -1,0 +1,50 @@
+<module>
+    <manifestVersion>1.0.0</manifestVersion>
+    <symbolicName>beam-3dvlab-vlab</symbolicName>
+    <version>0.1</version>
+    <name>3D Vegetation lab - VLab processor</name>
+    <description>3D Vegetation Lab Processor</description>
+
+    <vendor>Netcetera AG</vendor>
+    <contactAddress>Zypressenstr. 71, 8004 Zurich, Switzerland</contactAddress>
+    <copyright>(C) 2011, 2012, 2013 Netcetera AG</copyright>
+    <licenseUrl>http://www.gnu.org/licenses/gpl.html</licenseUrl>
+
+    <changelog>
+        <![CDATA[
+        Prototype
+        ]]>
+    </changelog>
+
+    <dependency>
+        <module>beam-processing</module>
+    </dependency>
+    <dependency>
+        <module>beam-visat</module>
+        <optional>true</optional>
+    </dependency>
+    
+    <!-- some classes needed by librat, libradtran und dart -->
+    
+    <categories>Reader,Writer,VISAT</categories>
+
+    <extension point="beam-ui:actions">
+        <action>
+            <id>vlab</id>
+            <class>org.esa.beam.visat.actions.ProcessorAction</class>
+            <processor>com.netcetera.vlab.VLabProcessor</processor>
+            <text>3D Vegetation Lab Processor...</text>
+            <shortDescr>Invoke the 3D Vegetation Lab processor</shortDescr>
+            <parent>tools</parent>
+            <placeAfter>sstScientificTool</placeAfter>
+        </action>
+    </extension>
+    
+    <extension point="beam-ui:helpSets">
+        <helpSet>
+            <parent>beam-help</parent>
+            <path>doc/help/vlab.hs</path>
+        </helpSet>
+    </extension>
+    
+</module>

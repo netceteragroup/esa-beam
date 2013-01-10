@@ -1,0 +1,40 @@
+diff -c -r librat/bpms/src/lib/image/imagelib.c librat-mingw32/bpms/src/lib/image/imagelib.c
+*** librat/bpms/src/lib/image/imagelib.c	2008-03-12 12:00:53.000000000 +0100
+--- librat-mingw32/bpms/src/lib/image/imagelib.c	2012-01-07 21:32:03.518826890 +0100
+***************
+*** 3,14 ****
+--- 3,17 ----
+  #include <stdlib.h>
+  #include <sys/types.h>
+  #include <unistd.h>
++ #ifdef MMAP
+  #include <sys/mman.h>
++ #endif
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #define IMAGEFORMATS_H_BETTER
+  #include "image_formats.h"
+  #include <errno.h>
++ #include <float.h>
+  
+  extern int errno;
+  int dontReWrite = 0;
+***************
+*** 626,633 ****
+  			exit(0);
+  		}
+  		for (frame = 0; frame < MAXFRAMES; frame++) {
+! 			ImagePtr->stats->min[frame] = HUGE;
+! 			ImagePtr->stats->max[frame] = -HUGE;
+  		}
+  	}
+  	/* set defaults for compulsory fields */
+--- 629,636 ----
+  			exit(0);
+  		}
+  		for (frame = 0; frame < MAXFRAMES; frame++) {
+! 			ImagePtr->stats->min[frame] = FLT_MAX;
+! 			ImagePtr->stats->max[frame] = -FLT_MAX;
+  		}
+  	}
+  	/* set defaults for compulsory fields */

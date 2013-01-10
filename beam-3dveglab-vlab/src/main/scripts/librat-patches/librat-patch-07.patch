@@ -1,0 +1,32 @@
+diff -c -r librat/bpms/src/lib/image/makefile librat-mingw32/bpms/src/lib/image/makefile
+*** librat/bpms/src/lib/image/makefile	2009-09-11 11:03:26.000000000 +0200
+--- librat-mingw32/bpms/src/lib/image/makefile	2012-01-10 10:54:18.304433400 +0100
+***************
+*** 5,17 ****
+  LIBRARY = ${BPMS}/src/lib
+  DYN2 = 
+  
+! CFLAGS += -I. -DMMAP  -DVERBOSE -DDOUBLEDEF -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  
+  all:	${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o
+  	mkdir -p ${OBJ}
+! 	ar rcv ${LIBRARY}/libimage_${ARCH}.a ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o
+! 	$(DYN) -o ${LIBRARY}/libimage_${ARCH}.so ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o ${DYN2}
+! 	ranlib ${LIBRARY}/libimage_${ARCH}.a
+  
+  ${OBJ}/%.o:	%.c
+  		mkdir -p ${OBJ}
+--- 5,17 ----
+  LIBRARY = ${BPMS}/src/lib
+  DYN2 = 
+  
+! CFLAGS += -I. -DVERBOSE -DDOUBLEDEF -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  
+  all:	${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o
+  	mkdir -p ${OBJ}
+! 	$(AR) rcv ${LIBRARY}/libimage_${ARCH}.a ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o
+! #	$(DYN) -o ${LIBRARY}/libimage_${ARCH}.so ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/imagelib.o ${DYN2}
+! 	$(RANLIB) ${LIBRARY}/libimage_${ARCH}.a
+  
+  ${OBJ}/%.o:	%.c
+  		mkdir -p ${OBJ}
