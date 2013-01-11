@@ -8,19 +8,22 @@ Binary Installation
 ------------------------------------------
 
 ```bash
-# MANUALLY: Download BEAM  - you have to click to Proceed
+# 1. MANUALLY: Download BEAM  - you have to click to Proceed
 firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_linux64_installer.sh'
-# or windows32 ...  http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe
+# or for windows32 ...  
+# firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe'
+# 2. run installer
 sh beam_4.10.3_linux64_installer.sh
-# get latest machine-independent java binary of 3dveglab BEAM plugin
+# 3. get latest machine-independent java binary of 3dveglab BEAM plugin
 wget ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST.jar 
-# (re)place it in BEAM's modules directory
+# 4. (re)place it in BEAM's modules directory
 rm -f ${HOME}/.beam/beam-3dveglab-vlab-*.jar
 cp beam-3dveglab-vlab-LATEST.jar ${HOME}/.beam/modules
-# run beam 
+# 5. run beam 
 ${HOME}/beam-4.10.3/bin/visat
-# MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
-# get snapshots of dependent vegetation lab software (librat, DART, libradtran)
+# 6. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
+# [Tools/3D Vegetation Lab Processor]
+# 7. get binary snapshots of dependent software (librat, DART, libradtran)
 sh ${HOME}/.beam/beam-vlab/auxdata/replaceWithLatest.sh
 ```
 
