@@ -40,9 +40,15 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux
 
 Build 3D Veglab Plugin from Source 
 ------------------------------------------
-Generally, you are able to modify the behavior of this plugin by editing the [VLebImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory and restarting the application.
+You should be able to make any changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
 
-However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
+```bash
+# OPTIONAL - this is used to create a Fedora linux virtual image so that you canbe sure that the build environment setup script below works unmodified 
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh
+sh build_fedora_virtual_image.sh
+VirtualBox --startvm f17-xfce-dev
+# now login to the machine and do the commands below...
+```
 
 ```bash
 # 1. Get the BEAM development env setup script (Fedora 64bit linux)
@@ -56,9 +62,6 @@ wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/sr
 sh build_beam_vlab_binaries.sh
 # Follow the commented out manual instructions at the end of the build script to finish eclipse configuration
 ```
-
-NOTE: If you don't have Fedora linux, you can use [this script](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh) to create the virtual image that was used by Netcetera for development.
-
 
 Build Dependent Software from Source
 ------------------------------------------
