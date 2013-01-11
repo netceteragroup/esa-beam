@@ -82,46 +82,6 @@ cat > beam-pom-xml.patch << EOF
 EOF
 patch -b < beam-pom-xml.patch
 
-cat > TokenizerTest-junit.patch <<EOF
-*** ./beam-core/src/test/java/com/bc/jexp/impl/TokenizerTest.java.orig	2012-12-12 13:13:05.392667922 +0100
---- ./beam-core/src/test/java/com/bc/jexp/impl/TokenizerTest.java	2012-12-12 13:14:59.144673101 +0100
-***************
-*** 54,60 ****
-          assertEquals(Tokenizer.TT_EOS, tokenizer.next());
-      }
-  
-!     @Test
-      public void testParseInt() {
-          Integer.parseInt("4");
-          Integer.parseInt("-4");
---- 54,60 ----
-          assertEquals(Tokenizer.TT_EOS, tokenizer.next());
-      }
-  
-!     @Ignore
-      public void testParseInt() {
-          Integer.parseInt("4");
-          Integer.parseInt("-4");
-***************
-*** 65,71 ****
-          }
-      }
-  
-!     @Test
-      public void testParseLong() {
-          Long.parseLong("4");
-          Long.parseLong("-4");
---- 65,71 ----
-          }
-      }
-  
-!     @Ignore
-      public void testParseLong() {
-          Long.parseLong("4");
-          Long.parseLong("-4");
-EOF
-patch -b -p0 < TokenizerTest-junit.patch
-
 cat > MappedByteBuffer-junit.patch << EOF
 *** ./beam-binning2/src/test/java/org/esa/beam/binning/operator/MappedByteBufferTest.java.orig	2012-12-12 15:05:56.150743233 +0100
 --- ./beam-binning2/src/test/java/org/esa/beam/binning/operator/MappedByteBufferTest.java	2012-12-12 15:06:04.710747147 +0100
