@@ -20,25 +20,27 @@ Binary Installation
 
 Build 3D Veglab Plugin from Source 
 ------------------------------------------
-1. Run BEAM development env setup script (Fedora 64bit linux)
-    wget https://raw.gitbub.com/netceteragroup/esa-beam/beam-3dveglab-vlab/src/main/scripts/master/build_beam_binaries.sh
+
+    # Run BEAM development env setup script (Fedora 64bit linux)
+    wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_binaries.sh 
     sh build_beam_binaries.sh
-2. Run this plugin development env setup script (Fedora 64bit linux)
-    wget https://raw.gitbub.com/netceteragroup/esa-beam/beam-3dveglab-vlab/src/main/scripts/master/build_beam_vlab_binaries.sh
+    # Run this plugin development env setup script (Fedora 64bit linux)
+    wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_vlab_binaries.sh
     sh build_beam_vlab_binaries.sh
-3. Follow the commented out manual instructions at the end of the build script
+    # Follow the commented out manual instructions at the end of the build script
 
 
 Build Dependent Software from Source
 ------------------------------------------
-1. Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-    wget https://raw.gitbub.com/netceteragroup/esa-beam/beam-3dveglab-vlab/src/main/scripts/master/build_dummy_binaries.sh
+
+    # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
+    wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_dummy_binaries.sh
     sh build_dummy_binaries.sh
-2.  Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-    wget https://raw.gitbub.com/netceteragroup/esa-beam/beam-3dveglab-vlab/src/main/scripts/master/build_librat_binaries.sh
+    # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
+    wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_librat_binaries.sh
     sh build_librat_binaries.sh
-3.  Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-    wget https://raw.gitbub.com/netceteragroup/esa-beam/beam-3dveglab-vlab/src/main/scripts/master/build_radtran_binaries.sh
+    # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
+    wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_radtran_binaries.sh
     sh build_radtran_binaries.sh
 
 3D Vegetation Dependent software
