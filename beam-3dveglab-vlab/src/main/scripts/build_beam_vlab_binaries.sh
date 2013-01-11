@@ -45,7 +45,7 @@ mvn eclipse:eclipse
 
 # manual steps...
 #
-# $ eclipse -showLocation -data ${P}/beam
+# eclipse -showLocation -data ${HOME}/projects/esa-034-5/beam
 #
 # Window/Prerferences/Java/Build Path/Classpath Variables/[New] Name: M2_REPO Path: /home/${USER}/.m2/repository
 #
