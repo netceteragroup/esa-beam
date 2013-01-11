@@ -40,16 +40,24 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux
 
 Build 3D Veglab Plugin from Source 
 ------------------------------------------
+Generally, you are able to modify the behavior of this plugin by editing the [VLebImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory and restarting the application.
+
+However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
 
 ```bash
-# Run BEAM development env setup script (Fedora 64bit linux)
+# 1. Get the BEAM development env setup script (Fedora 64bit linux)
+# This script automates the steps described here http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_binaries.sh 
+# 2. run it
 sh build_beam_binaries.sh
-# Run this plugin development env setup script (Fedora 64bit linux)
+# 3. Get development env setup script for this plugin (Fedora 64bit linux)
 wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_vlab_binaries.sh
+# 4. run it
 sh build_beam_vlab_binaries.sh
-# Follow the commented out manual instructions at the end of the build script
+# Follow the commented out manual instructions at the end of the build script to finish eclipse configuration
 ```
+
+NOTE: If you don't have Fedora linux, you can use [this script](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtal_image.sh) to create the virtual image that was used by Netcetera for development.
 
 
 Build Dependent Software from Source
