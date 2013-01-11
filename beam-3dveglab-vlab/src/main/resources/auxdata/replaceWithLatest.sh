@@ -61,8 +61,8 @@ sanity_check_beam() {
 config_latest_vlabshim() {
   echo "VLab..."
 
-  cd ${HOME}/beam-4.10.13/modules
-  if test ! -d  old; then mkdir old fi
+  cd ${HOME}/beam-4.10.3/modules
+  if test ! -d  old; then mkdir old; fi
   mv beam-3dveglab-vlab*.jar old
   wget $VLAB_SHIM
 
