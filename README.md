@@ -30,7 +30,7 @@ sh ${HOME}/.beam/beam-vlab/auxdata/replaceWithLatest.sh
 
 3D Vegetation Lab Dependent software
 -----------------------------------------
-The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux64/win32 binary snapshots of which can be obtained with by running the replaceWithLatest.sh script above
+The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux64/win32 binary snapshots of which can be obtained by running the replaceWithLatest.sh script above
 
 * [librat (Monte Carlo Ray Tracing library)](http://www2.geog.ucl.ac.uk/~plewis/bpms/src/lib/)
 * [DART (Discrete Anisotropic Radiative Transfer)](http://www.cesbio.ups-tlse.fr/us/dart/dart_description.html)
@@ -62,7 +62,7 @@ wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/sr
 # 2. run it
 sh build_beam_binaries.sh
 # 3. Get development env setup script for this plugin (Fedora 64bit linux)
-wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_vlab_binaries.sh
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_beam_vlab_binaries.sh
 # 4. run it
 sh build_beam_vlab_binaries.sh
 # Follow the commented out manual instructions at the end of the build script to finish eclipse configuration
@@ -73,13 +73,13 @@ Build Dependent Software from Source
 
 ```bash
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_dummy_binaries.sh
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_dummy_binaries.sh
 sh build_dummy_binaries.sh
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_librat_binaries.sh
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_librat_binaries.sh
 sh build_librat_binaries.sh
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
-wget https://raw.gitbub.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_radtran_binaries.sh
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_radtran_binaries.sh
 sh build_radtran_binaries.sh
 ```
 
