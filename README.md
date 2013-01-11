@@ -18,13 +18,15 @@ firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadpo
 sh beam_4.10.3_linux64_installer.sh
 # 3. remove old version of plugin (if it exists)
 rm -f ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-*.jar
-# 4. get latest machine-independent java binary of 3dveglab BEAM plugin
+# 4. move away old unpacked auxdata (if it exists)
+test -d ${HOME}/.beam/beam-vlab && mv ${HOME}/.beam/beam-vlab ${HOME}/.beam/beam-vlab-`date +%Y%m%d-%H%M`
+# 5. get latest machine-independent java binary of 3dveglab BEAM plugin
 wget ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST.jar 
-# 5. run beam 
+# 6. run beam 
 ${HOME}/beam-4.10.3/bin/visat
-# 6. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
+# 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
 # [Tools/3D Vegetation Lab Processor]
-# 7. get binary snapshots of dependent software (librat, DART, libradtran)
+# 8. get binary snapshots of dependent software (librat, DART, libradtran)
 sh ${HOME}/.beam/beam-vlab/auxdata/replaceWithLatest.sh
 ```
 
