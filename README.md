@@ -57,7 +57,7 @@ sh build_beam_vlab_binaries.sh
 # Follow the commented out manual instructions at the end of the build script to finish eclipse configuration
 ```
 
-NOTE: If you don't have Fedora linux, you can use [this script](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtal_image.sh) to create the virtual image that was used by Netcetera for development.
+NOTE: If you don't have Fedora linux, you can use [this script](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh) to create the virtual image that was used by Netcetera for development.
 
 
 Build Dependent Software from Source
