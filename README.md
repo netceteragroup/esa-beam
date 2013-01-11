@@ -39,7 +39,7 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux
 
 Build 3D Veglab Plugin from Source 
 ------------------------------------------
-You should be able to make any changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
+You should be able to make any changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
 
 ```bash
 # OPTIONAL - this is used to create a Fedora linux virtual image so that you canbe sure that the build environment setup script below works unmodified 
