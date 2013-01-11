@@ -21,7 +21,7 @@ rm -f ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-*.jar
 # 4. move away old unpacked auxdata (if it exists)
 test -d ${HOME}/.beam/beam-vlab && mv ${HOME}/.beam/beam-vlab ${HOME}/.beam/beam-vlab-`date +%Y%m%d-%H%M`
 # 5. get latest machine-independent java binary of 3dveglab BEAM plugin
-wget ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST.jar 
+wget -O ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-LATEST.jar ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST-20130110.jar
 # 6. run beam 
 ${HOME}/beam-4.10.3/bin/visat
 # 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
