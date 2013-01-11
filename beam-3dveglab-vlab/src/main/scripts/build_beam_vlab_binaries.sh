@@ -15,6 +15,8 @@ cd ${P}/beam
 
 git clone git://github.com/netceteragroup/esa-beam.git
 
+ln -s ${P}/beam/esa-beam/beam-3dveglab-vlab ${P}/beam/beam-3dveglab-vlab
+
 cat > beampluginspomxml.patch << EOF
 *** ./beam-plugins/pom.xml.orig   2012-12-19 16:14:29.866013086 +0100
 --- ./beam-plugins/pom.xml        2012-12-19 16:14:42.208993865 +0100
@@ -31,7 +33,7 @@ cat > beampluginspomxml.patch << EOF
           <module>../blue-marble-worldmap</module>
           <module>../globcover-worldmap</module>
           <module>../lib-hdf</module>
-+         <module>../beam-3dvlab-vlab</module>
++         <module>../beam-3dveglab-vlab</module>
       </modules>
   
 ! </project>
