@@ -1,5 +1,7 @@
-3D Vegation Lab plugin for the ESA BEAM toolkit
+3D Vegetation Lab plugin(s) for the ESA BEAM toolkit
 =======================================
+
+This repository contains plugin modules developed by Netcetera Zurich for version 4.10 of the ESA BEAM Earth Observation Toolbox and Development Platform.
 
 * [ESA BEAM toolkit](http://www.brockmann-consult.de/cms/web/beam/)
 * [3D Vegetation Lab plugin](http://www.geo.uzh.ch/en/units/rsl/research/lidar-remote-sensing-lidarlab/ongoing-projects/3dveglab)
@@ -67,7 +69,7 @@ sh build_radtran_binaries.sh
 
 BEAM Plugin Contributing Authors
 -----------------------------------------
-* Daniel Kueckenbrink 
+* Daniel Kuekenbrink 
 * Joshy Cyriac 
 * Marcel Kessler 
 * Jason Brazile
