@@ -6,22 +6,45 @@ This repository contains plugin modules developed by Netcetera Zurich for versio
 * [ESA BEAM toolkit](http://www.brockmann-consult.de/cms/web/beam/)
 * [3D Vegetation Lab plugin](http://www.geo.uzh.ch/en/units/rsl/research/lidar-remote-sensing-lidarlab/ongoing-projects/3dveglab)
 
-Binary Installation
+Binary Installation (windows)
+------------------------------------------
+
+```dos
+rem 1. MANUALLY: Download BEAM  - you have to click to Proceed
+start iexplore 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe'
+rem 2. run installer
+beam_4.10.3_win32_installer.exe
+rem 3. remove old unpacked auxdata (if it exists)
+rd /q /s %HOMEPATH%\.beam\beam-vlab 
+rem 4. remove old version of plugin (if it exists)
+del /f /q ${HOME}\beam-4.10.3\modules\beam-3dveglab-vlab-*.jar
+rem 5. get latest machine-independent java binary of 3dveglab BEAM plugin
+cd %HOMEPATH%\beam-4.10.3\modules\ 
+echo cd pub/                           >> getvlab-ftpcmds.txt
+echo get beam-3dveglab-vlab-LATEST.jar >> getvlab-ftpcmds.txt
+echo quit                              >> getvlab-ftpcmds.txt
+ftp -s:getvlab-ftpcmds.txt ftp.netcetera.ch
+rem 6. run beam 
+%HOMEPATH%\beam-4.10.3\bin\visat
+rem 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
+rem [Tools/3D Vegetation Lab Processor]
+rem 8. get binary snapshots of dependent software (librat, DART, libradtran)
+%HOMEPATH%\.beam\beam-vlab\auxdata\replaceWithLatest.bat
+```
+Binary Installation (linux)
 ------------------------------------------
 
 ```bash
 # 1. MANUALLY: Download BEAM  - you have to click to Proceed
 firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_linux64_installer.sh'
-# or for windows32 ...  
-# firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe'
 # 2. run installer
 sh beam_4.10.3_linux64_installer.sh
-# 3. remove old version of plugin (if it exists)
+# 3. remove old unpacked auxdata (if it exists)
+rm -rf ${HOME}/.beam/beam-vlab 
+# 4. remove old version of plugin (if it exists)
 rm -f ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-*.jar
-# 4. move away old unpacked auxdata (if it exists)
-test -d ${HOME}/.beam/beam-vlab && mv ${HOME}/.beam/beam-vlab ${HOME}/.beam/beam-vlab-`date +%Y%m%d-%H%M`
 # 5. get latest machine-independent java binary of 3dveglab BEAM plugin
-wget -O ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-LATEST.jar ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST-20130110.jar
+cd ${HOME}/beam-4.10.3/modules/ && wget ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST.jar
 # 6. run beam 
 ${HOME}/beam-4.10.3/bin/visat
 # 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
