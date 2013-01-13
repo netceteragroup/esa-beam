@@ -6,32 +6,34 @@ This repository contains plugin modules developed by Netcetera Zurich for versio
 * [ESA BEAM toolkit](http://www.brockmann-consult.de/cms/web/beam/)
 * [3D Vegetation Lab plugin](http://www.geo.uzh.ch/en/units/rsl/research/lidar-remote-sensing-lidarlab/ongoing-projects/3dveglab)
 
-Binary Installation (windows)
+Binary Installation (windows version)
 ------------------------------------------
 
 ```dos
 rem 1. MANUALLY: Download BEAM  - you have to click to Proceed
-start iexplore 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe'
+start iexplore "http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe"
 rem 2. run installer
 beam_4.10.3_win32_installer.exe
 rem 3. remove old unpacked auxdata (if it exists)
-rd /q /s %HOMEPATH%\.beam\beam-vlab 
+rd /q /s "%HOMEPATH%\.beam\beam-vlab"
 rem 4. remove old version of plugin (if it exists)
-del /f /q ${HOME}\beam-4.10.3\modules\beam-3dveglab-vlab-*.jar
+del /f /q "%ProgramFiles%\beam-4.10.3\modules\beam-3dveglab-vlab-*.jar"
 rem 5. get latest machine-independent java binary of 3dveglab BEAM plugin
-cd %HOMEPATH%\beam-4.10.3\modules\ 
-echo cd pub/                           >> getvlab-ftpcmds.txt
+cd "%ProgramFiles%\beam-4.10.3\modules\"
+echo ftp                                > getvlab-ftpcmds.txt
+echo ftp@                              >> getvlab-ftpcmds.txt
+echo cd pub                            >> getvlab-ftpcmds.txt
 echo get beam-3dveglab-vlab-LATEST.jar >> getvlab-ftpcmds.txt
 echo quit                              >> getvlab-ftpcmds.txt
 ftp -s:getvlab-ftpcmds.txt ftp.netcetera.ch
 rem 6. run beam 
-%HOMEPATH%\beam-4.10.3\bin\visat
+%ProgramFiles%\beam-4.10.3\bin\visat
 rem 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
 rem [Tools/3D Vegetation Lab Processor]
 rem 8. get binary snapshots of dependent software (librat, DART, libradtran)
 %HOMEPATH%\.beam\beam-vlab\auxdata\replaceWithLatest.bat
 ```
-Binary Installation (linux)
+Binary Installation (linux version)
 ------------------------------------------
 
 ```bash
