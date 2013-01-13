@@ -27,11 +27,11 @@ echo get beam-3dveglab-vlab-LATEST.jar >> getvlab-ftpcmds.txt
 echo quit                              >> getvlab-ftpcmds.txt
 ftp -s:getvlab-ftpcmds.txt ftp.netcetera.ch
 rem 6. run beam 
-%ProgramFiles%\beam-4.10.3\bin\visat
+"%ProgramFiles%\beam-4.10.3\bin\visat"
 rem 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
 rem [Tools/3D Vegetation Lab Processor]
 rem 8. get binary snapshots of dependent software (librat, DART, libradtran)
-%HOMEPATH%\.beam\beam-vlab\auxdata\replaceWithLatest.bat
+"%HOMEPATH%\.beam\beam-vlab\auxdata\replaceWithLatest.bat"
 ```
 Binary Installation (linux version)
 ------------------------------------------
