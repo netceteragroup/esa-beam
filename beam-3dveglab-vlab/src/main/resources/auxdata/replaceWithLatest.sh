@@ -61,10 +61,10 @@ sanity_check_beam() {
 config_latest_vlabshim() {
   echo "VLab..."
 
-  cd ${HOME}/beam-4.10.3/modules
-  if test ! -d  old; then mkdir old; fi
-  mv beam-3dveglab-vlab*.jar old
-  wget $VLAB_SHIM
+#  cd ${HOME}/beam-4.10.3/modules
+#  if test ! -d  old; then mkdir old; fi
+#  mv beam-3dveglab-vlab*.jar old
+#  wget $VLAB_SHIM
 
   cd ${VLABAUXTMP}
   dload_unpack dummy_linux64 $BIN_LIN_DUMMY
@@ -124,8 +124,8 @@ END {
  
 sanity_check_beam
 config_latest_vlabshim
-config_latest_dart
-config_latest_librat
-config_latest_radtran
-handle_duplicates
+#config_latest_dart
+#config_latest_librat
+#config_latest_radtran
+#handle_duplicates
 swap_auxdirs
