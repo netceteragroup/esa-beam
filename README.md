@@ -20,11 +20,11 @@ rem 4. remove old version of plugin (if it exists)
 del /f /q "%ProgramFiles%\beam-4.10.3\modules\beam-3dveglab-vlab-*.jar"
 rem 5. get latest machine-independent java binary of 3dveglab BEAM plugin
 cd "%ProgramFiles%\beam-4.10.3\modules\"
-echo ftp                                > getvlab-ftpcmds.txt
-echo ftp@                              >> getvlab-ftpcmds.txt
-echo cd pub                            >> getvlab-ftpcmds.txt
-echo get beam-3dveglab-vlab-LATEST.jar >> getvlab-ftpcmds.txt
-echo quit                              >> getvlab-ftpcmds.txt
+ > getvlab-ftpcmds.txt echo ftp
+>> getvlab-ftpcmds.txt echo ftp@
+>> getvlab-ftpcmds.txt echo cd pub
+>> getvlab-ftpcmds.txt echo get beam-3dveglab-vlab-LATEST.jar
+>> getvlab-ftpcmds.txt echo quit
 ftp -s:getvlab-ftpcmds.txt ftp.netcetera.ch
 rem 6. run beam 
 "%ProgramFiles%\beam-4.10.3\bin\visat"
