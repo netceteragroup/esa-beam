@@ -6,32 +6,36 @@ This repository contains plugin modules developed by Netcetera Zurich for versio
 * [ESA BEAM toolkit](http://www.brockmann-consult.de/cms/web/beam/)
 * [3D Vegetation Lab plugin](http://www.geo.uzh.ch/en/units/rsl/research/lidar-remote-sensing-lidarlab/ongoing-projects/3dveglab)
 
+Binary Installation
+---------------------------
+
+Binary installation of the 3D Vegetation Lab plugin involves
+ * copying/replacing the plugin jar file in the beam/modules directory
+ * clean/first time plugin run to create/unpack .beam/beam-vlab/auxdata/
+ * fetch/unpack latest versions of dependent 3rd party software into auxdata
+ * create command line wrappers in the bin directory for batch operation
+
+These were handled by complicated .bat (win32) and shell (linux64) scripts.
+The process is now easier and more robust as a command-line java app.
+
 Binary Installation (windows version)
 ------------------------------------------
 
 ```dos
 rem 1. MANUALLY: Download BEAM  - you have to click to Proceed
-start iexplore "http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe"
+press Windows-R  to get the "run" prompt
+iexplore "http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe"
 rem 2. run installer
 beam_4.10.3_win32_installer.exe
-rem 3. remove old unpacked auxdata (if it exists)
-rd /q /s "%HOMEPATH%\.beam\beam-vlab"
-rem 4. remove old version of plugin (if it exists)
-del /f /q "%ProgramFiles%\beam-4.10.3\modules\beam-3dveglab-vlab-*.jar"
-rem 5. get latest machine-independent java binary of 3dveglab BEAM plugin
-cd "%ProgramFiles%\beam-4.10.3\modules\"
- > getvlab-ftpcmds.txt echo ftp
->> getvlab-ftpcmds.txt echo ftp@
->> getvlab-ftpcmds.txt echo cd pub
->> getvlab-ftpcmds.txt echo get beam-3dveglab-vlab-LATEST.jar
->> getvlab-ftpcmds.txt echo quit
-ftp -s:getvlab-ftpcmds.txt ftp.netcetera.ch
-rem 6. run beam 
-"%ProgramFiles%\beam-4.10.3\bin\visat"
-rem 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
-rem [Tools/3D Vegetation Lab Processor]
-rem 8. get binary snapshots of dependent software (librat, DART, libradtran)
-"%HOMEPATH%\.beam\beam-vlab\auxdata\replaceWithLatest.bat"
+rem 3. go to the beam bin directory (the directory where you just installed it)
+press Windows-R to get the "run" prompt 
+cmd /K "cd /d C:\ProgramFiles(x86)\beam-4.10.3\bin"
+rem 4. download the 3DVegLabInstaller.jar into the bin directory from step 3.
+start iexplore "ftp://ftp.netcetera.ch/pub/"
+rem 5. run the 3DVegLabInstaller.jar from inside the bin directory 
+press Windows-R to get the "run" prompt
+cmd /K "cd /d C:\Program Files(x86)\beam-4.10.3\bin"
+java -jar 3DVegLabInstaller.jar
 ```
 Binary Installation (linux version)
 ------------------------------------------
@@ -41,18 +45,12 @@ Binary Installation (linux version)
 firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_linux64_installer.sh'
 # 2. run installer
 sh beam_4.10.3_linux64_installer.sh
-# 3. remove old unpacked auxdata (if it exists)
-rm -rf ${HOME}/.beam/beam-vlab 
-# 4. remove old version of plugin (if it exists)
-rm -f ${HOME}/beam-4.10.3/modules/beam-3dveglab-vlab-*.jar
-# 5. get latest machine-independent java binary of 3dveglab BEAM plugin
-cd ${HOME}/beam-4.10.3/modules/ && wget ftp://ftp.netcetera.ch/pub/beam-3dveglab-vlab-LATEST.jar
-# 6. run beam 
-${HOME}/beam-4.10.3/bin/visat
-# 7. MANUALLY: start the 3dveglab tool plugin (so it will unpack the module)
-# [Tools/3D Vegetation Lab Processor]
-# 8. get binary snapshots of dependent software (librat, DART, libradtran)
-sh ${HOME}/.beam/beam-vlab/auxdata/replaceWithLatest.sh
+# 3. go to the beam bin directory (the directory where you just installed it)
+cd ${HOME}/beam-4.10.3/bin
+# 4. download 3DVegLabInstaller.jar into the bin directory from step 3.
+wget ftp://ftp.netcetera.ch/pub/3DVegLabInstaller.jar
+# 5. run the 3DVegLabInstall.jar from inside the bin directory
+java -jar 3DVegLabInstaller.jar
 ```
 
 3D Vegetation Lab Dependent software
