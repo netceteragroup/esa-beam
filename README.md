@@ -23,12 +23,12 @@ Binary Installation (windows version)
 
 ```dos
 rem 1. MANUALLY: Download BEAM  - you have to click to Proceed
-press Windows-R  to get the "run" prompt
+rem press Windows-R  to get the "run" prompt
 iexplore "http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.10.3/beam_4.10.3_win32_installer.exe"
 rem 2. run installer
 beam_4.10.3_win32_installer.exe
 rem 3. go to the beam bin directory (the directory where you just installed it)
-press Windows-R to get the "run" prompt 
+rem press Windows-R to get the "run" prompt 
 cmd /K "cd /d C:\ProgramFiles(x86)\beam-4.10.3\bin"
 rem 4. download the 3DVegLabInstaller.jar into the bin directory from step 3.
 start iexplore "ftp://ftp.netcetera.ch/pub/"
