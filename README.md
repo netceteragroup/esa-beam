@@ -66,19 +66,7 @@ Build 3D Veglab Plugin from Source
 ------------------------------------------
 You should be able to make any changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
 
-**This block for creating a virtual image is OPTIONAL**
-```bash
-# OPTIONAL - this is used to create a Fedora linux virtual image so that you canbe sure that the build environment setup script below works unmodified 
-wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh
-# build the virtual image (side-effect - f17-xfce-dev will be ready to start in VirtualBox)
-sh build_fedora_virtual_image.sh
-# start up the virtual machine you just created
-VirtualBox --startvm f17-xfce-dev
-# now login to the virtual machine and execute the commands below...
-# if you ssh into it, it is easier to copy/paste from this window :-)
-# ssh -Y fedora@localhost -p 2222
-
-```
+**See below for OPTIONAL step on creating a linux virtual image**
 
 ```bash
 # 1. Get the BEAM development env setup script (Fedora 64bit linux)
@@ -106,6 +94,25 @@ sh build_librat_binaries.sh
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
 wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_radtran_binaries.sh
 sh build_radtran_binaries.sh
+```
+
+Build Linux Virtual Image (OPTIONAL)
+------------------------------------------
+To ensure reproducability of builds, we use a standard fedora linux install
+build in a virtual machine for development. Here is a script to do it yourself.
+
+**This block for creating a virtual image is OPTIONAL**
+```bash
+# OPTIONAL - this is used to create a Fedora linux virtual image so that you canbe sure that the build environment setup script below works unmodified 
+wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh
+# build the virtual image (side-effect - f17-xfce-dev will be ready to start in VirtualBox)
+sh build_fedora_virtual_image.sh
+# start up the virtual machine you just created
+VirtualBox --startvm f17-xfce-dev
+# now login to the virtual machine and execute the commands below...
+# if you ssh into it, it is easier to copy/paste from this window :-)
+# ssh -Y fedora@localhost -p 2222
+
 ```
 
 BEAM Plugin Contributing Authors
