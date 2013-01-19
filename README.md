@@ -29,9 +29,9 @@ rem 2. run installer
 beam_4.10.3_win32_installer.exe
 rem 3. go to the beam bin directory (the directory where you just installed it)
 rem press Windows-R to get the "run" prompt 
-cmd /K "cd /d C:\ProgramFiles(x86)\beam-4.10.3\bin"
+cmd /K "cd /d C:\Program Files(x86)\beam-4.10.3\bin"
 rem 4. download the 3DVegLabInstaller.jar into the bin directory from step 3.
-start iexplore "ftp://ftp.netcetera.ch/pub/"
+iexplore "ftp://ftp.netcetera.ch/pub/"
 rem 5. run the 3DVegLabInstaller.jar from inside the bin directory 
 press Windows-R to get the "run" prompt
 cmd /K "cd /d C:\Program Files(x86)\beam-4.10.3\bin"

@@ -166,7 +166,7 @@ public class Install {
     System.out.println("Running 3DVegLabProcessor...");
     String[] cmd;
     if (System.getProperty("os.name").startsWith("Windows")) {
-      cmd = new String[] {"cmd", "/c", scriptFile.getCanonicalPath(), inputFile.getCanonicalPath(), "2>&1"};
+      cmd = new String[] {"cmd", "/c", "\"", scriptFile.getCanonicalPath(), inputFile.getCanonicalPath(), "2>&1", "\""};
     } else {
       cmd = new String[] {"sh", "-c", scriptFile.getCanonicalPath() + " " + inputFile.getCanonicalPath()  + " 2>&1"};
     }
