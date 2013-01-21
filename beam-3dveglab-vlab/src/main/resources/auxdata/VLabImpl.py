@@ -239,11 +239,11 @@ class VLAB:
         line = br.readLine()
         while (line != None):
           if self.writer != None:
-            self.writer.write(line + System.lineSeparator())
+            self.writer.write(line + System.getProperty('line.separator'))
             self.writer.flush()
           else:
             (Logger.getLogger(VLAB.LOGGER_NAME)).info(
-              self.stype + ": " + line + System.lineSeparator())
+              self.stype + ": " + line + System.getProperty('line.separator'))
           line = br.readLine()
         if self.writer != None:
           self.writer.close()
