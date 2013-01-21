@@ -25,11 +25,13 @@ from java import lang
 from java.io import BufferedReader
 from java.io import BufferedWriter
 from java.io import File
+from java.io import FileReader
+from java.io import FileWriter
 from java.io import FileInputStream
 from java.io import FileOutputStream
 from java.io import InputStreamReader
-from java.io import IOException
 from java.io import OutputStreamWriter
+from java.io import IOException
 from java.lang import IllegalArgumentException
 from java.lang import Integer
 from java.lang import ProcessBuilder
@@ -38,6 +40,7 @@ from java.lang import RuntimeException
 from java.lang import String as JString
 from java.lang import System
 from java.lang import Thread
+from java.lang import ProcessBuilder
 from java.nio.channels import FileChannel
 from java.util import HashMap
 from java.util import Map
@@ -219,6 +222,106 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
+  class StreamSync(Thread):
+    def __init__(self, istr, logFileName, stype):
+      self.istr  = istr; self.stype = stype
+      if logFileName != None:
+        logFile = File(logFileName)
+        logFile.createNewFile()
+        if (not logFile.canWrite()):
+          raise RuntimeException("can't write to " + logFile.getAbsolutePath())
+        self.writer = BufferedWriter(FileWriter(logFile, True))
+      else:
+        self.writer = None
+    def run(self):
+      try:
+        line = None; br = BufferedReader(InputStreamReader(self.istr))
+        line = br.readLine()
+        while (line != None):
+          if self.writer != None:
+            self.writer.write(line + System.lineSeparator())
+            self.writer.flush()
+          else:
+            (Logger.getLogger(VLAB.LOGGER_NAME)).info(
+              self.stype + ": " + line + System.lineSeparator())
+          line = br.readLine()
+        if self.writer != None:
+          self.writer.close()
+      except IOException, e:
+        e.printStackTrace()
+
+  def expandEnv(instr):
+    outstr = instr
+    m = {'$HOME':'HOME','%HOMEDRIVE%':'HOMEDRIVE','%HOMEPATH%':'HOMEPATH'}
+    for e in m:
+      if outstr.find(e) != -1:
+        repl = System.getenv(m[e])
+        if repl != None:
+          outstr = outstr.replace(e, repl)
+    return outstr
+  expandEnv = staticmethod(expandEnv)
+
+  def doExec(cmdrec):
+    exitStatus = 0
+    osName = System.getProperty('os.name')
+    cmdLine = []
+    if osName.startswith('Windows'):
+      cmd=cmdrec['windows']
+      cmdLine = ['cmd', '/c']
+    elif (osName == 'Linux'):
+      cmd=cmdrec['linux']
+    else:
+      raise RuntimeException('Unsupported OS ' + osName)
+    exe = File(VLAB.expandEnv(cmd['exe']))
+    if not exe.canExecute():
+      raise RuntimeException("Can't find executable: " + exe.getAbsolutePath())
+    cmdLine.append(exe.getAbsolutePath())
+    for i in cmd['cmdline']:
+      cmdLine.append(VLAB.expandEnv(i))
+#    if osName.startswith('Windows'):
+#      cmdLine.append(' <nul')
+    
+    for cml in cmdLine:
+      (Logger.getLogger(VLAB.LOGGER_NAME)).info('cmdLine: ' + cml)
+   
+    #print 'cmdLine is ', cmdLine
+    pb = ProcessBuilder(cmdLine)
+    if cmd['cwd'] != None:
+      pb.directory(File(VLAB.expandEnv(cmd['cwd'])))
+    if cmd['env'] != None:
+      env = pb.environment()
+      cmdenv = cmd['env']
+      for e in cmdenv:
+        env[e] = VLAB.expandEnv(cmdenv[e])
+    proc = pb.start()
+    stdoutfName = None
+    if cmd['stdout'] != None:
+      stdoutfName = VLAB.expandEnv(cmd['stdout'])
+    stderrfName = None
+    if cmd['stderr'] != None:
+      stderrfName = VLAB.expandEnv(cmd['stderr'])
+    outs = VLAB.StreamSync(proc.getInputStream(), stdoutfName, 'out')
+    errs = VLAB.StreamSync(proc.getErrorStream(), stderrfName, 'err')
+    outs.start(); errs.start()
+    if cmd['stdin'] != None:
+      inFile = File(cmd['stdin'])
+      if cmd['cwd'] != None:
+        inFile = File(VLAB.expandEnv(cmd['cwd']), cmd['stdin'])
+      br = BufferedReader(FileReader(inFile))
+      bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
+      line = br.readLine()
+      while (line != None):
+        #print 'writing ', line
+        bw.write(line)
+        line = br.readLine()
+      br.close()
+      bw.close()
+    exitStatus = proc.waitFor()
+    errs.join(); outs.join()
+    (Logger.getLogger(VLAB.LOGGER_NAME)).info('returning exitStatus: ' + JString.format("%d", [exitStatus]))
+    return exitStatus
+  doExec = staticmethod(doExec)
+
 
 ##
 ## BEAM-defined Processor implementation
@@ -501,6 +604,29 @@ class DUMMY:
   def doTopOfCanopyBRF(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_linux/',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/dummy_linux/dummy',
+      'cmdline' : [ '-e', '1', '-r', '5' ],
+      'stdin'   : None,
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : None
+    },
+    'windows' : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_windows',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_windows\\dummy.exe',
+      'cmdline' : [ '-e', '1', '-r', '5' ],
+      'stdin'   : None,
+      'stdout'  : 'dummyout.txt',
+      'stderr'  : 'dummyerr.txt',
+      'env'     : None
+    }
+    }
+    # NOT YET - hangs on XP for some reason
+    #VLAB.doExec(cmd)
+
 
 ##
 ## DART-specific integration glue
@@ -518,7 +644,7 @@ class DART:
     VLAB.dependsOn(me, "soil.dat")
     self._log.info(me + ": executing...")
     #
-    # [stuff happens here]
+    # [more would happen here]
     #
     VLAB.created(me,   "object_3d.obj")
 
@@ -539,7 +665,7 @@ class DART:
     VLAB.dependsOn(me, "water.xml")
     self._log.info(me + ": executing...")
     #
-    # [stuff happens here]
+    # [more would happen here]
     #
     VLAB.created(me, "BAND0")
     VLAB.created(me, "dart.txt")
@@ -576,7 +702,7 @@ class LIBRAT:
     VLAB.dependsOn(me, "soil.dat")
     self._log.info(me + ": executing...")
     #
-    # stuff happens here
+    # more would happen here
     #
     VLAB.created(me,   "vlab-librat.obj")
 
@@ -589,8 +715,39 @@ class LIBRAT:
     VLAB.dependsOn(me, "sphere.dat")
     VLAB.dependsOn(me, "wavebands_file.dat")
     self._log.info(me + ": executing...")
+
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/start',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/start/start',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : 'starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/lib/',
+        'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_linux/'
+      }},
+    'windows'   : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\ratstart.exe',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : 'starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'BPMS'  : '%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
+     }}
+    }
+    # NOT YET - hangs on XP for some reason
+    # VLAB.doExec(cmd)
+
     #
-    # [stuff happens here]
+    # [more would happen here]
     #
     VLAB.created(me, "result.dat")
     VLAB.created(me, "result.dat.diffuse")
@@ -618,7 +775,7 @@ class RADTRAN:
     VLAB.dependsOn(me, "input.dat");
     self._log.info(me + ": executing...")
     #
-    # [stuff happens here]
+    # [more would happn here]
     #
     VLAB.created(me,  "output.dat")
 
