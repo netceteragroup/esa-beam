@@ -624,8 +624,7 @@ class DUMMY:
       'env'     : None
     }
     }
-    # NOT YET - hangs on XP for some reason
-    #VLAB.doExec(cmd)
+    VLAB.doExec(cmd)
 
 
 ##
@@ -740,12 +739,10 @@ class LIBRAT:
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
-        'BPMS'  : '%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
+        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
      }}
     }
-    # NOT YET - hangs on XP for some reason
-    # VLAB.doExec(cmd)
-
+    VLAB.doExec(cmd)
     #
     # [more would happen here]
     #
