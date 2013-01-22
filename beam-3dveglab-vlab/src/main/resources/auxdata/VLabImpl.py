@@ -619,8 +619,8 @@ class DUMMY:
       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_windows\\dummy.exe',
       'cmdline' : [ '-e', '1', '-r', '5' ],
       'stdin'   : None,
-      'stdout'  : 'dummyout.txt',
-      'stderr'  : 'dummyerr.txt',
+      'stdout'  : None,
+      'stderr'  : None,
       'env'     : None
     }
     }
