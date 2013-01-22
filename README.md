@@ -9,9 +9,9 @@ This repository contains plugin modules developed by Netcetera Zurich for versio
 Binary Installation
 ---------------------------
 
-Binary installation of the 3D Vegetation Lab plugin involves
+Binary installation of the 3D Vegetation Lab plugin is automated but involves
  * copying/replacing the plugin jar file in the beam/modules directory
- * clean/first time plugin run to create/unpack .beam/beam-vlab/auxdata/
+ * clean first-time plugin run to create/unpack .beam/beam-vlab/auxdata/
  * fetch/unpack latest versions of dependent 3rd party software into auxdata
  * create command line wrappers in the bin directory for batch operation
 
@@ -62,9 +62,25 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux
 * [libRadtran (library for radiative transfer)](http://www.libradtran.org/)
 
 
-Build 3D Veglab Plugin from Source 
+For 3D Vegatation Lab Developers
 ------------------------------------------
-You should be able to make any changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for an official build, you can follow these steps (for Fedora linux). 
+There are 2 modes of development:
+1. logic development (changing the single jython implementation file, restarting BEAM, browing logfile)
+2. full development (including Java plugin infrastructure, help files, support scripts, etc.)
+
+
+Developer - simple variant: Logic-only development
+------------------------------------------
+You should be able to make any logic changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for a complete build, see the "complete variant" below.
+
+1. Perform binary only installation (described above)
+2. Enable logging (in beam-4.10.3/config/beam.config, uncomment beam.logLevel = INFO)
+3. Change jython implementation file (VLabImpl.py) as needed
+4. Submit changes
+
+Developer - complete variant: Full development environment
+------------------------------------------
+This describes the complete variant for installing the entire (Java-based) development environemtn needed for a complete build. The first script automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 
 **See below for OPTIONAL step on creating a linux virtual image**
 
@@ -83,6 +99,8 @@ sh build_beam_vlab_binaries.sh
 
 Build Dependent Software from Source
 ------------------------------------------
+Most of the plugin's dependent software is open source and can be compiled yourself. Here are scripts that automate these steps for you.
+
 
 ```bash
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
