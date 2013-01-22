@@ -55,7 +55,7 @@ java -jar 3DVegLabInstaller.jar
 
 3D Vegetation Lab Dependent software
 -----------------------------------------
-The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux64/win32 binary snapshots of which can be obtained by running the replaceWithLatest.sh script above
+The BEAM Vegetation Lab plugin relies on the following 3rd party software. Binary snapshots of this software compiled for linux64/win32 platforms are automatically installed by the 3DVegLabInstaller.jar described above
 
 * [librat (Monte Carlo Ray Tracing library)](http://www2.geog.ucl.ac.uk/~plewis/bpms/src/lib/)
 * [DART (Discrete Anisotropic Radiative Transfer)](http://www.cesbio.ups-tlse.fr/us/dart/dart_description.html)
@@ -64,9 +64,9 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software, linux
 
 For 3D Vegatation Lab Developers
 ------------------------------------------
-There are 2 modes of development:
-1. logic development (changing the single jython implementation file, restarting BEAM, browing logfile)
-2. full development (including Java plugin infrastructure, help files, support scripts, etc.)
+There are 2 modes of development which are described in more detail below:
+ 1. logic development (changing the single jython implementation file, restarting BEAM, browing logfile)
+ 2. full development (including Java plugin infrastructure, help files, support scripts, etc.)
 
 
 Developer - simple variant: Logic-only development
