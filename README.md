@@ -71,7 +71,7 @@ There are 2 modes of development which are described in more detail below:
 
 Developer - simple variant: Logic-only development
 ------------------------------------------
-You should be able to make any logic changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application. However, if you'd like to recreate the entire Java development environment needed for a complete build, see the "complete variant" below.
+You should be able to make any logic changes to the plugin you need by editing the [VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been placed in your BEAM auxdata directory ($HOME/.beam/beam-vlab/auxdata/VLabImpl.py) and restarting the BEAM application.  The development cycle would be as follows:
 
 1. Perform binary only installation (described above)
 2. Enable logging (in beam-4.10.3/config/beam.config, uncomment beam.logLevel = INFO)
@@ -99,7 +99,7 @@ sh build_beam_vlab_binaries.sh
 
 Build Dependent Software from Source
 ------------------------------------------
-Most of the plugin's dependent software is open source and can be compiled yourself. Here are scripts that automate these steps for you.
+Most of the plugin's dependent software is open source and can be compiled yourself. Here are scripts that we used to build the binary snapshots.
 
 
 ```bash
