@@ -62,10 +62,10 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software. Binar
 * [libRadtran (library for radiative transfer)](http://www.libradtran.org/)
 
 
-For 3D Vegatation Lab Developers
+For 3D Vegetation Lab Developers
 ------------------------------------------
 There are 2 modes of development which are described in more detail below:
- 1. logic development (changing the single jython implementation file, restarting BEAM, browing logfile)
+ 1. simpler logic-only development (changing the single jython implementation file, restarting BEAM, browsing log file)
  2. full development (including Java plugin infrastructure, help files, support scripts, etc.)
 
 
@@ -80,7 +80,7 @@ You should be able to make any logic changes to the plugin you need by editing t
 
 Developer - complete variant: Full development environment
 ------------------------------------------
-This describes the complete variant for installing the entire (Java-based) development environemtn needed for a complete build. The first script automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
+This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. The first script automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 
 **See below for OPTIONAL step on creating a linux virtual image**
 
@@ -116,12 +116,12 @@ sh build_radtran_binaries.sh
 
 Build Linux Virtual Image (OPTIONAL)
 ------------------------------------------
-To ensure reproducability of builds, we use a standard fedora linux install
+To ensure reproducibility of builds, we use a standard fedora linux install
 build in a virtual machine for development. Here is a script to do it yourself.
 
 **This block for creating a virtual image is OPTIONAL**
 ```bash
-# OPTIONAL - this is used to create a Fedora linux virtual image so that you canbe sure that the build environment setup script below works unmodified 
+# OPTIONAL - this is used to create a Fedora linux virtual image so that you can be sure that the build environment setup script below works unmodified 
 wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh
 # build the virtual image (side-effect - f17-xfce-dev will be ready to start in VirtualBox)
 sh build_fedora_virtual_image.sh
