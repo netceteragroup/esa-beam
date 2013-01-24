@@ -1,0 +1,14 @@
+--- libsrc_c/uvspecrandom.c.orig	2012-01-09 21:11:54.000000000 +0100
++++ libsrc_c/uvspecrandom.c	2013-01-23 10:55:55.322240027 +0100
+@@ -32,6 +32,11 @@
+ #include <gsl/gsl_rng.h>
+ #endif
+ 
++#ifdef WIN32
++#define random rand
++#define srandom srand
++#endif
++
+ /* global variable: random number generator */
+ #if HAVE_LIBGSL 
+   gsl_rng *uvspecrng; 
