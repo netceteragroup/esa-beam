@@ -17,13 +17,16 @@ sudo yum -y install elinks
 wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
 
 # get Netcetera patches for cross-compiling win32 binaries under linux
+mkdir librat-patches
+cd librat-patches
 for f in `elinks -dump https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scripts/librat-patches | egrep 'http.*\.patch'`; do 
   p=`basename $f`
   wget "https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/librat-patches/$p"
 done
+cd ..
 
 # apply Netcetera win32 top level patch, then run configure
-patch < librat-configure.patch
+patch < librat-patches/librat-configure.patch
 BPMS=`pwd`/bpms csh -x -f ./configure -mingw32 2>&1 | tee build-win23.log
 mv bpms ${WINNAME}
 zip -r ${WINNAME} ${WINNAME}

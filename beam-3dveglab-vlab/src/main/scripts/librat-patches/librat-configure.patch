@@ -110,7 +110,7 @@
 + if ($domingw32 == 1 ) then
 +   echo "patching ..."
 +   cd "$BPMS"/..
-+   foreach p (librat-patches/librat-patch-patch*.patch)
++   foreach p (librat-patches/librat-patch-*.patch)
 +     patch -p 1 < $p
 +   end
 +   cp -p librat-patches/librat-testMe.bat "$BPMS"/src/start/testMe.bat
