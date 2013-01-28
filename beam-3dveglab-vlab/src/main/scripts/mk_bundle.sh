@@ -22,6 +22,9 @@ mkentry aux     'dummy_linux*'
 mkentry aux     'dummy_win*'
 mkentry aux     'librat*linux*'
 mkentry aux     'librat*win*'
-# mkentry aux     'libRat*lin*'
+mkentry aux     'libRadtran*linux*'
+mkentry aux     'libRadtran*win*'
+#mkentry aux     'DART*windows32*'
+#mkentry aux     'DART*linux64*'
 
 rm -rf $XTMPDIR

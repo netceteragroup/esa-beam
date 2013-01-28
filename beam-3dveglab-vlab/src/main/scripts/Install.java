@@ -41,18 +41,21 @@ public class Install {
   private static final String TYPE_BIN         = "bin";
   private static final String TYPE_MODULES     = "modules";
   private static final String TYPE_AUX         = "aux";
-  private static final String DEFAULT_REPO     = "ftp://ftp.netcetera.ch/pub/";
+  private static final String DEFAULT_REPO     = "ftp://ftp.netcetera.ch/pub";
   private static final String DEFAULT_MANIFEST = DEFAULT_REPO + "/3DVegLab.manifest";
   
   public static void die(String msg) {System.err.println(msg); System.exit(1);}
   public static void fetch(String urlName, String targetName) throws Exception {
+      System.out.println("fetch " + urlName + " " + targetName);
       URL url                 = new URL(urlName);
       ReadableByteChannel rbc = Channels.newChannel(url.openStream());
       FileOutputStream fos    = new FileOutputStream(targetName);
-      fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+      long nbytes = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
       fos.close();
+      System.out.println(nbytes + " bytes downloaded");
   }
   public static String md5sum(String fName) throws Exception {
+    System.out.println("md5sum " + fName);
     MessageDigest md = MessageDigest.getInstance("MD5");
     InputStream   is = new FileInputStream(fName);
     try {
@@ -63,6 +66,7 @@ public class Install {
     return String.format("%1$032x", new BigInteger(1,md.digest()));
   }
   public static void unzip(String baseDir, String zipPath) throws Exception {
+    System.out.println("unzip " + baseDir + " " + zipPath);
     Enumeration<?> entries; ZipFile zipFile;
     zipFile = new ZipFile(zipPath); entries = zipFile.entries();
     while (entries.hasMoreElements()) {
@@ -232,9 +236,7 @@ public class Install {
       } else {
         die("unknown file locator: " + triple[1]);
       }
-      System.out.println("Fetching " + triple[2] + " for " + triple[1]);
-      fetch(repoURL + triple[2], targetName);
-      System.out.println("Checking md5sum for " + triple[2]);
+      fetch(repoURL + "/" + triple[2], targetName);
       String cksum = md5sum(targetName);
       if (!cksum.equals(triple[0])) {
         die("md5sum mismatch: expected=" + triple[0] + " actual=" + cksum);
@@ -247,7 +249,6 @@ public class Install {
           die("no auxdir - running 3DVegLab must have failed");
         }
       } else if (targetName.endsWith("zip")) {
-        System.out.println("Unpacking " + targetName);
         unzip(new File(targetName, "..").getCanonicalPath(), targetName);
         System.out.println("Deleting " + targetName);
         new File(targetName).delete();
@@ -257,7 +258,6 @@ public class Install {
         new File(oldPath).renameTo(new File(newPath));
       } else if (targetName.endsWith(".tar.gz")) {
         if (! System.getProperty("os.name").startsWith("Windows")) {
-          System.out.println("Unpacking " + targetName);
           String [] cmd = new String[] {"sh", "-c", "tar -C " + new File(targetName, "..").getCanonicalPath() + " -xzvf " + targetName};
           System.out.println("Running " + join(cmd, " "));
           ProcessBuilder pb = new ProcessBuilder(cmd);
