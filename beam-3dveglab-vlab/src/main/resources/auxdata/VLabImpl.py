@@ -312,7 +312,7 @@ class VLAB:
       line = br.readLine()
       while (line != None):
         #print 'writing ', line
-        bw.write(line)
+        bw.write(line + System.getProperty('line.separator'))
         line = br.readLine()
       br.close()
       bw.close()
