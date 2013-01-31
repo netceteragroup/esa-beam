@@ -6,6 +6,8 @@ SZMB=1500
 INSTDIR=/tmp/boxes/
 BUILDDIR=/tmp/builds/
 
+set -e 
+
 mkdir -p ${BUILDDIR}
 cat > ${BUILDDIR}/${NAME}.appl << EOF
 name: $NAME
