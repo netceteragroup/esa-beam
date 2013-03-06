@@ -8,6 +8,8 @@ BUILDDIR=/tmp/builds/
 
 set -e 
 
+sudo yum install -y rubygem-boxgrinder-build
+
 mkdir -p ${BUILDDIR}
 cat > ${BUILDDIR}/${NAME}.appl << EOF
 name: $NAME
