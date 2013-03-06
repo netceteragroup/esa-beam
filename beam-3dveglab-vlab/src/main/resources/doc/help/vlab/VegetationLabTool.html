@@ -35,19 +35,97 @@
 <h3>Introduction</h3>
 
 <p>
-    The <em>Vegetation Lab Tool</em> allows you to ...
+The up-coming generation of ESA operational missions &mdash; the Sentinels &mdash; will enhance the capability for observing the vegetated surfaces of the Earth.  Nevertheless, the quantitative interpretation of the Earth Observation (EO) signal is a challenging task because vegetation is a complex and dynamic medium. Effects of horizontal and vertical heterogeneities and asymmetrical structures of vegetation as well as their high temporal dynamics are often neglected in algorithm development, calibration, and validation procedures.  
+</p>
+
+<p>
+To better understand a scientific basis as well as the potential of future and upcoming missions, detailed knowledge about the observed medium and the processes governing the radiative transfer is needed. The combination of a realistic description of the medium in high detail, together with a validated radiative transfer model, is the basis of this toolbox. It effectively creates a virtual lab mimicking reality. The toolbox provides the educated user with the capability to assess the potential of novel observation systems as well as to develop new algorithms and understand scaling issues from point measurements to the landscape. 
+</p>
+
+<p>
+The toolbox comprises initially two forest scenes from central Europe. One is mainly deciduous, the other mainly coniferous forest. The sites have been characterised using a combination of airborne laser scanning, terrestrial laser scanning and lab-based laser scanning of very fine structures, such as shoots.
+Additionally, spectral information has been derived for all scene elements at the two sites. The two sites have been parameterised for two radiative transfer models, librat and DART, which form the RT modules of this toolbox. In this toolbox, both models can be used in forward mode only; that is to compute the BRF of the scenes with given settings.
+</p>
+
+<p>
+The detailed representations of the canopy structure and the distribution of leaves/branches within the 3D radiative transfer models allows the simulation of current and future missions in a controlled yet realistic environment. This toolbox provides the scientific community a common benchmarking tool to develop, validate and compare biophysical EO products from space-borne missions with special attention to preparing for upcoming Sentinels.
 </p>
 
 <h3>Algorithm</h3>
 
 <p>
-    TBD...
+The toolbox comprises three radiative transfer models, two for the computation of canopy BRF and one for the atmospheric radiative transfer. More information on these models can be found via the links below.
 </p>
+
+<ul>
+<li> <a href="http://librat.wikispaces.com">librat (canopy model 1)</a>
+<li> <a href="http://www.cesbio.ups-tlse.fr/dart/documentation/5.DART_User_Manual.pdf">DART (canopy model 2)</a>
+<li> <a href="http://www.libradtran.org/doku.php">libradtran (atmosphere model)</a>
+</ul>
 
 <h3>User Interfaces</h3>
 
+<h4>Forward Modelling</h4>
+
+<h5>Model Selection</h5>
 <p>
-    TBD...
+In this section, the user can select the 3d scene to be simulated (either Laegeren or Tharandt) and the RT model to be used for the forward simulation of BRF values based on the selected 3d scene. Choices are librat and DART.
+</p>
+<h5>Spectral Characteristics</h5>
+<p>
+Chooses the predefined spectral characteristics settings for a specific sensor and selects a subset of the bands. 
+</p>
+
+<h5>Viewing Characteristics</h5>
+<p>
+Defines viewing characteristics of the sensor relative to the 3d scene, namely zenith and azimuth.
+</p>
+
+<h5>Illumination Characteristics</h5>
+<p>
+Defines the solar illumination characteristics of the sensor relative to the 3d scene, namely zenith and azimuth.
+</p>
+
+<h5>Scene Parameters</h5>
+<p>
+Defines the pixel size, center coordinates (XC, YC) and spatial extent (XW, YW). The spatial extent is provided in pixel units.
+</p>
+
+<h5>Atmospheric Parameters</h5>
+<p>
+This section provides the inputs for the atmospheric modeling component, libradtran. The day of year can be specified as Julian day, together with the location of the scene in global coordinates (lat/lon). Please note that the location will be prescribed from the selected scenes. Additionally, values for CO2 mixing ratio, water vapor and ozone column can be provided, together with a choice of typical aerosol profiles.
+</p>
+
+<h5>Output Parameters</h5>
+<p>
+The image and BRF output of the RTM models will be written to a specific directory (Result Directory) using a specific file prefix (Result file prefix). The choice of image and BRF (ASCII) output is also offered.
+</p>
+
+<h4>DHP Simulation</h4>
+
+<h5>Model Selection</h5>
+<p>
+The 3d scene and the RT model can be selected here. The current version of the plugin supports only the librat RT processor.
+</p>
+
+<h5>DHP Location</h5>
+<p>
+The location of the virtual DHP photograph. Locations are relative to the center location of the 3d scenes and are provided in meters. 
+</p>
+
+<h5>DHP Properties</h5>
+<p>
+The size of the imaging plane (effectively the number of pixels in the simulated image), the field of view of the hemispherical lens, the focal point (if required) and the rays per pixel (rpp) i.e. the Monte Carlo sampling; simulation time increases linearly with rpp but the noise reduces as ~ 1/sqrt(rpp).
+</p>
+
+<h5>DHP Imaging Plane</h5>
+<p>
+This provides the angle of the imaging plane (typically 0 degrees for field measured DHPs) and the height above ground of the virtual DHP location.
+</p>
+
+<h5>Output Parameters</h5>
+<p>
+An image simulated at the specified wavebands (default RGB).
 </p>
 
 <br>
