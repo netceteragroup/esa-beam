@@ -1,8 +1,8 @@
-*** librat/configure	2010-11-05 21:28:58.000000000 +0100
---- librat-mingw32/configure	2012-01-11 09:35:14.650770503 +0100
+*** librat/configure	2013-03-07 15:12:27.000000000 +0100
+--- librat-mingw32/configure	2013-03-09 22:01:07.015283971 +0100
 ***************
-*** 23,28 ****
---- 23,29 ----
+*** 24,29 ****
+--- 24,30 ----
   setenv TMP /tmp
   setenv HOSTNAME `uname -n`
   set dodownload = 1
@@ -11,7 +11,7 @@
   #set domain = (`domainname`)
   set CCS = (gcc cc)
 ***************
-*** 30,37 ****
+*** 31,38 ****
   set CFLAGSS = (-L. -fPIC)
   set OPTS = (-g -O4 -O -g)
   set MAKES = (gmake make)
@@ -19,8 +19,8 @@
 ! if (! $?BPMS )set BPMS = $HOME/bpms
   mkdir -p $BPMS/src/lib
   echo $BPMS > $BPMS/src/lib/BPMS
-  if (! $?MIRROR )set MIRROR = "www.geog.ucl.ac.uk/~plewis/bpms"
---- 31,39 ----
+  if (! $?MIRROR )set MIRROR = "www2.geog.ucl.ac.uk/~plewis/bpms"
+--- 32,40 ----
   set CFLAGSS = (-L. -fPIC)
   set OPTS = (-g -O4 -O -g)
   set MAKES = (gmake make)
@@ -29,9 +29,9 @@
 ! if (! $?BPMS )set BPMS = ${HOME}/bpms
   mkdir -p $BPMS/src/lib
   echo $BPMS > $BPMS/src/lib/BPMS
-  if (! $?MIRROR )set MIRROR = "www.geog.ucl.ac.uk/~plewis/bpms"
+  if (! $?MIRROR )set MIRROR = "www2.geog.ucl.ac.uk/~plewis/bpms"
 ***************
-*** 103,115 ****
+*** 104,116 ****
      set clean = 1
      shift argv
      breaksw
@@ -45,7 +45,7 @@
   #############
   # compiler test
   ############
---- 105,139 ----
+--- 106,140 ----
      set clean = 1
      shift argv
      breaksw
@@ -82,8 +82,8 @@
   # compiler test
   ############
 ***************
-*** 222,230 ****
---- 246,258 ----
+*** 223,231 ****
+--- 247,259 ----
   endif
   \rm -f $TMP/test.c $TMP/test.o $TMP/test.so $TMP/test
   
@@ -98,8 +98,8 @@
   while ($i <= $#DIRS)
     set DIR = $DIRS[$i]
 ***************
-*** 318,323 ****
---- 346,366 ----
+*** 345,350 ****
+--- 373,393 ----
   # chmod
   ########
   chmod +x ../../bin/csh/*
@@ -122,7 +122,7 @@
   # compile
   ########
 ***************
-*** 329,352 ****
+*** 356,379 ****
   set status = 1
   echo -n "compiling in "
   echo $cwd
@@ -147,7 +147,7 @@
   ########
   # test start
   ########
---- 372,409 ----
+--- 399,436 ----
   set status = 1
   echo -n "compiling in "
   echo $cwd
@@ -187,13 +187,11 @@
   # test start
   ########
 ***************
-*** 360,363 ****
-   exit 1
-  endif
+*** 392,395 ****
+--- 449,454 ----
+    echo " README"
+    echo "========="
+    cat "$BPMS"/src/lib/README
++ endif
   
-! 
---- 417,420 ----
-   exit 1
-  endif
-  
-! endif
++ endif

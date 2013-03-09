@@ -3,12 +3,13 @@
 # this script builds librat native binaries for win32 and linux64 platforms
 #
 
-VERSION=1_3_3
+VERSION=1_3_5
 WINNAME=librat_${VERSION}_windows32-`date +%Y%m%d`
 LINNAME=librat_${VERSION}_linux64-`date +%Y%m%d`
 
 set -e
 
+sudo yum -y install gcc
 sudo yum -y install mingw32-gcc
 sudo yum -y install patch
 sudo yum -y install elinks
