@@ -51,7 +51,11 @@ cd ${HOME}/beam-4.10.3/bin
 wget ftp://ftp.netcetera.ch/pub/3DVegLabInstaller.jar
 # 5. run the 3DVegLabInstall.jar from inside the bin directory
 java -jar 3DVegLabInstaller.jar
+# 6. run BEAM
+${HOME}/beam-4.10.3/bin/visat
 ```
+
+Once you have started BEAM (visat), use Tools/3D Vegetation Lab Processor to start the plugin.
 
 3D Vegetation Lab Dependent software
 -----------------------------------------
