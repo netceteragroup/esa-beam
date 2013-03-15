@@ -14,7 +14,6 @@ P=/home/${USER}/projects/esa-034-5
 sudo yum update -y
 sudo yum install -y eclipse
 sudo yum install -y eclipse-egit
-sudo yum install -y eclipse-svnkit
 sudo yum install -y git
 sudo yum install -y maven2
 sudo yum install -y patch
