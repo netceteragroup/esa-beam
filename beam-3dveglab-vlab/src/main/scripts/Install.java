@@ -218,13 +218,17 @@ public class Install {
     String text = sc.useDelimiter("\\Z").next(); sc.close();
     System.out.println("Processing " + manifestUrl);
     for (String line : text.split("\n")) {
-      String[] triple = line.split(":");
+      String[] tuple = line.split(":");
       String targetName = null;
-      if (TYPE_BIN.equals(triple[1])) {
-        targetName = bindir + File.separator + triple[2];
-      } else if (TYPE_AUX.equals(triple[1])) {
-        targetName = auxdir + File.separator + triple[2];
-      } else if (TYPE_MODULES.equals(triple[1])) {
+      String newBaseName = "";
+      if (tuple.length > 3) {
+        newBaseName = tuple[3];
+      }
+      if (TYPE_BIN.equals(tuple[1])) {
+        targetName = bindir + File.separator + tuple[2];
+      } else if (TYPE_AUX.equals(tuple[1])) {
+        targetName = auxdir + File.separator + tuple[2];
+      } else if (TYPE_MODULES.equals(tuple[1])) {
         for (File toDelete : new File(moddir).listFiles(new FilenameFilter() {
           public boolean accept(File directory, String fileName) {
               return fileName.startsWith("beam-3dveglab-vlab");
@@ -232,16 +236,16 @@ public class Install {
           System.out.println("Deleting " + toDelete.getCanonicalPath());
           toDelete.delete();
         }
-        targetName = moddir + File.separator + triple[2];
+        targetName = moddir + File.separator + tuple[2];
       } else {
-        die("unknown file locator: " + triple[1]);
+        die("unknown file locator: " + tuple[1]);
       }
-      fetch(repoURL + "/" + triple[2], targetName);
+      fetch(repoURL + "/" + tuple[2], targetName);
       String cksum = md5sum(targetName);
-      if (!cksum.equals(triple[0])) {
-        die("md5sum mismatch: expected=" + triple[0] + " actual=" + cksum);
+      if (!cksum.equals(tuple[0])) {
+        die("md5sum mismatch: expected=" + tuple[0] + " actual=" + cksum);
       }
-      if (TYPE_MODULES.equals(triple[1])) {
+      if (TYPE_MODULES.equals(tuple[1])) {
         File script = createRunScript(bindir);
         File dummy  = createDummyInput();
         run3DVegLabProcessor(dummy, script);
@@ -252,10 +256,12 @@ public class Install {
         unzip(new File(targetName, "..").getCanonicalPath(), targetName);
         System.out.println("Deleting " + targetName);
         new File(targetName).delete();
-        String oldPath = targetName.substring(0, targetName.length()-4);
-        String newPath = deriveName(oldPath);
-        System.out.println("Renaming " + oldPath + " to " + newPath);
-        new File(oldPath).renameTo(new File(newPath));
+        if (!newBaseName.equals("")) {
+          String oldPath = targetName.substring(0, targetName.length()-4);
+          String newPath = deriveName(oldPath, newBaseName);
+          System.out.println("Renaming " + oldPath + " to " + newPath);
+          new File(oldPath).renameTo(new File(newPath));
+        }
       } else if (targetName.endsWith(".tar.gz")) {
         if (! System.getProperty("os.name").startsWith("Windows")) {
           String [] cmd = new String[] {"sh", "-c", "tar -C " + new File(targetName, "..").getCanonicalPath() + " -xzvf " + targetName};
@@ -267,24 +273,25 @@ public class Install {
           proc.waitFor();
           System.out.println("Deleting " + targetName);
           new File(targetName).delete();
-          String oldPath = targetName.substring(0, targetName.length()-7);
-          String newPath = deriveName(oldPath);
-          System.out.println("Renaming " + oldPath + " to " + newPath);
-          new File(oldPath).renameTo(new File(newPath));
+          if (!newBaseName.equals("")) {
+            String oldPath = targetName.substring(0, targetName.length()-7);
+            String newPath = deriveName(oldPath, newBaseName);
+            System.out.println("Renaming " + oldPath + " to " + newPath);
+            new File(oldPath).renameTo(new File(newPath));
+          }
         }
       }
     }
     System.out.println("Successfully completed.");
   }
-  private static String deriveName(String oldName) throws Exception {
+  private static String deriveName(String oldName, String newBaseName) throws Exception {
     String newName = "";
     String[] comps = oldName.split(Matcher.quoteReplacement(File.separator));
     String basename = comps[comps.length-1];
-    String newBaseName = basename.split("[-_]")[0];
-    if (oldName.contains("inux")) {
-      newName = new File(oldName, "..").getCanonicalPath() + File.separator + newBaseName + "_" + "linux";
-    } else if (oldName.contains("indows")) {
-      newName = new File(oldName, "..").getCanonicalPath() + File.separator + newBaseName + "_" + "windows";
+    if (newBaseName.length() > 0) {
+      newName = new File(oldName, "..").getCanonicalPath() + File.separator + newBaseName;
+    } else {
+      newName = new File(oldName, "..").getCanonicalPath() + File.separator + basename;
     }
     return newName;
   }

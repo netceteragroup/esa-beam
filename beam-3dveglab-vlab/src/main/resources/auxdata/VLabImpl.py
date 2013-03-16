@@ -606,8 +606,8 @@ class DUMMY:
     self._log.info(me)
     cmd = {
     'linux' : {
-      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_linux/',
-      'exe'     : '$HOME/.beam/beam-vlab/auxdata/dummy_linux/dummy',
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/dummy',
       'cmdline' : [ '-e', '1', '-r', '5' ],
       'stdin'   : None,
       'stdout'  : None,
@@ -717,8 +717,8 @@ class LIBRAT:
 
     cmd = {
     'linux' : {
-      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/start',
-      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/start/start',
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
       'cmdline' : [
         '-sensor_wavebands', 'wavebands.dat', '-m', '100',
         '-sun_position', '0', '0', '10', 'test.obj'],
@@ -726,12 +726,12 @@ class LIBRAT:
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
-        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_linux/src/lib/',
-        'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_linux/'
+        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib/',
+        'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
       }},
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\ratstart.exe',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
       'cmdline' : [
         '-sensor_wavebands', 'wavebands.dat', '-m', '100',
         '-sun_position', '0', '0', '10', 'test.obj'],
@@ -739,7 +739,7 @@ class LIBRAT:
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
-        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
+        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32'
      }}
     }
     VLAB.doExec(cmd)
