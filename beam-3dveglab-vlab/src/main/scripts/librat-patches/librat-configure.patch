@@ -1,12 +1,13 @@
 *** librat/configure	2013-03-07 15:12:27.000000000 +0100
---- librat-mingw32/configure	2013-03-09 22:01:07.015283971 +0100
+--- librat-mingw/configure	2013-03-16 23:24:57.785539562 +0100
 ***************
 *** 24,29 ****
---- 24,30 ----
+--- 24,31 ----
   setenv TMP /tmp
   setenv HOSTNAME `uname -n`
   set dodownload = 1
 + set domingw32 = 0
++ set domingw64 = 0
   set domake = 1
   #set domain = (`domainname`)
   set CCS = (gcc cc)
@@ -20,7 +21,7 @@
   mkdir -p $BPMS/src/lib
   echo $BPMS > $BPMS/src/lib/BPMS
   if (! $?MIRROR )set MIRROR = "www2.geog.ucl.ac.uk/~plewis/bpms"
---- 32,40 ----
+--- 33,41 ----
   set CFLAGSS = (-L. -fPIC)
   set OPTS = (-g -O4 -O -g)
   set MAKES = (gmake make)
@@ -45,7 +46,7 @@
   #############
   # compiler test
   ############
---- 106,140 ----
+--- 107,154 ----
      set clean = 1
      shift argv
      breaksw
@@ -53,9 +54,13 @@
 +    set domingw32 = 1
 +    shift argv
 +    breaksw
++   case -mingw64
++    set domingw64 = 1
++    shift argv
++    breaksw
     case -help:
     default:
-!    echo "$cmd [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-mingw32] [-help]"
+!    echo "$cmd [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-mingw32] [-mingw64] [-help]"
      exit 1
      breaksw
    endsw
@@ -65,16 +70,25 @@
 + # special case cross-compiling for windows
 + #############
 + 
-+ if ($domingw32 == 1 ) then
++ if (($domingw32 == 1) || ($domingw64 == 1)) then
 + 
-+   setenv ARCH "mingw32"
-+   set CC      = "i686-w64-mingw32-gcc"
-+   set AR      = "i686-w64-mingw32-ar"
-+   set DYN     = "i686-w64-mingw32-ld -G" 
-+   set RANLIB  = "i686-w64-mingw32-ranlib"
 +   set CFLAGS_ = "-fPIC"
 +   set OPT     = "-g"
 +   set MAKE    = "gmake"
++ 
++   if ($domingw32 == 1) then
++     setenv ARCH "mingw32"
++     set CC      = "i686-w64-mingw32-gcc"
++     set AR      = "i686-w64-mingw32-ar"
++     set DYN     = "i686-w64-mingw32-ld -G" 
++     set RANLIB  = "i686-w64-mingw32-ranlib"
++   else
++     setenv ARCH "mingw64"
++     set CC      = "x86_64-w64-mingw32-gcc"
++     set AR      = "x86_64-w64-mingw32-ar"
++     set DYN     = "x86_64-w64-mingw32-ld -G" 
++     set RANLIB  = "x86_64-w64-mingw32-ranlib"
++   endif
 + 
 + else
 + 
@@ -83,7 +97,7 @@
   ############
 ***************
 *** 223,231 ****
---- 247,259 ----
+--- 261,273 ----
   endif
   \rm -f $TMP/test.c $TMP/test.o $TMP/test.so $TMP/test
   
@@ -99,7 +113,7 @@
     set DIR = $DIRS[$i]
 ***************
 *** 345,350 ****
---- 373,393 ----
+--- 387,407 ----
   # chmod
   ########
   chmod +x ../../bin/csh/*
@@ -107,7 +121,7 @@
 + ########
 + # patches introduced to compile win32 binaries
 + ########
-+ if ($domingw32 == 1 ) then
++ if ( ($domingw32 == 1) || ($domingw64 == 1) ) then
 +   echo "patching ..."
 +   cd "$BPMS"/..
 +   foreach p (librat-patches/librat-patch-*.patch)
@@ -147,7 +161,7 @@
   ########
   # test start
   ########
---- 399,436 ----
+--- 413,450 ----
   set status = 1
   echo -n "compiling in "
   echo $cwd
@@ -158,7 +172,7 @@
    exit 1
   endif
   
-+ if ($domingw32 == 1 ) then
++ if (($domingw32 == 1) || ($domingw64 == 1)) then
 +   foreach f ("$BPMS"/bin/${ARCH}/*) 
 +     mv $f ${f}.exe
 +   end
@@ -168,7 +182,7 @@
   # start
   ########
   
-+ if ($domingw32 == 1 ) then
++ if (($domingw32 == 1) || ($domingw64 == 1)) then
 +   set TARGET = ratstart.exe
 + else
 +   set TARGET = ratstart
@@ -181,14 +195,14 @@
    exit 1
   endif
   
-+ if ($domingw32 == 0 ) then
++ if (($domingw32 == 0) && ($domingw64 == 0)) then
 + 
   ########
   # test start
   ########
 ***************
 *** 392,395 ****
---- 449,454 ----
+--- 463,468 ----
     echo " README"
     echo "========="
     cat "$BPMS"/src/lib/README
