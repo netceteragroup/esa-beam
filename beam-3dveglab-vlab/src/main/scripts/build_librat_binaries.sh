@@ -31,8 +31,6 @@ cd ..
 # apply Netcetera windows top level patch, then run configure
 patch < librat-patches/librat-configure.patch
 
-exit
-
 BPMS=`pwd`/bpms csh -x -f ./configure -mingw32 2>&1 | tee build-win32.log
 mv bpms ${W32NAME}
 zip -r ${W32NAME} ${W32NAME}
