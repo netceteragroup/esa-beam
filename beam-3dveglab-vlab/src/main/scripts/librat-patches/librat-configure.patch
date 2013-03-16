@@ -1,8 +1,8 @@
-*** librat/configure	2013-03-07 15:12:27.000000000 +0100
---- librat-mingw/configure	2013-03-16 23:24:57.785539562 +0100
+*** librat/configure	2013-03-15 12:34:28.000000000 +0100
+--- librat-mingw/configure	2013-03-16 23:59:21.535560182 +0100
 ***************
-*** 24,29 ****
---- 24,31 ----
+*** 25,30 ****
+--- 25,32 ----
   setenv TMP /tmp
   setenv HOSTNAME `uname -n`
   set dodownload = 1
@@ -12,7 +12,7 @@
   #set domain = (`domainname`)
   set CCS = (gcc cc)
 ***************
-*** 31,38 ****
+*** 32,39 ****
   set CFLAGSS = (-L. -fPIC)
   set OPTS = (-g -O4 -O -g)
   set MAKES = (gmake make)
@@ -21,7 +21,7 @@
   mkdir -p $BPMS/src/lib
   echo $BPMS > $BPMS/src/lib/BPMS
   if (! $?MIRROR )set MIRROR = "www2.geog.ucl.ac.uk/~plewis/bpms"
---- 33,41 ----
+--- 34,42 ----
   set CFLAGSS = (-L. -fPIC)
   set OPTS = (-g -O4 -O -g)
   set MAKES = (gmake make)
@@ -32,22 +32,18 @@
   echo $BPMS > $BPMS/src/lib/BPMS
   if (! $?MIRROR )set MIRROR = "www2.geog.ucl.ac.uk/~plewis/bpms"
 ***************
-*** 104,116 ****
-     set clean = 1
+*** 111,119 ****
+     set README = 1
      shift argv
      breaksw
     case -help:
     default:
-!    echo "$cmd [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-help]"
+!    echo "$cmd [-readme | -version] [-cc $CCS] [-lidar] [-make $MAKES] [-tmp $TMP] [-cflags $CFLAGSS] [-nodownload] [-g|-O|-O1-4] [-opt $OPTS] [-clean] [-help]"
      exit 1
      breaksw
    endsw
-  end
-  #############
-  # compiler test
-  ############
---- 107,154 ----
-     set clean = 1
+--- 114,130 ----
+     set README = 1
      shift argv
      breaksw
 +   case -mingw32
@@ -64,7 +60,12 @@
      exit 1
      breaksw
    endsw
-  end
+***************
+*** 130,135 ****
+--- 141,173 ----
+    cat "$BPMS"/src/lib/README
+    exit 1
+  endif
 + 
 + #############
 + # special case cross-compiling for windows
@@ -96,8 +97,8 @@
   # compiler test
   ############
 ***************
-*** 223,231 ****
---- 261,273 ----
+*** 242,250 ****
+--- 280,292 ----
   endif
   \rm -f $TMP/test.c $TMP/test.o $TMP/test.so $TMP/test
   
@@ -112,8 +113,23 @@
   while ($i <= $#DIRS)
     set DIR = $DIRS[$i]
 ***************
-*** 345,350 ****
---- 387,407 ----
+*** 360,370 ****
+   echo ""
+   cd "$BPMS"/src/lib
+  endif
+- 
+  ########
+  # chmod
+  ########
+  chmod +x ../../bin/csh/*
+  ########
+  # compile
+  ########
+--- 402,426 ----
+   echo ""
+   cd "$BPMS"/src/lib
+  endif
+  ########
   # chmod
   ########
   chmod +x ../../bin/csh/*
@@ -136,7 +152,7 @@
   # compile
   ########
 ***************
-*** 356,379 ****
+*** 376,399 ****
   set status = 1
   echo -n "compiling in "
   echo $cwd
@@ -161,7 +177,7 @@
   ########
   # test start
   ########
---- 413,450 ----
+--- 432,469 ----
   set status = 1
   echo -n "compiling in "
   echo $cwd
@@ -201,11 +217,9 @@
   # test start
   ########
 ***************
-*** 392,395 ****
---- 463,468 ----
-    echo " README"
-    echo "========="
-    cat "$BPMS"/src/lib/README
-+ endif
+*** 407,409 ****
+--- 477,480 ----
+   exit 1
+  endif
   
 + endif
