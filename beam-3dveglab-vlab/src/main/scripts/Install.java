@@ -72,7 +72,7 @@ public class Install {
     while (entries.hasMoreElements()) {
       ZipEntry ent = (ZipEntry) entries.nextElement();
       if (ent.isDirectory()) {
-        (new File(baseDir, ent.getName())).mkdir();
+        (new File(baseDir, ent.getName())).mkdirs();
       } else {
         File newFile = new File(baseDir, ent.getName());
         InputStream   in = zipFile.getInputStream(ent);
