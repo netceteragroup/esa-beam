@@ -138,7 +138,7 @@ class VLAB:
 {'Forward Modeling': (
 {'Model Selection': (
  ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN)),
- ('RT Processor',      'RTProcessor',         JCB, (K_LIBRAT, K_DART, K_DUMMY)))},
+ ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
  ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
  ('Bands',             'Bands',               JTF, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10'))},
@@ -276,6 +276,7 @@ class VLAB:
     if not exe.canExecute():
       raise RuntimeException("Can't find executable: " + exe.getAbsolutePath())
     cmdLine.append(exe.getAbsolutePath())
+
     for i in cmd['cmdline']:
       cmdLine.append(VLAB.expandEnv(i))
 #    if osName.startswith('Windows'):
@@ -304,9 +305,7 @@ class VLAB:
     errs = VLAB.StreamSync(proc.getErrorStream(), stderrfName, 'err')
     outs.start(); errs.start()
     if cmd['stdin'] != None:
-      inFile = File(cmd['stdin'])
-      if cmd['cwd'] != None:
-        inFile = File(VLAB.expandEnv(cmd['cwd']), cmd['stdin'])
+      inFile = File(VLAB.expandEnv(cmd['stdin']))
       br = BufferedReader(FileReader(inFile))
       bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
       line = br.readLine()
@@ -365,8 +364,15 @@ class VLabImpl(IVLabProcessor):
     else:
       raise RuntimeException('unknown processor: <' + processor + '>')
 
+    pm.beginTask("Computing top of canopy BRF...", 10)
     rtProcessor.doTopOfCanopyBRF()
     radProcessor = RADTRAN()
+    pm.beginTask("Computing top of atmosphere BRF...", 10)
+    # ensure at least 1 second to ensure progress popup feedback
+    try:
+      Thread.sleep(1000); 
+    except JException, e:
+      raise RuntimeException(e.getMessage())
     radProcessor.doTopOfAtmosphereBRF()
 
   def process(self, pm, req):
@@ -743,25 +749,19 @@ class LIBRAT:
   def _runSimulation(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
-    VLAB.dependsOn(me, "camera_field.dat")
-    VLAB.dependsOn(me, "light_file.dat")
-    VLAB.dependsOn(me, "plants.matlib")
-    VLAB.dependsOn(me, "sphere.dat")
-    VLAB.dependsOn(me, "wavebands_file.dat")
+    VLAB.dependsOn(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/plants.matlib.dem")
     self._log.info(me + ": executing...")
 
     cmd = {
     'linux' : {
-      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
-      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
+      'exe'     : '/bin/sh',
       'cmdline' : [
-        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
-        '-sun_position', '0', '0', '10', 'test.obj'],
-      'stdin'   : 'starttest.ip',
+'./dobrdf.py', '-v', '-obj', 'HET01_DIS_UNI_NIR_20.obj', '-wb', 'wb.image.dat', '-ideal', '80', '80', '-look', '0', '0', '0', '-rpp', '1', '-npixels', '200000', '-sorder', '5', '-angles', 'angles.rami.dat', '-boom', '100000', '-opdir', 'HET01_DIS_UNI_NIR_20' ],
+      'stdin'   : None,
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
-        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib/',
         'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
       }},
     'windows'   : {
@@ -778,13 +778,11 @@ class LIBRAT:
      }}
     }
     VLAB.doExec(cmd)
-    #
-    # [more would happen here]
-    #
-    VLAB.created(me, "result.dat")
-    VLAB.created(me, "result.dat.diffuse")
-    VLAB.created(me, "result.dat.direct")
-    VLAB.created(me, "result.dat.hips")
+
+    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat")
+    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.diffuse")
+    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.direct")
+    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.hips")
 
   def doTopOfCanopyBRF(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -806,8 +804,28 @@ class RADTRAN:
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.dependsOn(me, "input.dat");
     self._log.info(me + ": executing...")
-    #
-    # [more would happn here]
-    #
-    VLAB.created(me,  "output.dat")
+
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/bin/uvspec',
+      'cmdline' : [],
+      'stdin'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR.INP',
+      'stdout'  : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt',
+      'stderr'  : None,
+      'env'     : None
+    },
+    'windows' : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\uvspec.exe',
+      'cmdline' : [],
+      'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR.INP',
+      'stdout'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR-BEAM-OUTPUT.txt',
+      'stderr'  : None,
+      'env'     : None
+    }
+    }
+    VLAB.doExec(cmd)
+
+    VLAB.created(me, '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt')
 
