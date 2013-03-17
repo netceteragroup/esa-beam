@@ -621,8 +621,8 @@ class DUMMY:
       'env'     : None
     },
     'windows' : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_windows',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_windows\\dummy.exe',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_win32',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_win32\\dummy.exe',
       'cmdline' : [ '-e', '1', '-r', '5' ],
       'stdin'   : None,
       'stdout'  : None,
@@ -683,7 +683,7 @@ class DART:
       'env'     : None,
       },
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_win32\\tools\\lignes_commande',
       'exe'     : 'cmd.exe',
       'cmdline' : ['/c', 'echo', 'hello'],
       'stdin'   : None,
@@ -709,7 +709,7 @@ class DART:
       'env'     : None,
       },
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_win32\\tools\\lignes_commande',
       'exe'     : 'cmd.exe',
       'cmdline' : ['/c', 'echo', 'hello'],
       'stdin'   : None,
