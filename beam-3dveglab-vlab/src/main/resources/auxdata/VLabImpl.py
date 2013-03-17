@@ -207,12 +207,12 @@ class VLAB:
               plst.append(nm)
 
   def dependsOn(who,what):
-    if (not (File(what)).exists()):
-      (Logger.getLogger(VLAB.LOGGER_NAME)).info(JString.format ("Error: \"%s\" expected \"%s\" to exist", [who, what]))
+    if (not (File(VLAB.expandEnv(what))).exists()):
+      (Logger.getLogger(VLAB.LOGGER_NAME)).info(JString.format ("Error: \"%s\" expected \"%s\" to exist", [who, VLAB.expandEnv(what)]))
   dependsOn = staticmethod(dependsOn)
   def created(who,what):
-    if (not (File(what)).exists()):
-      (Logger.getLogger(VLAB.LOGGER_NAME)).info(JString.format ("Error: \"%s\" failed to generate \"%s\"", [who, what]))
+    if (not (File(VLAB.expandEnv(what))).exists()):
+      (Logger.getLogger(VLAB.LOGGER_NAME)).info(JString.format ("Error: \"%s\" failed to generate \"%s\"", [who, VLAB.expandEnv(what)]))
   created = staticmethod(created)
   def me():
     nm = ''
@@ -650,34 +650,69 @@ class DART:
   def _runSimulation(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
-    VLAB.dependsOn(me, "atmosphere.xml")
-    VLAB.dependsOn(me, "coef_diff.xml")
-    VLAB.dependsOn(me, "directions.xml")
-    VLAB.dependsOn(me, "inversion.xml")
-    VLAB.dependsOn(me, "maket.xml")
-    VLAB.dependsOn(me, "object_3d.xml")
-    VLAB.dependsOn(me, "phase.xml")
-    VLAB.dependsOn(me, "plots.xml")
-    VLAB.dependsOn(me, "trees.xml")
-    VLAB.dependsOn(me, "triangleFile.xml")
-    VLAB.dependsOn(me, "urban.xml")
-    VLAB.dependsOn(me, "water.xml")
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/atmosphere.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/coeff_diff.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/directions.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/inversion.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/log.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/maket.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/object_3d.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/phase.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/plots.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/sequence_apex.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/trees.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/triangleFile.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/urban.xml')
+    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/water.xml')
+
     self._log.info(me + ": executing...")
-    #
-    # [more would happen here]
-    #
-    VLAB.created(me, "BAND0")
-    VLAB.created(me, "dart.txt")
-    VLAB.created(me, "directions.txt")
-    VLAB.created(me, "lib_phase")
-    VLAB.created(me, "Maket_trees_result.txt")
-    VLAB.created(me, "maket.txt")
-    VLAB.created(me, "output_console_dart.txt")
-    VLAB.created(me, "output_console_directions.txt")
-    VLAB.created(me, "output_console_maket.txt")
-    VLAB.created(me, "output_console_phase.txt")
-    VLAB.created(me, "simulation_properties.txt")
-    VLAB.created(me, "triangles.txt")
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/lignes_commande/linux',
+      'exe'     : '/bin/sh',
+      'cmdline' : ['LancementDART_complet.sh', 'Laegeren'],
+      'stdin'   : None,
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : None,
+      },
+    'windows'   : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'exe'     : 'cmd.exe',
+      'cmdline' : ['/c', 'echo', 'hello'],
+      'stdin'   : None,
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : None,
+     }
+    }
+    VLAB.doExec(cmd)
+
+    VLAB.created(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/output/BAND0')
+
+    self._log.info(me + ": executing...")
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/output',
+      'exe'     : '/bin/sh',
+      'cmdline' : ['-c',
+'for f in `find . -name *.mpr`; do gdal_translate -q -of netCDF $f `echo $f | sed -e \'s,mpr,nc,g\'`; done'],
+      'stdin'   : None,
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : None,
+      },
+    'windows'   : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'exe'     : 'cmd.exe',
+      'cmdline' : ['/c', 'echo', 'hello'],
+      'stdin'   : None,
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : None,
+     }
+    }
+    VLAB.doExec(cmd)
 
   def doTopOfCanopyBRF(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
