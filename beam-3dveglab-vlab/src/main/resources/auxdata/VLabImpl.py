@@ -106,11 +106,11 @@ class VLAB:
  ('Azimuth',           'IlluminationAzimuth', JTF, '0.0'))},
 {'Scene Parameters': (
  ('Pixel Size',        'ScenePixel',          JTF, '8'),
- (),
- ('XC',                'SceneXC',             JTF, '-50'),
- ('XW',                'SceneXW',             JTF, '50'),
- ('YC',                'SceneYC',             JTF, '100'),
- ('YW',                'SceneYW',             JTF, '100'))},
+ ('(Alt A) Filename',  'SceneLocFile',        JTF, ''),
+ ('(Alt B) XC',        'SceneXC',             JTF, '-50'),
+ ('(Alt B) XW',        'SceneXW',             JTF, '50'),
+ ('(Alt B) YC',        'SceneYC',             JTF, '100'),
+ ('(Alt B) YW',        'SceneYW',             JTF, '100'))},
 {'Atmospheric Parameters': (
  ('Day of Year',       'AtmosphereDay',       JTF, '214'),
  (),
@@ -139,7 +139,7 @@ class VLAB:
  ('Y',                 'DHP_Y',               JTF, '0'))},
 {'DHP Properties': (
  ('Zenith',            'DHP_Zenith',          JTF, '20.0'),
- ('Azimuth',           'DHP_Azaimuth',        JTF, '0.0'))},
+ ('Azimuth',           'DHP_Azimuth',         JTF, '0.0'))},
 {'DHP Imaging Plane': (
  ('Orientation',       'DHP_Orientation',     JTF, '0'),
  ('Height(z)',         'DHP_Height',          JTF, '0'))},
@@ -362,7 +362,7 @@ class DART:
       'env'     : None,
       },
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_win32\\tools\\lignes_commande',
       'exe'     : 'cmd.exe',
       'cmdline' : ['/c', 'echo', 'hello'],
       'stdin'   : None,
@@ -388,7 +388,7 @@ class DART:
       'env'     : None,
       },
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_lin64\\tools\\lignes_commande',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dart_win32\\tools\\lignes_commande',
       'exe'     : 'cmd.exe',
       'cmdline' : ['/c', 'echo', 'hello'],
       'stdin'   : None,
@@ -413,6 +413,243 @@ class LIBRAT:
     self._log = Logger.getLogger(VLAB.LOGGER_NAME)
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me + ": constructor completed...")
+
+  def _writeCamFile(self, camFile, args):
+    cdata = 'camera {\n' \
+   + ' camera.name                     = "%s";\n' % args['cam_camera'] \
+   + ' geometry.zenith                 = %s;\n'   % args['vz'] \
+   + ' geometry.azimuth                = %s;\n'   % args['va'] \
+   + ' result.image                    = "%s";\n' % args['result_image'] \
+   + ' result.integral.mode            = "%s";\n' % args['result_integral_mode'] \
+   + ' result.integral                 = "%s";\n' % args['result_integral'] \
+   + ' samplingCharacteristics.nPixels = %s;\n'   % args['npixels'] \
+   + ' samplingCharacteristics.rpp     = %s;\n'   % args['rpp'] \
+   + ' geometry.idealArea              = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['ideal']))) \
+   + ' geometry.lookat                 = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['look_xyz']))) \
+   + ' geometry.boomlength             = %s;\n'   % args['boom']
+    if args['perspective']:
+      cdata += ' geometry.perspective            = %s;\n' % args['perspective']
+    if args['twist']:
+      cdata += ' geometry.twist                  = %s;\n' % args['twist']
+    if args['fov']:
+      cdata += ' geometry.fov                    = %s;\n' % args['fov']
+    if args['lidar']:
+      cdata += ' lidar.binStep                   = %s;\n' % args['binStep']
+      cdata += ' lidar.binStart                  = %s;\n' % args['binStart']
+      cdata += ' lidar.nBins                     = %s;\n' % args['nBins']
+    cdata += '}'
+    writer = BufferedWriter(FileWriter(camFile.getCanonicalPath()))
+    writer.write(cdata); writer.close()
+
+  def _writeLightFile(self, lightFile, args):
+    ldata = 'camera {\n' \
+   + ' camera.name                     = "%s";\n' % args['light_camera'] \
+   + ' geometry.zenith                 = %.1f;\n' % args['sz'] \
+   + ' geometry.azimuth                = %.1f;\n' % args['sa'] \
+   + ' geometry.twist                  = %.1f;\n' % args['twist']
+    key = "sideal"
+    if key in args:
+      ldata += ' geometry.ideal                  = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
+    key = "slook_xyz"
+    if key in args:
+      ldata += ' geometry.lookat                 = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
+    key = "sboom"
+    if key in args:
+      ldata += ' geometry.boom                   = %s;\n' % args[key]
+    key = "sperspective"
+    if key in args:
+      ldata += ' geometry.perspective            = %s;\n' % args[key]
+    key = "sfov"
+    if key in args:
+      ldata += ' geometry.fov                    = %s;\n' % args[key]
+    ldata += '}'
+    writer = BufferedWriter(FileWriter(lightFile.getCanonicalPath()))
+    writer.write(ldata); writer.close()
+
+  def _writeInputFile(self, inpFile, lightFile, camFile):
+    idata = '14' \
+   + ' ' \
+   + camFile.getCanonicalPath() \
+   + ' ' \
+   + lightFile.getCanonicalPath()
+    writer = BufferedWriter(FileWriter(inpFile.getCanonicalPath()))
+    writer.write(idata); writer.close()
+
+  def _writeGrabFile(self, grabFile, args):
+    gFilePath = grabFile.getCanonicalPath()
+    gdata = """
+cmd = {
+  'linux' : {
+    'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
+    'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
+    'stdin'   : '%s',
+    'stdout'  : '%s',
+    'stderr'  : '%s',
+    'env'     : {
+      'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/',
+  'LD_LIBRARY_PATH' :  '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib',
+    }},
+  'windows'   : {
+    'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes',
+    'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
+    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s' ],
+    'stdin'   : '%s',
+    'stdout'  : '%s',
+    'stderr'  : '%s',
+    'env'     : {
+      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32'
+   }}
+}
+"""
+    # hack to allow replacing only %s
+    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%\\","\x81\\")
+    replaced = escaped % \
+   ('5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
+    '5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
+    gdata = replaced.replace("\x81", "%")
+    gdata += 'VLAB.doExec(cmd)\n'
+    writer = BufferedWriter(FileWriter(gFilePath))
+    writer.write(gdata); writer.close()
+
+  def doTopOfCanopyBRF_NOTYET(self):
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    defaults = {
+           'lightfile' : 'light.dat',
+             'camfile' : 'camera.dat',
+              'wbfile' : 'wb.test.dat',
+           'anglefile' : 'angles.dat',
+             'objfile' : 'veglab_test.obj',
+             'npixels' : 1000000,
+               'image' : 1,
+                 'rpp' : 1,
+                'boom' : 100000,
+               'ideal' : (100, 100),
+                'mode' : 'scattering order',
+               'opdir' : 'brdf',
+         'result_root' : 'result',
+         'camera_root' : 'camera',
+          'light_root' : 'light',
+         'grabme_root' : 'grabme',
+           'look_file' : False,
+            'look_xyz' : (150, 150, 35),
+              'verbose': False,
+                  'vz' : -1,
+                  'va' : -1,
+                  'sz' : -1,
+                  'sa' : -1,
+          'cam_camera' : 'simple camera',
+        'light_camera' : 'simple illumination',
+               'twist' : 0,
+         'perspective' : False,
+                 'fov' : False,
+               'lidar' : False,
+        'result_image' : 'result.hips',
+'result_integral_mode' : 'scattering order',
+     'result_integral' : 'result'
+    }
+    argsrami = {
+              'verbose': True,
+              'objfile': 'HET01_DIS_UNI_NIR_20.obj',
+               'wbfile': 'wb.image.dat',
+                'ideal': (80, 80),
+             'look_xyz': (0, 0, 0),
+                  'rpp': 1,
+              'npixels': 200000,
+               'sorder': 5,
+            'anglefile': 'angles.rami.dat',
+                 'boom': 100000,
+                'opdir': 'HET01_DIS_UNI_NIR_20'
+    }
+    argslaegeren = {
+              'verbose': True,
+              'objfile': 'laegeren.obj',
+               'wbfile': 'wb.image.dat',
+                'ideal': (800, 800),
+             'look_xyz': (150, 150, 700),
+                  'rpp': 16,
+              'npixels': 200000,
+            'anglefile': 'angles.dat',
+                 'boom': 100000,
+                'opdir': 'test1'
+    }
+
+    # start with a copy of the defaults
+    args = dict(defaults)
+
+    # overwrite defaults with laegeren parameters
+    for arg in argslaegeren:
+      args[arg] = argslaegeren[arg]
+
+    if System.getProperty('os.name').startswith('Windows'):
+      sceneDir = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes')
+    else:
+      sceneDir = VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes')
+    angleFile = File(sceneDir, args['anglefile'])
+
+    alines = open(angleFile.getCanonicalPath()).readlines()
+    # loop through angles 
+    for aline in alines:
+      args['vz'], args['va'], args['sz'], args['sa'] = aline.split()
+      if args['look_file']:
+        llines = open(args['look_file']).readlines()
+      else:
+        llines = [' '.join(map(str, args['look_xyz'])) + '\n',]
+  
+      # loop through looks
+      for lline in llines:
+        look_xyz = lline.split()
+  
+        # base file name
+        rooty = '%s_vz_%s_va_%s_sz_%s_sa_%s_xyz_%s_wb_%s' % ( \
+          args['objfile'], \
+          args['vz'], args['va'], args['sz'], args['sa'], \
+          '_'.join(map(str, map('%.1f'.__mod__, look_xyz))), \
+          args['wbfile'])
+        lightroot = "sz_%s_sa_%s_dat" % ( args['sz'], args['sa'] )
+  
+        grabfname  = 'grabme.' + rooty
+        camfname   = 'camera.' + rooty
+        lightfname = 'light.'  + lightroot
+  
+        args['result_image'] = \
+          File(sceneDir + File.separator + args['opdir'], 'result.' + rooty + '.hips').getCanonicalPath()
+  
+        args['result_integral'] = \
+          File(sceneDir + File.separator + args['opdir'], 'result.' + rooty).getCanonicalPath()
+  
+        grabFile = File(sceneDir + File.separator + args['opdir'], grabfname)
+  
+        # only do these if the grab file doesn't yet exist
+        if grabFile.isFile() & grabFile.canRead():
+          self._log.info(me + ": " + grabFile.toString() + " already exists - skipping")
+        else:
+          grabFile.getParentFile().mkdirs()
+          if grabFile.getParentFile().isDirectory():
+            if grabFile.createNewFile():
+              # write grab file
+              self._writeGrabFile(grabFile, args)
+              # write the light file
+              lightFile = File(sceneDir + File.separator + args['opdir'], lightfname)
+              if lightFile.createNewFile():
+                self._writeLightFile(lightFile, args)
+              # write the camera file
+              camFile = File(sceneDir + File.separator + args['opdir'], camfname)
+              if camFile.createNewFile():
+                self._writeCamFile(camFile, args)
+                # write std input file
+                inputFile = File(sceneDir + File.separator + args['opdir'], grabfname + '.inp')
+                self._writeInputFile(inputFile, lightFile, camFile)
+                # now execute the grab file
+                srcstr = open(grabFile.getCanonicalPath()).read()
+                compiled = compile(srcstr, grabFile.getCanonicalPath(), 'exec')
+                eval(compiled)
+              else:
+                self._log.info(me + ": Failed to create file: " + camFile.toString())
+            else:
+              self._log.info(me + ": Failed to create file: " + grabFile.toString())
+          else:
+            self._log.info(me + ": Failed to create parent dir for: " + grabFile.toString())
 
   def _createScene(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -532,13 +769,21 @@ if System.getProperty("beam.version") == None:
     'env'     : None,
    }
   }
-  VLAB.doExec(cmd)
+  #VLAB.doExec(cmd)
 
   print "Running DUMMY.doTopOfCanopy() test..."
   dummyProcessor = DUMMY()
-  dummyProcessor.doTopOfCanopyBRF()
+  #dummyProcessor.doTopOfCanopyBRF()
+
+  print "Running LIBRAT.doTopOfCamopy() test..."
+  libratProcessor = LIBRAT()
+  libratProcessor.doTopOfCanopyBRF_NOTYET()
 
 else:
+
+#
+# BEAM-specific code from here to the end...
+#
 
   from com.bc.ceres.core                       import ProgressMonitor
   from com.netcetera.vlab                      import IVLabProcessor
