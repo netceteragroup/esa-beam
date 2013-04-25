@@ -81,39 +81,6 @@ cat > beam-pom-xml.patch << EOF
 EOF
 patch -b < beam-pom-xml.patch
 
-cat > MappedByteBuffer-junit.patch << EOF
-*** ./beam-binning2/src/test/java/org/esa/beam/binning/operator/MappedByteBufferTest.java.orig	2012-12-12 15:05:56.150743233 +0100
---- ./beam-binning2/src/test/java/org/esa/beam/binning/operator/MappedByteBufferTest.java	2012-12-12 15:06:04.710747147 +0100
-***************
-*** 19,24 ****
---- 19,25 ----
-  
-  import org.junit.After;
-  import org.junit.Before;
-+ import org.junit.Ignore;
-  import org.junit.Test;
-  
-  import java.io.DataInputStream;
-***************
-*** 125,131 ****
-  //        assertFalse(file.exists());
-  //    }
-  
-!     @Test
-      public void testThatMemoryMappedFileIODoesNotConsumeHeapSpace() throws Exception {
-          final int fileSize = Integer.MAX_VALUE; // 2GB!
-          final long mem1, mem2, mem3, mem4;
---- 126,132 ----
-  //        assertFalse(file.exists());
-  //    }
-  
-!     @Ignore
-      public void testThatMemoryMappedFileIODoesNotConsumeHeapSpace() throws Exception {
-          final int fileSize = Integer.MAX_VALUE; // 2GB!
-          final long mem1, mem2, mem3, mem4;
-EOF
-patch -b -p0 < MappedByteBuffer-junit.patch
-
 cat > CommandLineToolTest-patch << EOF
 *** ./beam-gpf/src/test/java/org/esa/beam/framework/gpf/main/CommandLineToolMultiSourceGraphTest.java.orig	2013-03-16 22:58:18.676592569 +0100
 --- ./beam-gpf/src/test/java/org/esa/beam/framework/gpf/main/CommandLineToolMultiSourceGraphTest.java	2013-03-16 22:59:41.943577343 +0100
