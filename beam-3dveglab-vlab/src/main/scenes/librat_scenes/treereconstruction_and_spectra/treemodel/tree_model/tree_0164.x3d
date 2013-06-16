@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="utf-8"?>
+<X3D profile="Immersive">
+   <Scene>
+      <Transform rotation="0.00536 0 0.016102 0.1212" translation="-0.0080511 0.06967 0.00268">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.14037" radius="0.15292"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.021965 0 -0.0030396 2.174" translation="-0.31389 8.883 -1.519">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.026925" radius="0.0074843"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.088415 0 -0.010734 2.1333" translation="-0.32077 8.9187 -1.4638">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.10529" radius="0.0073292"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.04538 0 -0.0011386 1.942" translation="-0.3118 8.8665 -1.5526">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.048712" radius="0.0096238"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.070846 0 0.0011753 2.0835" translation="-0.31182 8.8377 -1.6108">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.081311" radius="0.0057767"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.085407 0 -0.0028187 1.8994" translation="-0.311 8.8032 -1.6889">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.090284" radius="0.0080543"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.082114 0 -0.0053374 1.9458" translation="-0.30692 8.7725 -1.7726">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.088433" radius="0.0060904"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.078633 0 -0.034748 1.3515" translation="-0.33958 9.2647 -1.4564">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.088078" radius="0.01091"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.062354 0 -0.037154 1.4992" translation="-0.30363 9.2769 -1.5268">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.072771" radius="0.0060595"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.055899 0 -0.032584 1.43" translation="-0.26876 9.2841 -1.586">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.065349" radius="0.0058653"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.33477 0 -0.16238 1.4561" translation="-0.17128 9.3101 -1.7813">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.37454" radius="0.0085444"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.10436 0 -0.057136 1.6237" translation="-0.061518 9.3283 -2.0009">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.11914" radius="0.0087282"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.12443 0 -0.06826 1.6371" translation="0.0011805 9.3205 -2.1153">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.14223" radius="0.0063118"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.13037 0 -0.084525 1.5956" translation="0.077573 9.3139 -2.2427">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.15542" radius="0.007447"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.066635 0 -0.053083 1.6922" translation="0.14638 9.3067 -2.3412">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.085826" radius="0.0032344"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.036196 0 -0.033184 1.4578" translation="0.18951 9.3043 -2.3926">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.049421" radius="0.0063844"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.067465 0 -0.061254 1.6574" translation="0.23673 9.3032 -2.4444">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.091467" radius="0.0043065"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.052028 0 -0.045745 1.7148" translation="0.29023 9.2942 -2.5042">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.070003" radius="0.0024824"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.035603 0 -0.040238 1.646" translation="0.33322 9.2871 -2.548">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.05388" radius="0.0063431"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.044594 0 -0.014366 1.9232" translation="0.36052 9.2765 -2.5881">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.049917" radius="0.0083423"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.051434 0 -0.0083181 1.307" translation="0.37186 9.2749 -2.6361">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.053969" radius="0.0068463"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.042472 0 -0.0098496 1.5461" translation="0.38095 9.2825 -2.683">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.043613" radius="0.008064"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.017766 0 -0.021134 2.3706" translation="-0.059069 8.4813 -2.3028">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.039621" radius="0.0038939"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.023648 0 -0.039549 2.2873" translation="-0.028727 8.447 -2.3235">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.061103" radius="0.0055157"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.016955 0 -0.033685 2.1761" translation="0.0078901 8.4139 -2.3438">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.045859" radius="0.0051402"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.025015 0 -0.025147 2.4693" translation="0.094495 8.2753 -2.4048">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.056954" radius="0.003664"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.022851 0 -0.039951 2.6239" translation="0.044708 8.3604 -2.3637">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.093006" radius="0.0057989"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.017162 0 -0.017238 2.3153" translation="0.073303 8.3088 -2.3837">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.033075" radius="0.0048465"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.019249 0 -0.022911 2.4656" translation="0.11852 8.2344 -2.4269">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.047825" radius="0.0050464"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.019043 0 -0.012344 2.2047" translation="0.13615 8.2074 -2.4461">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.028167" radius="0.0031731"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.045123 0 -0.021443 2.0567" translation="0.15304 8.1859 -2.4782">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.056497" radius="0.0054656"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.057908 0 0.0099741 1.8937" translation="-0.30924 8.7464 -1.8427">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.061964" radius="0.0074433"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.071921 0 -0.0013669 1.9479" translation="-0.31354 8.7224 -1.9076">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.07737" radius="0.0071899"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.03277 0 -0.035591 2.3315" translation="-0.087432 8.5185 -2.2775">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.06679" radius="0.0036231"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.059826 0 -0.0054889 1.8715" translation="-0.31011 8.6988 -1.9734">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.062901" radius="0.0086517"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.04949 0 -0.036914 1.5622" translation="-0.28891 8.6898 -2.0281">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.061743" radius="0.0028805"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.076819 0 -0.056144 1.8734" translation="-0.24238 8.6752 -2.0913">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.099677" radius="0.0029362"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.054663 0 -0.013519 2.1399" translation="-0.30061 8.6715 -2.0307">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.066848" radius="0.0073537"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.06285 0 -0.025746 2.2298" translation="-0.28097 8.6272 -2.0894">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.085908" radius="0.0052319"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.028738 0 -0.0084067 2.3827" translation="-0.2639 8.5851 -2.1352">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.043513" radius="0.0061695"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.099995 0 -0.078976 2.1431" translation="-0.17482 8.6193 -2.1797">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.15157" radius="0.0033166"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.031472 0 -0.030107 2.2711" translation="-0.12028 8.5599 -2.2454">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.056958" radius="0.0030375"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.0076364 0 -0.05456 2.9353" translation="0.0024549 0.5391 0.025917">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.26897" radius="0.13766"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.024375 0 0.045837 2.9503" translation="0.0068164 0.2734 0.017547">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.27311" radius="0.14399"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.0037813 0 -0.0083906 3.1054" translation="-0.02902 0.79775 0.020208">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.2542" radius="0.12422"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0078544 0 0.0073778 0.031821" translation="-0.036905 1.094 0.01439">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.33871" radius="0.13179"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.028766 0 0.018344 0.075689" translation="-0.049766 1.4883 -0.0039202">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.45119" radius="0.12309"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.027859 0 0.03594 0.11592" translation="-0.076908 1.9085 -0.032233">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.39316" radius="0.11876"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.01687 0 0.021595 0.089865" translation="-0.10568 2.2558 -0.054597">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.30535" radius="0.11332"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.017197 0 0.018099 0.075634" translation="-0.12552 2.5726 -0.071631">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.33041" radius="0.10972"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0031156 0 0.015718 0.056325" translation="-0.14243 2.8794 -0.081787">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.28464" radius="0.10476"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0014512 0 0.034782 0.11242" translation="-0.16768 3.1757 -0.084071">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.31032" radius="0.10463"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.0062846 0 0.017667 0.055588" translation="-0.19391 3.4983 -0.081654">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.3375" radius="0.10184"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.0015262 0 0.015645 0.043181" translation="-0.21056 3.8487 -0.077748">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.36415" radius="0.097498"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.085956 0 -0.020682 2.007" translation="-0.33648 8.9674 -1.3766">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.097545" radius="0.0122"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.1288 0 -0.054807 1.4528" translation="-0.38436 9.2468 -1.3526">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.14096" radius="0.0078634"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.066384 0 -0.030866 1.3111" translation="-0.4272 9.2288 -1.255">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.075749" radius="0.0075544"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0058164 0 0.010923 0.039322" translation="-0.22385 4.1879 -0.079894">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.31479" radius="0.092481"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.004512 0 0.0045774 0.045721" translation="-0.2316 4.4154 -0.085058">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.14063" radius="0.091382"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.019731 0 0.032971 0.053113" translation="-0.25037 4.847 -0.097179">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.72378" radius="0.099867"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.014183 0 0.035836 0.090923" translation="-0.28477 5.4198 -0.11414">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.42446" radius="0.10033"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.010482 0 -0.0030441 0.033432" translation="-0.30117 5.7943 -0.12647">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.32654" radius="0.098285"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.020749 0 0.031187 1.3307" translation="-0.71856 9.2222 -1.3255">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.038565" radius="0.010286"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.045729 0 0.046175 1.7561" translation="-0.75724 9.2207 -1.3588">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.066118" radius="0.0088884"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.04352 0 0.058524 1.6202" translation="-0.80959 9.2128 -1.4034">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.073022" radius="0.0083303"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.020923 0 0.022137 1.8125" translation="-0.84992 9.2072 -1.4356">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.031372" radius="0.0069443"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.028875 0 0.031133 1.6479" translation="-0.87655 9.2019 -1.4605">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.042589" radius="0.0066603"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.05563 0 0.060869 1.5207" translation="-0.67253 9.2156 -1.2873">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.082564" radius="0.012479"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.02147 0 0.033492 1.4846" translation="-0.62535 9.2118 -1.2488">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.039931" radius="0.0118"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.033602 0 0.048606 1.4907" translation="-0.5843 9.2077 -1.2212">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.05928" radius="0.013483"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.20787 0 0.0086853 1.3103" translation="-0.38167 8.8311 -0.37727">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.21531" radius="0.036893"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.027677 0 -0.00044241 2.0099" translation="-0.38623 8.8653 -0.49504">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.030582" radius="0.017709"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.020783 0 0.023094 0.053591" translation="-0.43073 11.1175 -0.36185">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.58001" radius="0.094795"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.046229 0 0.0056518 0.076627" translation="-0.41635 10.5246 -0.32835">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.60839" radius="0.094729"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.018457 0 -0.0020417 0.034034" translation="-0.41455 9.9486 -0.29601">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.54572" radius="0.1055"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.023804 0 0.031379 0.13935" translation="-0.39301 8.9437 -0.26143">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.28356" radius="0.10786"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.021539 0 0.016695 0.054305" translation="-0.30799 6.2082 -0.14248">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.50207" radius="0.099714"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.020575 0 0.0048474 0.042237" translation="-0.31877 6.7089 -0.16354">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.50061" radius="0.10109"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.025085 0 0.015733 0.058181" translation="-0.32906 7.2132 -0.18637">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.50923" radius="0.10593"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.076 0 0.11536 0.10181" translation="-0.69112 15.4085 -0.59433">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="1.3592" radius="0.12836"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.030242 0 0.028186 0.081585" translation="-0.61935 14.4796 -0.54121">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.50728" radius="0.12624"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.049107 0 0.081094 0.096227" translation="-0.56471 13.7357 -0.50154">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.98673" radius="0.15033"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.038402 0 -0.01367 0.064534" translation="-0.53099 12.9293 -0.45778">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.63209" radius="0.10605"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0078316 0 0.001635 0.03109" translation="-0.37651 8.6747 -0.26942">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.25737" radius="0.10778"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.17433 0 -0.010734 1.3595" translation="-0.40104 9.0259 -0.85874">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.17863" radius="0.021833"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.12435 0 -0.0064467 2.0528" translation="-0.38968 8.9043 -0.57105">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.14053" radius="0.017977"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.035964 0 0.047484 1.4079" translation="-0.53626 9.2004 -1.1865">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.060366" radius="0.012394"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.024418 0 0.011546 0.050509" translation="-0.3427 7.7345 -0.21112">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.53499" radius="0.10442"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.042177 0 0.027221 0.091947" translation="-0.36208 8.2739 -0.24441">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.54673" radius="0.10483"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.0094995 0 -0.0022591 0.038861" translation="-0.40757 9.2097 -0.25428">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.25133" radius="0.099516"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.029301 0 -0.0068498 1.6861" translation="-0.4846 9.2003 -1.1382">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.030292" radius="0.011383"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.0077148 0 -0.0040638 2.4901" translation="-0.47915 9.1929 -1.1197">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.014379" radius="0.012122"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.049727 0 0.0045984 1.3837" translation="-0.37257 9.025 -1.1978">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.050826" radius="0.0090693"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.11098 0 -0.023444 1.848" translation="-0.35855 9.0041 -1.2781">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.11793" radius="0.0066819"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.070627 0 -0.0023898 1.976" translation="-0.40521 8.992 -0.73626">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.076895" radius="0.015597"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.051123 0 0.003245 1.4922" translation="-0.37649 9.0317 -1.1473">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.051384" radius="0.0074705"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.17589 0 -0.017561 1.6324" translation="-0.38689 9.0392 -1.0338">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.1771" radius="0.018216"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.027747 0 0.009125 0.085552" translation="-0.41101 9.5056 -0.2729">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.34184" radius="0.10453"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.067066 0 0.072151 0.1657" translation="-0.50175 12.3194 -0.40505">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.59721" radius="0.11775"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.00073224 0 0.023404 0.037883" translation="-0.45398 11.716 -0.37188">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.61824" radius="0.098145"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.069029 0 -0.045397 1.368" translation="-0.46533 9.2106 -1.1873">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.084347" radius="0.0053028"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="-0.015654 0 0.024486 1.7927" translation="-0.50027 9.1988 -1.1607">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.029793" radius="0.011799"/>
+         </Shape>
+      </Transform>
+      <Transform rotation="0.067712 0 -0.011118 2.0983" translation="-0.39846 8.9569 -0.66709">
+         <Shape>
+            <Appearance>
+               <Material diffuseColor="0.6 0.2 0.0"/>
+            </Appearance>
+            <Cylinder height="0.079412" radius="0.015266"/>
+         </Shape>
+      </Transform>
+   </Scene>
+</X3D>

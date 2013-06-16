@@ -1,0 +1,8 @@
+1 = 2D_understory_veg_0-50cm
+2 = 2D_unvegetated
+3 = 2D_litter
+4 = 3D_understory_veg_50cm-3m
+
+spatial resolution: 2 x 2 m
+projection: CH1903 LV03
+dim: 150 x 150

@@ -1,0 +1,8 @@
+#include tree_0036.asc.obj
+#include tree_0036.asc.obj.crown
+#define
+g tree_0036.asc.obj.plus_crown 0
+!{
+clone 0 0 0 0 tree_0036.asc 0
+clone 0 0 5 0 tree_0036.asc.obj.crown 0
+!}

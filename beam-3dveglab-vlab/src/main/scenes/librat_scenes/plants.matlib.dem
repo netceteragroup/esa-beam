@@ -1,0 +1,8 @@
+srm coniferous_bark treereconstruction_and_spectra/spectra/2D_bark_coniferous.txt.filt
+srm deciduous_bark treereconstruction_and_spectra/spectra/2D_bark_deciduous.txt.filt
+srm leaf treereconstruction_and_spectra/spectra/3D_Leaf_mid.txt.filt
+srm 2D_understory_veg_0-50cm groundmap_and_spectra/spectra/2D_understory_veg_0-50cm.txt.filt
+srm 2D_unvegetated groundmap_and_spectra/spectra/2D_unvegetated.txt.filt
+srm 2D_litter groundmap_and_spectra/spectra/2D_litter.txt.filt
+srm 3D_understory_veg_50cm-3m groundmap_and_spectra/spectra/3D_understory_veg_50cm-3m.txt.filt
+matmap ground_map.matmap.dat groundmap_and_spectra/ground_map.matmap.dat

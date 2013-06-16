@@ -1,0 +1,9 @@
+foreach f ( spectra/*.txt )
+        dos2unix < $f | gawk '(NR>22){print $1, $2;}' > $f.filt
+end
+
+convert ground_map.tif ground_map.txt
+
+./convert_dtm.py -i ground_map.txt -o ground_map.tmp.hips
+ptof < ground_map.tmp.hips | ptob > ground_map.hips
+

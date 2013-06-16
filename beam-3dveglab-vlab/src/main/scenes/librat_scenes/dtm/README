@@ -1,0 +1,8 @@
+convert -monochrome -compress none dtm.tif dtm.pbm
+
+BUT is 300 x 300 array of 1s. so......
+
+gawk 'BEGIN{for(i=1;i<=300;i++){for(j=1;j<300;j++){printf("1 ");}printf("1\n");}}' > x.dat
+genheader -t 5 1 300 300 | cat - x.dat | ptob > dtm.hips
+
+genheader -t 3 300 300 | cat - dtm_new.dat > dtm.hips

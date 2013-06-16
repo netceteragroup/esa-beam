@@ -1,0 +1,6 @@
+material_map: groundmap_and_spectra/ground_map.hips
+attributes:
+1 2D_understory_veg_0-50cm
+2 2D_unvegetated
+3 2D_litter
+4 3D_understory_veg_50cm-3m

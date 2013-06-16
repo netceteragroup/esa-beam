@@ -1,0 +1,16 @@
+ENVI
+description = {
+E:\002_3DVegLab\002_Data\002_Tharandt\dtm_new.dat}
+samples = 300
+lines   = 300
+bands   = 1
+header offset = 0
+file type = ENVI Standard
+data type = 4
+interleave = bsq
+byte order = 0
+map info = {Hotine Oblique Mercator B, 1, 1, 669659.52795347, 259209.511278278, 1, 1}
+projection info = {6, 6377397.155, 6356078.962818189, 46.95240555555556, 7.439583333333333, 90, 600000, 200000, 1, Hotine Oblique Mercator B}
+coordinate system string = {PROJCS["CH1903_LV03",GEOGCS["GCS_CH1903",DATUM["D_CH1903",SPHEROID["Bessel_1841",6377397.155,299.1528128]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.017453292519943295]],PROJECTION["Hotine_Oblique_Mercator_Azimuth_Center"],PARAMETER["false_easting",600000.0],PARAMETER["false_northing",200000.0],PARAMETER["scale_factor",1.0],PARAMETER["azimuth",90.0],PARAMETER["longitude_of_center",7.439583333333333],PARAMETER["latitude_of_center",46.95240555555556],UNIT["Meter",1.0]]}
+band names = {
+Band 1}
