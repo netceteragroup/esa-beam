@@ -1,0 +1,16 @@
+solar_file /data/geospatial_07/mdisney/ESA/3Dveglab/libRadtran-1.7/data/solar_flux/NewGuey2003.dat
+dens_column O3 300.
+correlated_k LOWTRAN
+rte_solver cdisort
+rpv_file rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat
+deltam on
+nstr 6
+zout TOA
+output_user lambda uu
+quiet
+umu 1.0
+phi  0.
+latitude 50
+longitude 0
+time 2013 06 01 12 00 00
+wavelength 665.0

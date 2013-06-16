@@ -1,0 +1,71 @@
+Steps to go from TOC reflectance to TOA radiance - this involves essentially simulating BRDF of canopy over many angles, randomly sampling BRDF (cosine-weighted), then 
+
+1. First, generate cosine-weighted angular sampling of view/illum hemisphere:
+
+./drivers.py -random -n 1000 -angles angles.rpv.2.dat
+
+i.e. this only needs to be done once and drives all subsequent simulations. Doesn't really need to be done via toolbox as can be provided as default to user IF they ever want to redo this!
+
+2. Simulate BRDF of canopy at these angles and MSI wavebands for RAMI and Laegeren canopy - via toolbox if required (note 1000 simulations in each case):
+
+./dobrdf.py -v -nice 19 -obj laegeren.obj.lai.1 -hips -wb wb.MSI.dat -ideal 300 300 -look 150 150 710 -rpp 4 -npixels 10000 -boom 786000 -angles angles.rpv.2.dat -opdir rpv.laegeren
+./dobrdf.py -v -nice 19 -obj HET01_DIS_UNI_NIR_20.obj -hips -wb wb.MSI.dat -ideal 80 80 -look 0 0 0 -rpp 4 -npixels 10000 -boom 786000 -angles angles.rpv.2.dat -opdir rpv.rami
+
+3. Collect all the BRDF simulations into a single file using plot.py. This script *should* be provided with the toolbox as it will be the one that allows the user to generate basic spectral or angular plots from the simulated reflectance data. A simple interface to this from the toolbox should be provided if at all possible - it just needs to know the name of the angles file, wavebands file and root file name for the output of the simulations (default wb file is wb.MSI.dat): 
+
+./plot.py -brdf -angles angles.rpv.2.dat -root rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj
+./plot.py -brdf -angles angles.rpv.2.dat -root rpv.laegeren/result.laegeren.obj.lai.1
+
+the outputs in this case are effectively the LUTs of reflectance:
+
+rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat
+rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat
+
+where each line is the input set of angles (vz, va, sz, sa) followed by the simulated TOC BRF for each of the 12 MSI wavebands. The red, NIR simulated TOC BRFs are also plotted in:
+
+rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.png
+rpv.laegeren/result.laegeren.obj.lai.1.brdf.png
+
+4. Invert the 3-parameter RPV model against these BRFs to obtain per band best estimates of the RPV model parameters using rpv_invert.py. Again, this script can be provided with the toolbox I guess, but essentially only needs to be run the once for a particular canopy. This requires scipy and numpy and so is a little more complex than some of the others in terms of dependencies but runs with standard Enthought Python:
+
+./rpv_invert.py -three -v -plot -data rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat -paramfile rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plotfile rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params
+./rpv_invert.py -three -v -plot -data rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat -paramfile rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plotfile rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params
+
+which results in files containing per-wavebands estimates of the 3 RPV parameters i.e. wb rho0 k bigtet
+
+rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat
+rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat
+
+and a plot of each waveband of original (librat simulated) BRF, with the corresponding rpv-derived fwd model fit eg for RED band (665nm):
+
+rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.inv.wb.3.png
+rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.inv.wb.3.png
+
+5. Finally, use the RPV parameters to simulate the TOA radiance from the original TOC refl:
+
+EITHER for angles specified in an angles file (default: angles.MSI.dat)
+./dolibradtran.py -opdir rami.TOA -v -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA/rpv.rami.libradtran.dat.all
+./dolibradtran.py -opdir laegeren.TOA -v -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA/rpv.laegeren.libradtran.dat.all
+
+OR for lat (deg) lon (deg) time YYYY MM DD HH MM SS:
+./dolibradtran.py -opdir rami.TOA -v -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA/rpv.rami.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00"
+./dolibradtran.py -opdir laegeren.TOA -v -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA/rpv.laegeren.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00"
+
+where dolibradtran generates an individual input file for libradtran based on:
+
+EITHER angles file - default is angles.MSI.dat, can be specified on cmd line OR lat, lon, time
+wavebands - default is wb.MSI.dat (same as for RPV obviously - would need to change this for different wavebands), can be specified on cmd line
+rpv param file - specified as above on cmd line
+location of libradtran executable and data files including atmos profile  - specified as libradtran_path on cmd line
+
+and results in the output of:
+
+rami.TOA/rpv.rami.libradtran.dat.all
+laegeren.TOA/rpv.laegeren.libradtran.dat.all
+
+which are spectral plots of TOA radiance, based on this atmosphere, generated by uvspec (the libradtran executable).
+
+
+
+
+[M. Disney]
