@@ -39,7 +39,8 @@ def openFileIfNotExists(filename):
 def main():
 
 	# set up defaults
-	
+	_UNIX_ = 1
+	INFINITY = 1000000
 	lightfile = "light.dat"
 	camfile = "camera.dat"
 	wbfile = "wb.test.dat"
@@ -50,9 +51,13 @@ def main():
 	npixels = 1000000
 	image = 1
 	rpp = 1
+	fov = False
 	sorder = 100
+	nice = ''
+	niceLevel = 19
 	boom = 100000
-	ideal = (100, 100)
+	ideal = False
+	samplingPattern = False
 	mode = 'scattering order'
 	opdir = "brdf"
 	result_root = 'result'
@@ -61,6 +66,7 @@ def main():
 	grabme_root = 'grabme'
 	# top of canopy height so brdf simulations pivot about x, y, z
 	look_xyz = (150, 150, 35)
+	location = False
 	vz, va, sz, sa = -1, -1, -1, -1
 
 	if options.wbfile: wbfile = options.wbfile
@@ -72,6 +78,7 @@ def main():
 	if options.rpp: rpp = options.rpp
 	if options.boom: boom = options.boom
 	if options.ideal: ideal = np.array(options.ideal,dtype=float)
+	if options.fov: fov = options.fov
 	if options.mode: mode = options.mode
 	if options.look: look_xyz = np.array(options.look,dtype=float)
 	if options.result: result_root = options.result
@@ -80,8 +87,17 @@ def main():
 	if options.grabme: grabme_root = options.grabme
 	if options.sorder: sorder = options.sorder
 	if options.blacksky:
-		blacksky = '-blacksky 1'
-
+		blacksky = '-blacksky'
+	if options.niceLevel: 
+		if _UNIX_:
+			nice = 'nice +' + np.str(niceLevel)
+		else:
+			nice = ''
+	if options.samplingPattern:
+		samplingPattern = options.samplingPattern
+		if samplingPattern != 'circular':
+			sys.stderr.write("%s: samplingPattern %s not supported - only circular currently\n"%(sys.argv[0],samplingPattern))
+			sys.exit([True])
 	
 	try:
 		os.stat(opdir)
@@ -97,21 +113,25 @@ def main():
 	ang = np.genfromtxt(anglefile,unpack=True).transpose()
 	
 	if options.lookFile:
+		# use this as locations as well as loo at for DHP
+		lookFile = options.lookFile
 		lookfp = checkFile(lookFile)
 		look_xyz = np.genfromtxt(options.lookFile,unpack=True).transpose()
-
 	
+	#if look_xyz.size == 3:
+        if np.array(look_xyz).size == 3:
+		look_xyz = ((look_xyz),)
+	
+
 	if ang.size < 4 or (ang.size > 4 and ang.shape[1] != 4):
 		sys.stderr.write("%s: wrong number of fields (%i) in %s - should be 4\n"%(sys.argv[0], ang.shape[1], anglefile))
-		sys.exit()
+		sys.exit([True])
 	
 	
 	if ang.size == 4:
 		ang = ((ang),)
 	
-	if look_xyz.size == 3:
-		look_xyz = ((look_xyz),)
-	
+
 	for n, a in enumerate(ang):
 		vz = a[0]
 		va = a[1]
@@ -120,28 +140,44 @@ def main():
 		
 		
 		for ll, look in enumerate(look_xyz):
-				
+			
 			lightfile = os.path.join(opdir, light_root + '_sz_' + str(sz) + '_sa_' + str(sa) + '_dat')
 			# does the file exist already? Only create if not
 			ligfp = openFileIfNotExists(lightfile)
 			if ligfp != None:
 				l = rat.light(sz=sz,sa=sa)
 				l.printer(file=lightfile)
-
+			
+			
 			rooty = objfile + '_vz_' + np.str(vz) + '_va_' + np.str(va) + '_sz_' + np.str(sz) + '_sa_' + np.str(sa) + '_xyz_' + np.str(look[0]) + '_' + np.str(look[1]) + '_' + np.str(look[2]) + '_wb_' + wbfile
 			grabme = os.path.join(opdir, grabme_root + '.' + rooty)
 		
-		
+			if options.dhp:
+				location = np.copy(look)
+				look[2] = INFINITY
+				sampling = "circular"
+			
 			# critical to see if it exists or not and only do the processing if it does
 			if not os.path.exists(grabme):
 				grabfp = openFileIfNotExists(grabme)
 				logfile = grabme + '.log'
 				camfile = os.path.join(opdir, camera_root + '.' + rooty)
 				oproot = os.path.join(opdir, result_root + '.' + rooty)
-				imfile = oproot + '.hips'
-				c = rat.cam(name='simple camera', vz=vz, va=va, integral=oproot, integral_mode=mode, image=imfile, nPixels=npixels, rpp=rpp, boom=boom, ideal=ideal, look=look)
+				if options.image:
+					# do image
+					if options.hips: 
+						imfile = oproot + '.hips'
+					else:
+						# default o/p is BEAM flat binary
+						imfile = oproot + '.bim'
+					c = rat.cam(name='simple camera', vz=vz, va=va, integral=oproot, integral_mode=mode, image=imfile, nPixels=npixels, rpp=rpp, boom=boom, ideal=ideal, look=look, location=location, fov=fov, samplingPattern=samplingPattern)
+				else:
+					# no image
+					c = rat.cam(name='simple camera', vz=vz, va=va, integral=oproot, integral_mode=mode, nPixels=npixels, rpp=rpp, boom=boom, ideal=ideal, look=look, location=location, fov=fov, samplingPattern=samplingPattern)
+				
+				#c = rat.cam(name='simple camera', vz=vz, va=va, integral=oproot, integral_mode=mode, image=imfile, nPixels=npixels, rpp=rpp, boom=boom, ideal=ideal, look=look, fov=fov)
 				c.printer(file=camfile)
-				cmd = '(echo 14 ' + camfile + ' ' + lightfile + ' | start -RATv -m '+ np.str(sorder) + ' ' + blacksky +' -RATsensor_wavebands ' + wbfile + ' ' + objfile + ' > ' + logfile + ' 2>&1)\n'
+				cmd = '(echo 14 ' + camfile + ' ' + lightfile + ' | ' + nice + ' start -RATv -m '+ np.str(sorder) + ' ' + blacksky +' -RATsensor_wavebands ' + wbfile + ' ' + objfile + ' > ' + logfile + ' 2>&1)\n'
 				grabfp.write('#!/bin/sh\n')
 				grabfp.write("#host: %s\n"%os.environ['HOST'])
 				grabfp.write("# %s\n"%datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
@@ -164,6 +200,8 @@ if __name__ == "__main__":
 	parser.add_argument("-obj", dest="objfile", help="obj file")
 	parser.add_argument("-angles", dest="anglefile", help="angles file", metavar="FILE")
 	parser.add_argument("-lookFile", dest="lookFile", help="look location file", metavar="FILE")
+	parser.add_argument("-dhp", action="store_true", help="do DHP")
+	parser.add_argument("-fov", dest="fov", help="fov")
 	parser.add_argument("-c", "--camera",dest="camera", help="camera file", metavar="FILE")
 	parser.add_argument("-l", "--light",dest="light", help="light file", metavar="FILE")
 	parser.add_argument("-wb", dest="wbfile", help="wb file", metavar="FILE")
@@ -172,13 +210,17 @@ if __name__ == "__main__":
 	parser.add_argument("-npixels", dest="npixels", help="npixels")
 	parser.add_argument("-rpp", dest="rpp", help="rpp")
 	parser.add_argument("-sorder", dest="sorder", help="sorder")
+	parser.add_argument("-nice", dest="niceLevel", help="nice level")
 	parser.add_argument("-boom", dest="boom", help="boom")
 	parser.add_argument("-ideal", dest="ideal", nargs=2, help="ideal AREA")
+	parser.add_argument("-samplingPattern", dest="samplingPattern", help="sampling pattern")
 	parser.add_argument("-mode", dest="mode", help="mode")
 	parser.add_argument("-look", dest="look", nargs=3, help="look XYZ")
 	parser.add_argument("-result", dest="result", help="result root name")
 	parser.add_argument("-light", dest="light", help="light root name")
 	parser.add_argument("-camera", dest="camera", help="camera root name")
 	parser.add_argument("-grabme", dest="grabme", help="grabme root name")
+	parser.add_argument("-hips", action="store_true", help="HIPS image o/p")
+	parser.add_argument("-image", action="store_true", help="do image o/p")
 	options = parser.parse_args()
 	main()
