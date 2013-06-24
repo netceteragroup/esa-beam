@@ -179,7 +179,7 @@ def main():
 				c.printer(file=camfile)
 				cmd = '(echo 14 ' + camfile + ' ' + lightfile + ' | ' + nice + ' start -RATv -m '+ np.str(sorder) + ' ' + blacksky +' -RATsensor_wavebands ' + wbfile + ' ' + objfile + ' > ' + logfile + ' 2>&1)\n'
 				grabfp.write('#!/bin/sh\n')
-				grabfp.write("#host: %s\n"%os.environ['HOST'])
+				grabfp.write("#host: %s\n"%os.environ['HOSTNAME'])
 				grabfp.write("# %s\n"%datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 				grabfp.write("PATH=%s:%s/.beam/beam-vlab/auxdata/librat_lin64/bin/x86_64;export PATH\n"%(os.environ['PATH'], os.environ['HOME']))
 				grabfp.write("LD_LIBRARY_PATH=%s/.beam/beam-vlab/auxdata/librat_lin64/src/lib/;export LD_LIBRARY_PATH\n"%os.environ['HOME'])
