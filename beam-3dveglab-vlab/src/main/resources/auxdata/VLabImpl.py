@@ -238,8 +238,8 @@ class VLAB:
 #    if osName.startswith('Windows'):
 #      cmdLine.append(' <nul')
     
-    for cml in cmdLine:
-      (Logger.getLogger(VLAB.LOGGER_NAME)).info('cmdLine: ' + cml)
+#    for cml in cmdLine:
+#      (Logger.getLogger(VLAB.LOGGER_NAME)).info('cmdLine: ' + cml)
    
     #print 'cmdLine is ', cmdLine
     pb = ProcessBuilder(cmdLine)
@@ -286,9 +286,10 @@ class DUMMY:
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me + ": constructor completed...")
 
-  def doTopOfCanopyBRF(self):
+  def doTopOfCanopyBRF(self, params):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
+
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/',
@@ -399,7 +400,7 @@ class DART:
     }
     VLAB.doExec(cmd)
 
-  def doTopOfCanopyBRF(self):
+  def doTopOfCanopyBRF(self, params):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
     self._createScene()
@@ -414,266 +415,13 @@ class LIBRAT:
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me + ": constructor completed...")
 
-  def _writeCamFile(self, camFile, args):
-    cdata = 'camera {\n' \
-   + ' camera.name                     = "%s";\n' % args['cam_camera'] \
-   + ' geometry.zenith                 = %s;\n'   % args['vz'] \
-   + ' geometry.azimuth                = %s;\n'   % args['va'] \
-   + ' result.image                    = "%s";\n' % args['result_image'] \
-   + ' result.integral.mode            = "%s";\n' % args['result_integral_mode'] \
-   + ' result.integral                 = "%s";\n' % args['result_integral'] \
-   + ' samplingCharacteristics.nPixels = %s;\n'   % args['npixels'] \
-   + ' samplingCharacteristics.rpp     = %s;\n'   % args['rpp'] \
-   + ' geometry.idealArea              = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['ideal']))) \
-   + ' geometry.lookat                 = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['look_xyz']))) \
-   + ' geometry.boomlength             = %s;\n'   % args['boom']
-    if args['perspective']:
-      cdata += ' geometry.perspective            = %s;\n' % args['perspective']
-    if args['twist']:
-      cdata += ' geometry.twist                  = %s;\n' % args['twist']
-    if args['fov']:
-      cdata += ' geometry.fov                    = %s;\n' % args['fov']
-    if args['lidar']:
-      cdata += ' lidar.binStep                   = %s;\n' % args['binStep']
-      cdata += ' lidar.binStart                  = %s;\n' % args['binStart']
-      cdata += ' lidar.nBins                     = %s;\n' % args['nBins']
-    cdata += '}'
-    writer = BufferedWriter(FileWriter(camFile.getCanonicalPath()))
-    writer.write(cdata); writer.close()
-
-  def _writeLightFile(self, lightFile, args):
-    ldata = 'camera {\n' \
-   + ' camera.name                     = "%s";\n' % args['light_camera'] \
-   + ' geometry.zenith                 = %.1f;\n' % args['sz'] \
-   + ' geometry.azimuth                = %.1f;\n' % args['sa'] \
-   + ' geometry.twist                  = %.1f;\n' % args['twist']
-    key = "sideal"
-    if key in args:
-      ldata += ' geometry.ideal                  = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
-    key = "slook_xyz"
-    if key in args:
-      ldata += ' geometry.lookat                 = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
-    key = "sboom"
-    if key in args:
-      ldata += ' geometry.boom                   = %s;\n' % args[key]
-    key = "sperspective"
-    if key in args:
-      ldata += ' geometry.perspective            = %s;\n' % args[key]
-    key = "sfov"
-    if key in args:
-      ldata += ' geometry.fov                    = %s;\n' % args[key]
-    ldata += '}'
-    writer = BufferedWriter(FileWriter(lightFile.getCanonicalPath()))
-    writer.write(ldata); writer.close()
-
-  def _writeInputFile(self, inpFile, lightFile, camFile):
-    idata = '14' \
-   + ' ' \
-   + camFile.getCanonicalPath() \
-   + ' ' \
-   + lightFile.getCanonicalPath()
-    writer = BufferedWriter(FileWriter(inpFile.getCanonicalPath()))
-    writer.write(idata); writer.close()
-
-  def _writeGrabFile(self, grabFile, args):
-    gFilePath = grabFile.getCanonicalPath()
-    gdata = """
-cmd = {
-  'linux' : {
-    'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
-    'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
-    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
-    'stdin'   : '%s',
-    'stdout'  : '%s',
-    'stderr'  : '%s',
-    'env'     : {
-      'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/',
-  'LD_LIBRARY_PATH' :  '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib',
-    }},
-  'windows'   : {
-    'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes',
-    'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
-    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s' ],
-    'stdin'   : '%s',
-    'stdout'  : '%s',
-    'stderr'  : '%s',
-    'env'     : {
-      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32'
-   }}
-}
-"""
-    # hack to allow replacing only %s
-    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%\\","\x81\\")
-    replaced = escaped % \
-   ('5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
-    '5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
-    gdata = replaced.replace("\x81", "%")
-    gdata += 'VLAB.doExec(cmd)\n'
-    writer = BufferedWriter(FileWriter(gFilePath))
-    writer.write(gdata); writer.close()
-
-  def doTopOfCanopyBRF_NOTYET(self):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    defaults = {
-           'lightfile' : 'light.dat',
-             'camfile' : 'camera.dat',
-              'wbfile' : 'wb.test.dat',
-           'anglefile' : 'angles.dat',
-             'objfile' : 'veglab_test.obj',
-             'npixels' : 1000000,
-               'image' : 1,
-                 'rpp' : 1,
-                'boom' : 100000,
-               'ideal' : (100, 100),
-                'mode' : 'scattering order',
-               'opdir' : 'brdf',
-         'result_root' : 'result',
-         'camera_root' : 'camera',
-          'light_root' : 'light',
-         'grabme_root' : 'grabme',
-           'look_file' : False,
-            'look_xyz' : (150, 150, 35),
-              'verbose': False,
-                  'vz' : -1,
-                  'va' : -1,
-                  'sz' : -1,
-                  'sa' : -1,
-          'cam_camera' : 'simple camera',
-        'light_camera' : 'simple illumination',
-               'twist' : 0,
-         'perspective' : False,
-                 'fov' : False,
-               'lidar' : False,
-        'result_image' : 'result.hips',
-'result_integral_mode' : 'scattering order',
-     'result_integral' : 'result'
-    }
-    argsrami = {
-              'verbose': True,
-              'objfile': 'HET01_DIS_UNI_NIR_20.obj',
-               'wbfile': 'wb.image.dat',
-                'ideal': (80, 80),
-             'look_xyz': (0, 0, 0),
-                  'rpp': 1,
-              'npixels': 200000,
-               'sorder': 5,
-            'anglefile': 'angles.rami.dat',
-                 'boom': 100000,
-                'opdir': 'HET01_DIS_UNI_NIR_20'
-    }
-    argslaegeren = {
-              'verbose': True,
-              'objfile': 'laegeren.obj',
-               'wbfile': 'wb.image.dat',
-                'ideal': (800, 800),
-             'look_xyz': (150, 150, 700),
-                  'rpp': 16,
-              'npixels': 200000,
-            'anglefile': 'angles.dat',
-                 'boom': 100000,
-                'opdir': 'test1'
-    }
-
-    # start with a copy of the defaults
-    args = dict(defaults)
-
-    # overwrite defaults with laegeren parameters
-    for arg in argslaegeren:
-      args[arg] = argslaegeren[arg]
-
-    if System.getProperty('os.name').startswith('Windows'):
-      sceneDir = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes')
-    else:
-      sceneDir = VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes')
-    angleFile = File(sceneDir, args['anglefile'])
-
-    alines = open(angleFile.getCanonicalPath()).readlines()
-    # loop through angles 
-    for aline in alines:
-      args['vz'], args['va'], args['sz'], args['sa'] = aline.split()
-      if args['look_file']:
-        llines = open(args['look_file']).readlines()
-      else:
-        llines = [' '.join(map(str, args['look_xyz'])) + '\n',]
-  
-      # loop through looks
-      for lline in llines:
-        look_xyz = lline.split()
-  
-        # base file name
-        rooty = '%s_vz_%s_va_%s_sz_%s_sa_%s_xyz_%s_wb_%s' % ( \
-          args['objfile'], \
-          args['vz'], args['va'], args['sz'], args['sa'], \
-          '_'.join(map(str, map('%.1f'.__mod__, look_xyz))), \
-          args['wbfile'])
-        lightroot = "sz_%s_sa_%s_dat" % ( args['sz'], args['sa'] )
-  
-        grabfname  = 'grabme.' + rooty
-        camfname   = 'camera.' + rooty
-        lightfname = 'light.'  + lightroot
-  
-        args['result_image'] = \
-          File(sceneDir + File.separator + args['opdir'], 'result.' + rooty + '.hips').getCanonicalPath()
-  
-        args['result_integral'] = \
-          File(sceneDir + File.separator + args['opdir'], 'result.' + rooty).getCanonicalPath()
-  
-        grabFile = File(sceneDir + File.separator + args['opdir'], grabfname)
-  
-        # only do these if the grab file doesn't yet exist
-        if grabFile.isFile() & grabFile.canRead():
-          self._log.info(me + ": " + grabFile.toString() + " already exists - skipping")
-        else:
-          grabFile.getParentFile().mkdirs()
-          if grabFile.getParentFile().isDirectory():
-            if grabFile.createNewFile():
-              # write grab file
-              self._writeGrabFile(grabFile, args)
-              # write the light file
-              lightFile = File(sceneDir + File.separator + args['opdir'], lightfname)
-              if lightFile.createNewFile():
-                self._writeLightFile(lightFile, args)
-              # write the camera file
-              camFile = File(sceneDir + File.separator + args['opdir'], camfname)
-              if camFile.createNewFile():
-                self._writeCamFile(camFile, args)
-                # write std input file
-                inputFile = File(sceneDir + File.separator + args['opdir'], grabfname + '.inp')
-                self._writeInputFile(inputFile, lightFile, camFile)
-                # now execute the grab file
-                srcstr = open(grabFile.getCanonicalPath()).read()
-                compiled = compile(srcstr, grabFile.getCanonicalPath(), 'exec')
-                eval(compiled)
-              else:
-                self._log.info(me + ": Failed to create file: " + camFile.toString())
-            else:
-              self._log.info(me + ": Failed to create file: " + grabFile.toString())
-          else:
-            self._log.info(me + ": Failed to create parent dir for: " + grabFile.toString())
-
-  def _createScene(self):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
-    VLAB.dependsOn(me, "locations.dat")
-    VLAB.dependsOn(me, "soil.dat")
-    self._log.info(me + ": executing...")
-    #
-    # more would happen here
-    #
-    VLAB.created(me,   "vlab-librat.obj")
-
-  def _runSimulation(self):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
-    VLAB.dependsOn(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/plants.matlib.dem")
-    self._log.info(me + ": executing...")
-
+  def _cmdHelper(self, cmdLine):
+    self._log.info("commandLine is " + ' '.join(cmdLine))
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
-      'exe'     : '/bin/sh',
-      'cmdline' : [
-'./dobrdf.py', '-v', '-obj', 'HET01_DIS_UNI_NIR_20.obj', '-wb', 'wb.image.dat', '-ideal', '80', '80', '-look', '0', '0', '0', '-rpp', '1', '-npixels', '200000', '-sorder', '5', '-angles', 'angles.rami.dat', '-boom', '100000', '-opdir', 'HET01_DIS_UNI_NIR_20' ],
+      'exe'     : '/usr/bin/python',
+      'cmdline' : cmdLine,
       'stdin'   : None,
       'stdout'  : None,
       'stderr'  : None,
@@ -681,12 +429,10 @@ cmd = {
         'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
       }},
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
-      'cmdline' : [
-        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
-        '-sun_position', '0', '0', '10', 'test.obj'],
-      'stdin'   : 'starttest.ip',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes',
+      'exe'     : 'python',
+      'cmdline' : cmdLine,
+      'stdin'   : None,
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
@@ -695,16 +441,49 @@ cmd = {
     }
     VLAB.doExec(cmd)
 
-    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat")
-    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.diffuse")
-    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.direct")
-    VLAB.created(me, "$HOME/.beam/beam-vlab/auxdata/librat_scenes/HET01_DIS_UNI_NIR_20/result.dat.hips")
-
-  def doTopOfCanopyBRF(self):
+  def doTopOfCanopyBRF(self, params):
     me=self.__class__.__name__ +'::'+VLAB.me()
     self._log.info(me)
-    self._createScene()
-    self._runSimulation()
+
+    if params[VLAB.P_3dScene] == VLAB.K_RAMI:
+      doRami = True
+    else:
+      doRami = False
+
+    self._log.info(me + ": scene is " + params[VLAB.P_3dScene])
+
+    # 1. generate cosine-weighted angular samplines of view/illum hemisphere
+    cmdline = ['./drivers.py', '-random', '-n', '1000', '-angles', 'angles.rpv.2.dat']
+    self._cmdHelper(cmdline)
+
+    # 2. simulate BRDF 
+    if doRami:
+      cmdline = ['./dobrdf.py', '-v', '-obj', 'HET01_DIS_UNI_NIR_20.obj', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '80', '80', '-look',  '0', '0', '0', '-rpp', '4', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.rami']
+    else:
+      cmdline = ['./dobrdf.py', '-v', '-obj', 'laegeren.obj.lai.1', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '300', '300', '-look', '150', '150', '710', '-rpp', '4', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.laegeren']
+
+    self._cmdHelper(cmdline)
+
+    # 3. collect BRDF simulations into a single file
+    if doRami:
+      cmdline = ['./plot.py', '-brdf', '-angles', 'angles.rpv.2.dat', '-root', 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj']
+    else:
+      cmdline = ['./plot.py', '-brdf', '-angles', 'angles.rpv.2.dat', '-root', 'rpv.laegeren/result.laegeren.obj.lai.1']
+    self._cmdHelper(cmdline)
+
+    # 4. invert the 3 parameter RPV model 
+    if doRami:
+      cmdline = ['./rpv_invert.py', '-three', '-v', '-plot', '-data', 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat', '-paramfile', 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat', '-plotfile', 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params']
+    else:
+      cmdline = ['./rpv_invert.py', '-three', '-v', '-plot', '-data', 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat', '-paramfile', 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', '-plotfile', 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params']
+    self._cmdHelper(cmdline)
+
+    # 5. use the RPV paramaters to simulate TOA radiance
+    if doRami:
+      cmdline = ['./dolibradtran.py', '-opdir', 'rami.TOA', '-v', '-rpv', 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat', '-plot', 'rami.TOA/rpv.rami.libradtran.dat.all', '-lat', '50', '-lon', '0', '-time', '2013 06 01 12 00 00']
+    else:
+      cmdline = ['./dolibradtran.py', '-opdir', 'laegeren.TOA', '-v', '-rpv', 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', '-plot', 'laegeren.TOA/rpv.laegeren.libradtran.dat.all', '-lat', '50', '-lon', '0', '-time', '2013 06 01 12 00 00']
+    self._cmdHelper(cmdline)
 
 ##
 ## libradtran-specific integration glue
@@ -771,13 +550,16 @@ if System.getProperty("beam.version") == None:
   }
   #VLAB.doExec(cmd)
 
-  print "Running DUMMY.doTopOfCanopy() test..."
-  dummyProcessor = DUMMY()
-  #dummyProcessor.doTopOfCanopyBRF()
+  params = {}
+  params[VLAB.P_3dScene] = VLAB.K_RAMI
 
-  print "Running LIBRAT.doTopOfCamopy() test..."
-  libratProcessor = LIBRAT()
-  libratProcessor.doTopOfCanopyBRF_NOTYET()
+  #print "Running DUMMY.doTopOfCanopy() test..."
+  #rtProcessor = DUMMY()
+  #rtProcessor.doTopOfCanopyBRF(params)
+
+  print "Running LIBRAT.doTopOfCanopy() test..."
+  rtProcessor = LIBRAT()
+  rtProcessor.doTopOfCanopyBRF(params)
 
 else:
 
@@ -850,6 +632,8 @@ else:
 
     def _doBRF(self, pm, req):
       me=self.__class__.__name__ +'::'+VLAB.me()
+      params = {}
+      params[VLAB.P_3dScene] = self._getP(req, VLAB.P_3dScene)
       processor = self._getP(req, VLAB.P_RTProcessor)
       self._log.info(me + ": processor is <" + processor + ">")
       if processor == VLAB.K_DART:
@@ -862,7 +646,7 @@ else:
         raise RuntimeException('unknown processor: <' + processor + '>')
 
       pm.beginTask("Computing top of canopy BRF...", 10)
-      rtProcessor.doTopOfCanopyBRF()
+      rtProcessor.doTopOfCanopyBRF(params)
       radProcessor = RADTRAN()
       pm.beginTask("Computing top of atmosphere BRF...", 10)
       # ensure at least 1 second to ensure progress popup feedback
