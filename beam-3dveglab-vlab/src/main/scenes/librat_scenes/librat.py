@@ -15,14 +15,11 @@
 # 
 # @(#) $Id: $
 #
-# This is a (subset of) jython re-implementation of python code written by Mat Disney - for original code see
+# This is a simplified python/jython re-implementation of code written by Mat Disney - for original code see
 #  https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes
 # 
 
-import sys
-
-from java.util import Random
-from java.lang import Math
+import sys, math
 
 ################
 # to be merged into VLAB class...
@@ -35,16 +32,30 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
-  def checkFile(self, fname):
+  def checkFile(fname):
     try:
       fp = open(fname, 'rw')
       return fp
     except IOError, e:
-      # for 3.2 print("({})".format(e))
-      # print("%s: ({0})".format(e)%(sys.argv[0]))
-      print("({})".format(e))
+      print(e)
       sys.exit(1)
   checkFile = staticmethod(checkFile)
+  def fileExists(fname):
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(fname).exists()
+    else:
+      import os
+      return os.path.exists(fname)
+  fileExists = staticmethod(fileExists)
+  def getFullPath(fname):
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(fname).getCanonicalPath()
+    else:
+      import os
+      return os.path.abspath(fname)
+  getFullPath = staticmethod(getFullPath)
   def frange(end, start=0, inc=0):
     import math
     if not start:
@@ -61,7 +72,76 @@ class VLAB:
     return L
   frange = staticmethod(frange)
   def openFileIfNotExists(filename):
-    True
+    if sys.platform.startswith('java'):
+      from java.io import File
+      if File(filename).createNewFile():
+        return open(filename)
+      else:
+        return None
+    else:
+      import os
+      try:
+        fd = os.open(filename, os.O_CREAT|os.O_EXCL|os.O_WRONLY|os.O_TRUNC)
+      except:
+        return None
+      fobj = os.fdopen(fd,'w')
+      return fobj
+  openFileIfNotExists = staticmethod(openFileIfNotExists)
+  def rndInit(seed = None):
+    if sys.platform.startswith('java'):
+      from java.util import Random
+      if seed == None:
+        return Random()
+      else:
+        return Random(seed)
+    else:
+      import random
+      random.seed(seed)
+      return None
+  rndInit = staticmethod(rndInit)
+  def rndNextFloat(randState):
+    if sys.platform.startswith('java'):
+      from java.util import Random
+      return randState.nextFloat()
+    else:
+      import random
+      return random.random()
+  rndNextFloat = staticmethod(rndNextFloat)
+  def r2d(v):
+    if sys.platform.startswith('java'):
+      from java.lang import Math
+      return Math.toDegrees(v)
+    else:
+      return math.degrees(v)
+  r2d = staticmethod(r2d)
+  def d2r(v):
+    if sys.platform.startswith('java'):
+      from java.lang import Math
+      return Math.toRadians(v)
+    else:
+      return math.radians(v)
+  d2r = staticmethod(d2r)
+  def mkDirPath(path):
+   if sys.platform.startswith('java'):
+     from java.io import File
+     if not File(path).isDirectory():
+       if not File(path).mkdirs():
+         print "failed to create dir: ", path
+   else:
+     import os
+     try:
+       os.stat(path)
+     except:
+       os.makedirs(path) 
+  mkDirPath = staticmethod(mkDirPath)
+  def fPath(d,n):
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(d, n).getPath()
+    else:
+      import os
+      return os.path.join(d, n)
+  fPath = staticmethod(fPath)
   def savetxt(a,b,fmt):
     fh = open(a, 'w')
     if not fmt:
@@ -76,68 +156,99 @@ class VLAB:
 ################
 class dobrdf:
   def _writeCamFile(self, camFile, args):
+
+    # defaults
+    q = {
+      'cam_camera'                      : 'simple camera',
+      'perspective'                     : False,
+      'result_image'                    : 'result.hips',
+      'result_integral_mode'            : 'result.hips',
+      'result_integral'                 : 'result',
+      'vz'                              : 0,
+      'va'                              : 0,
+      'twist'                           : 0,
+      'look'                            : (0., 0., 0.),
+      'ideal'                           : (100., 100.),
+      'boom'                            : 1000.,
+      'samplingCharacteristics_nPixels' : 100000,
+      'samplingCharacteristics_rpp'     : 1,
+    }
+
+    # overwrite defaults
+    for a in args:
+      q[a] = args[a]
+
     cdata = 'camera {\n' \
-   + ' camera.name                     = "%s";\n' % args['cam_camera'] \
-   + ' geometry.zenith                 = %s;\n'   % args['vz'] \
-   + ' geometry.azimuth                = %s;\n'   % args['va'] \
-   + ' result.image                    = "%s";\n' % args['result_image'] \
-   + ' result.integral.mode            = "%s";\n' % args['result_integral_mode'] \
-   + ' result.integral                 = "%s";\n' % args['result_integral'] \
-   + ' samplingCharacteristics.nPixels = %s;\n'   % args['npixels'] \
-   + ' samplingCharacteristics.rpp     = %s;\n'   % args['rpp'] \
-   + ' geometry.idealArea              = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['ideal']))) \
-   + ' geometry.lookat                 = %s;\n'   % ', '.join(map(str, map('%.1f'.__mod__, args['look_xyz']))) \
-   + ' geometry.boomlength             = %s;\n'   % args['boom']
-    if args['perspective']:
-      cdata += ' geometry.perspective            = %s;\n' % args['perspective']
-    if args['twist']:
-      cdata += ' geometry.twist                  = %s;\n' % args['twist']
-    if args['fov']:
-      cdata += ' geometry.fov                    = %s;\n' % args['fov']
-    if args['lidar']:
-      cdata += ' lidar.binStep                   = %s;\n' % args['binStep']
-      cdata += ' lidar.binStart                  = %s;\n' % args['binStart']
-      cdata += ' lidar.nBins                     = %s;\n' % args['nBins']
++ ' %s = "%s";\n' %('camera.name', q['cam_camera']) \
++ ' %s = %s;\n'   %('gemoetry.zenith', q['vz']) \
++ ' %s = %s;\n'   %('geometry.azimuth', q['va']) \
++ ' %s = "%s";\n' %('result.image', q['result_image']) \
++ ' %s = "%s";\n' %('result.integral.mode', q['result_integral_mode']) \
++ ' %s = "%s";\n' %('result.integral', q['result_integral']) \
++ ' %s = %s;\n'   %('samplingCharacteristics.nPixels', q['npixels']) \
++ ' %s = %s;\n'   %('samplingCharacteristics.rpp', q['rpp']) \
++ ' %s = %s;\n'   %('geometry.idealArea', ', '.join(map(str,map('%.1f'.__mod__, q['ideal'])))) \
++ ' %s = %s;\n'   %('geometry.lookat', ', '.join(map(str,map('%.1f'.__mod__,q['look_xyz'])))) \
++ ' %s = %s;\n'   %('geometry.boomlength', q['boom'])
+
+    if q['perspective']:
+      cdata += ' %s = %s;\n' %('geometry.perspective', q['perspective'])
+    if q['twist']:
+      cdata += ' %s = %s;\n' %('geometry.twist', q['twist'])
+    if q['fov']:
+      cdata += ' %s = %s;\n' %('geometry.fov', q['fov'])
+    if 'lidar' in q:
+      if q['lidar']:
+        cdata += ' %s = %s;\n' %('lidar.binStep', q['binStep']) \
+               + ' %s = %s;\n' %('lidar.binStart', q['binStart']) \
+               + ' %s = %s;\n' %('lidar.nBins', q['nBins'])
     cdata += '}'
-    writer = BufferedWriter(FileWriter(camFile.getCanonicalPath()))
-    writer.write(cdata); writer.close()
+    open(camFile, 'w').write(cdata)
 
   def _writeLightFile(self, lightFile, args):
+
+    # defaults
+    q = {
+      'light_camera' : 'simple illumination',
+       'sz'          : 0.,
+       'sa'          : 0.,
+       'twist'       : 0.,
+    }
+
+    # overwrite detaults
+    for a in args:
+      q[a] = args[a]
+
     ldata = 'camera {\n' \
-   + ' camera.name                     = "%s";\n' % args['light_camera'] \
-   + ' geometry.zenith                 = %.1f;\n' % args['sz'] \
-   + ' geometry.azimuth                = %.1f;\n' % args['sa'] \
-   + ' geometry.twist                  = %.1f;\n' % args['twist']
++ ' %s = "%s";\n'   %('camera.name', q['light_camera']) \
++ ' %s = "%.1f";\n' %('geometry.zenith', float(q['sz'])) \
++ ' %s = "%.1f";\n' %('geometry.azimuth', float(q['sa'])) \
++ ' %s = "%.1f";\n' %('geometry.twist', float(q['twist']))
+
     key = "sideal"
-    if key in args:
-      ldata += ' geometry.ideal                  = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
+    if key in q: ldata += '%s = %s\n' %('geometry.ideal', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "slook_xyz"
-    if key in args:
-      ldata += ' geometry.lookat                 = %s;\n' % ', '.join(map(str, map('%.1f'.__mod__, args[key])))
+    if key in q: ldata += '%s = %s\n' %('geometry.lookat', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "sboom"
-    if key in args:
-      ldata += ' geometry.boom                   = %s;\n' % args[key]
+    if key in q: ldata += '%s = %s\n' %('geometry.boom', q[key])
     key = "sperspective"
-    if key in args:
-      ldata += ' geometry.perspective            = %s;\n' % args[key]
+    if key in q: ldata += '%s = %s\n' %('geometry.perspecitive', q[key])
     key = "sfov"
-    if key in args:
-      ldata += ' geometry.fov                    = %s;\n' % args[key]
+    if key in q: ldata += '%s = %s\n' %('geometry.fov', q[key])
     ldata += '}'
-    writer = BufferedWriter(FileWriter(lightFile.getCanonicalPath()))
-    writer.write(ldata); writer.close()
+    open(lightFile, 'w').write(ldata)
+
 
   def _writeInputFile(self, inpFile, lightFile, camFile):
     idata = '14' \
    + ' ' \
-   + camFile.getCanonicalPath() \
+   + VLAB.getFullPath(camFile) \
    + ' ' \
-   + lightFile.getCanonicalPath()
-    writer = BufferedWriter(FileWriter(inpFile.getCanonicalPath()))
-    writer.write(idata); writer.close()
+   + VLAB.getFullPath(lightFile)
+    open(inpFile, 'w').write(idata)
 
   def _writeGrabFile(self, grabFile, args):
-    gFilePath = grabFile.getCanonicalPath()
+    gFilePath = VLAB.getFullPath(grabFile)
     gdata = """
 cmd = {
   'linux' : {
@@ -170,8 +281,7 @@ cmd = {
     '5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
     gdata = replaced.replace("\x81", "%")
     gdata += 'VLAB.doExec(cmd)\n'
-    writer = BufferedWriter(FileWriter(gFilePath))
-    writer.write(gdata); writer.close()
+    open(gFilePath, 'w').write(gdata)
 
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -223,8 +333,100 @@ cmd = {
         q['light_root'] = args[a]
       elif a == 'grabme':
         q['grabme_root'] = args[a]
+      elif a == 'wb':
+        q['wbfile'] = args[a]
+      elif a == 'angles':
+        q['anglefile'] = args[a]
+      elif a == 'obj':
+        q['objfile'] = args[a]
       else:
         q[a] = args[a]
+
+    VLAB.mkDirPath(q['opdir'])
+
+    angfp = VLAB.checkFile(q['anglefile'])
+    wbfp  = VLAB.checkFile(q['wbfile'])
+    objfp = VLAB.checkFile(q['objfile'])
+
+    # vz va sz sa
+    ang = [line.strip().split() for line in open(q['anglefile'])]
+
+    if 'lookFile' in q:
+      lookfp = VLAB.checkFile(q['lookFile'])
+      q['look_xyz'] = [line.strip().split() for line in open(q['lookFile'])]
+
+    print 'len is ', len(q['look_xyz'])
+    if len(q['look_xyz']) == 3:
+      q['look_xyz'] = ((q['look_xyz']),)
+
+    if len(ang) < 4 or (len(ang) > 4 and len(ang[1]) != 4):
+      sys.stderr.write("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
+      sys.exit([True])
+
+    if len(ang) == 4:
+      ang = ((ang),)
+
+    for n, a in enumerate(ang):
+      q['vz'] = a[0]
+      q['va'] = a[1]
+      q['sz'] = a[2]
+      q['sa'] = a[3]
+
+      for ll, look in enumerate(q['look_xyz']):
+        lightfile = VLAB.fPath(q['opdir'], q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
+        print "lightfile is ", lightfile
+        ligfp = VLAB.openFileIfNotExists(lightfile)
+        if ligfp != None:
+          nq = {
+            'sz' : q['sz'],
+            'sa' : q['sa'],
+          }
+          self._writeLightFile(lightfile, nq)
+
+        rooty = q['objfile'] + '_vz_' + str(q['vz']) + '_va_' + str(q['va']) + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_xyz_' + str(look[0]) + '_' + str(look[1]) + '_' + str(look[2]) + '_wb_' + q['wbfile']
+        grabme = VLAB.fPath(q['opdir'], q['grabme_root'] + '.' + rooty)
+        if 'dhp' in q:
+          location = look.copy()
+          look[2] = q['INFINITY']
+          sampling = 'circular'
+
+        if not VLAB.fileExists(grabme):
+          grabfp = VLAB.openFileIfNotExists(grabme)
+          q['grabme_log'] = grabme + '.log'
+          q['camfile'] = VLAB.fPath(q['opdir'], q['camera_root'] + '.' + rooty)
+          q['oproot'] = VLAB.fPath(q['opdir'], q['result_root'] + '.' + rooty)
+          nq = {
+            'name'             : 'simple camera', 
+            'vz'               : q['vz'],
+            'va'               : q['va'], 
+            'integral'         : q['oproot'], 
+            'integral_mode'    : q['mode'], 
+            'npixels'          : q['npixels'], 
+            'rpp'              : q['rpp'], 
+            'boom'             : q['boom'], 
+            'ideal'            : q['ideal'], 
+            'look_xyz'         : look,
+            'location'         : q['location'], 
+            'fov'              : q['fov'], 
+            'samplingPattern'  : q['samplingPattern'],
+            'file'             : q['camfile'],
+            'grabme_log'       : q['grabme_log']
+          }
+          if 'image' in q:
+            if 'hips' in q:
+              q['imfile'] = q['oproot'] + '.hips'
+            else:
+              q['imfile'] = q['oproot'] + '.bim'
+          else:
+             nq['image'] = q['imfile']
+          self._writeCamFile(q['camfile'], nq)
+          self._writeInputFile(q['imfile'], q['lightfile'], grabme)
+          nq = {
+            'wbfile'  : q['wbfile'],
+            'objfile' : q['objfile']
+          }
+          self._writeGrabFile(grabme, nq)
+    print 'done'
 
 ################
 class dolibradtran:
@@ -321,21 +523,21 @@ class drivers:
       # all those outside the angle range and then take the first n.
       nn = q['nsamples']*2
 
-      # deubg: a particular seed for reproducibility
-      randgen = Random(17)
+      # FIXME: temporarily set a particular seed for reproducibility
+      rState = VLAB.rndInit(17)
 
       # view angles first
-      u1    = [randgen.nextFloat() for i in range(nn)]
-      r     = [Math.sqrt(i)        for x in u1]
-      theta = [2.*Math.PI*x for x in [randgen.nextFloat() for i in range(nn)]]
+      u1    = [VLAB.rndNextFloat(rState) for i in range(nn)]
+      r     = [math.sqrt(i)        for x in u1]
+      theta = [2.*math.pi*x for x in [VLAB.rndNextFloat(rState) for i in range(nn)]]
 
 
-      x  = [r[i] * Math.cos(theta[i])   for i in range(nn)]
-      y  = [r[i] * Math.sin(theta[i])   for i in range(nn)]
-      z = [Math.sqrt(1 - u1[i])         for i in range(nn)]
+      x  = [r[i] * math.cos(theta[i]) for i in range(nn)]
+      y  = [r[i] * math.sin(theta[i]) for i in range(nn)]
+      z  = [math.sqrt(1 - u1[i])      for i in range(nn)]
 
-      q['vz'] = [Math.acos(z[i])      for i in range(nn)]
-      q['va'] = [Math.atan(y[i]/x[i]) for i in range(nn)]
+      q['vz'] = [math.acos(z[i])      for i in range(nn)]
+      q['va'] = [math.atan(y[i]/x[i]) for i in range(nn)]
 
       # if x -ve then vz -ve
       for i in range(nn):
@@ -343,27 +545,27 @@ class drivers:
           q['vz'][i] = q['vz'][i] * -1.
 
       # sun angles
-      u1    = [randgen.nextFloat() for i in range(nn)]
-      r     = [Math.sqrt(i)        for x in u1]
-      theta = [2.*Math.PI*x for x in [randgen.nextFloat() for i in range(nn)]]
+      u1    = [VLAB.rndNextFloat(rState) for i in range(nn)]
+      r     = [math.sqrt(i)              for x in u1]
+      theta = [2.*math.pi*x for x in [VLAB.rndNextFloat(rState) for i in range(nn)]]
 
-      x  = [r[i] * Math.cos(theta[i])   for i in range(nn)]
-      y  = [r[i] * Math.sin(theta[i])   for i in range(nn)]
-      z = [Math.sqrt(1 - u1[i])         for i in range(nn)]
+      x  = [r[i] * math.cos(theta[i]) for i in range(nn)]
+      y  = [r[i] * math.sin(theta[i]) for i in range(nn)]
+      z  = [math.sqrt(1 - u1[i])      for i in range(nn)]
 
       #np.savetxt('rpv.angles.test.plot',np.transpose([x,y,z]),fmt='%.6f')
-      q['sz'] = [Math.acos(z[i])      for i in range(nn)]
-      q['sa'] = [Math.atan(y[i]/x[i]) for i in range(nn)]
+      q['sz'] = [math.acos(z[i])      for i in range(nn)]
+      q['sa'] = [math.atan(y[i]/x[i]) for i in range(nn)]
 
       # if x -ve then sz -ve
       for i in range(nn):
         if (x[i]<0):
           q['sz'][i] = q['sz'][i] * -1.
 
-      vzdeg = [Math.toDegrees(q['vz'][i]) for i in range(nn)]
-      vadeg = [Math.toDegrees(q['va'][i]) for i in range(nn)]
-      szdeg = [Math.toDegrees(q['sz'][i]) for i in range(nn)]
-      sadeg = [Math.toDegrees(q['sa'][i]) for i in range(nn)]
+      vzdeg = [VLAB.r2d(q['vz'][i]) for i in range(nn)]
+      vadeg = [VLAB.r2d(q['va'][i]) for i in range(nn)]
+      szdeg = [VLAB.r2d(q['sz'][i]) for i in range(nn)]
+      sadeg = [VLAB.r2d(q['sa'][i]) for i in range(nn)]
       # zip does a transpose
       angles = zip(vzdeg, vadeg, szdeg, sadeg)
 
@@ -448,8 +650,8 @@ args = {
       'obj' : 'HET01_DIS_UNI_NIR_20.obj',
      'hips' : True,
        'wb' : 'wb.MSI.dat',
-    'ideal' : '80 80',
-     'look' : '0 0 0',
+    'ideal' : (80, 80), 
+     'look' : (0, 0, 0),
       'rpp' : 4,
   'npixels' : 10000,
      'boom' : 786000,
