@@ -152,6 +152,10 @@ class VLAB:
       fh.write('\n')
     fh.close()
   savetxt = staticmethod(savetxt)
+  def doExec(args):
+    # TODO: do for both jython and python
+    pass
+  doExec = staticmethod(doExec)
 
 ################
 class dobrdf:
@@ -159,32 +163,32 @@ class dobrdf:
 
     # defaults
     q = {
-      'cam_camera'                      : 'simple camera',
-      'perspective'                     : False,
-      'result_image'                    : 'result.hips',
-      'result_integral_mode'            : 'result.hips',
-      'result_integral'                 : 'result',
-      'vz'                              : 0,
-      'va'                              : 0,
-      'twist'                           : 0,
-      'look'                            : (0., 0., 0.),
-      'ideal'                           : (100., 100.),
-      'boom'                            : 1000.,
-      'samplingCharacteristics_nPixels' : 100000,
-      'samplingCharacteristics_rpp'     : 1,
+      'cam_camera'      : 'simple camera',
+      'perspective'     : False,
+      'result_image'    : 'result.hips',
+      'integral_mode'   : 'scattering order',
+      'integral'        : 'result',
+      'vz'              : 0,
+      'va'              : 0,
+      'twist'           : 0,
+      'look'            : (0., 0., 0.),
+      'ideal'           : (100., 100.),
+      'boom'            : 1000.,
+      'npixels'         : 100000,
+      'rpp'             : 1,
     }
 
     # overwrite defaults
     for a in args:
       q[a] = args[a]
 
-    cdata = 'camera {\n' \
+    cdata = ' camera { \n' \
 + ' %s = "%s";\n' %('camera.name', q['cam_camera']) \
-+ ' %s = %s;\n'   %('gemoetry.zenith', q['vz']) \
++ ' %s = %s;\n'   %('geometry.zenith', q['vz']) \
 + ' %s = %s;\n'   %('geometry.azimuth', q['va']) \
 + ' %s = "%s";\n' %('result.image', q['result_image']) \
-+ ' %s = "%s";\n' %('result.integral.mode', q['result_integral_mode']) \
-+ ' %s = "%s";\n' %('result.integral', q['result_integral']) \
++ ' %s = "%s";\n' %('result.integral.mode', q['integral_mode']) \
++ ' %s = "%s";\n' %('result.integral', q['integral']) \
 + ' %s = %s;\n'   %('samplingCharacteristics.nPixels', q['npixels']) \
 + ' %s = %s;\n'   %('samplingCharacteristics.rpp', q['rpp']) \
 + ' %s = %s;\n'   %('geometry.idealArea', ', '.join(map(str,map('%.1f'.__mod__, q['ideal'])))) \
@@ -203,7 +207,11 @@ class dobrdf:
                + ' %s = %s;\n' %('lidar.binStart', q['binStart']) \
                + ' %s = %s;\n' %('lidar.nBins', q['nBins'])
     cdata += '}'
-    open(camFile, 'w').write(cdata)
+    try:
+      fp = open(camFile, 'w')
+      fp.write(cdata)
+    finally:
+      fp.close()
 
   def _writeLightFile(self, lightFile, args):
 
@@ -219,7 +227,7 @@ class dobrdf:
     for a in args:
       q[a] = args[a]
 
-    ldata = 'camera {\n' \
+    ldata = ' camera { \n' \
 + ' %s = "%s";\n'   %('camera.name', q['light_camera']) \
 + ' %s = "%.1f";\n' %('geometry.zenith', float(q['sz'])) \
 + ' %s = "%.1f";\n' %('geometry.azimuth', float(q['sa'])) \
@@ -236,7 +244,11 @@ class dobrdf:
     key = "sfov"
     if key in q: ldata += '%s = %s\n' %('geometry.fov', q[key])
     ldata += '}'
-    open(lightFile, 'w').write(ldata)
+    try:
+      fp = open(lightFile, 'w')
+      fp.write(ldata)
+    finally:
+      fp.close()
 
 
   def _writeInputFile(self, inpFile, lightFile, camFile):
@@ -245,7 +257,11 @@ class dobrdf:
    + VLAB.getFullPath(camFile) \
    + ' ' \
    + VLAB.getFullPath(lightFile)
-    open(inpFile, 'w').write(idata)
+    try:
+      fp = open(inpFile, 'w')
+      fp.write(idata)
+    finally:
+      fp.close()
 
   def _writeGrabFile(self, grabFile, args):
     gFilePath = VLAB.getFullPath(grabFile)
@@ -281,7 +297,11 @@ cmd = {
     '5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
     gdata = replaced.replace("\x81", "%")
     gdata += 'VLAB.doExec(cmd)\n'
-    open(gFilePath, 'w').write(gdata)
+    try:
+      fp = open(gFilePath, 'w')
+      fp.write(gdata)
+    finally:
+      fp.close()
 
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -355,7 +375,6 @@ cmd = {
       lookfp = VLAB.checkFile(q['lookFile'])
       q['look_xyz'] = [line.strip().split() for line in open(q['lookFile'])]
 
-    print 'len is ', len(q['look_xyz'])
     if len(q['look_xyz']) == 3:
       q['look_xyz'] = ((q['look_xyz']),)
 
@@ -374,7 +393,6 @@ cmd = {
 
       for ll, look in enumerate(q['look_xyz']):
         lightfile = VLAB.fPath(q['opdir'], q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
-        print "lightfile is ", lightfile
         ligfp = VLAB.openFileIfNotExists(lightfile)
         if ligfp != None:
           nq = {
@@ -410,22 +428,24 @@ cmd = {
             'fov'              : q['fov'], 
             'samplingPattern'  : q['samplingPattern'],
             'file'             : q['camfile'],
-            'grabme_log'       : q['grabme_log']
+            'grabme_log'       : q['grabme_log'],
+            'camfile'          : q['camfile']
           }
           if 'image' in q:
             if 'hips' in q:
-              q['imfile'] = q['oproot'] + '.hips'
+              nq['imfile'] = q['oproot'] + '.hips'
             else:
-              q['imfile'] = q['oproot'] + '.bim'
+              nq['imfile'] = q['oproot'] + '.bim'
           else:
-             nq['image'] = q['imfile']
-          self._writeCamFile(q['camfile'], nq)
-          self._writeInputFile(q['imfile'], q['lightfile'], grabme)
+            nq['imfile'] = 'image'
+          self._writeCamFile(nq['camfile'], nq)
+          self._writeInputFile(grabme + '.inp', lightfile, nq['camfile'])
           nq = {
             'wbfile'  : q['wbfile'],
             'objfile' : q['objfile']
           }
           self._writeGrabFile(grabme, nq)
+          execfile(grabme)
     print 'done'
 
 ################
@@ -640,9 +660,8 @@ args = {
    'random' : True,
    'n'      : 1000,
    'angles' : 'angles.rpv.2.dat',
-   'look'   : 'look.1.dat',
 }
-drivers.main(args)
+#drivers.main(args)
 
 args = {
         'v' : True,
@@ -650,8 +669,8 @@ args = {
       'obj' : 'HET01_DIS_UNI_NIR_20.obj',
      'hips' : True,
        'wb' : 'wb.MSI.dat',
-    'ideal' : (80, 80), 
-     'look' : (0, 0, 0),
+    'ideal' : (80., 80.), 
+     'look' : (0., 0., 0.),
       'rpp' : 4,
   'npixels' : 10000,
      'boom' : 786000,
