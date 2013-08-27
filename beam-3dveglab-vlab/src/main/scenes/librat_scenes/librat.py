@@ -152,9 +152,106 @@ class VLAB:
       fh.write('\n')
     fh.close()
   savetxt = staticmethod(savetxt)
-  def doExec(args):
-    # TODO: do for both jython and python
-    pass
+  def osName():
+    if sys.platform.startswith('java'):
+      from java.lang import System
+      oname = System.getProperty('os.name')
+    else:
+      import os
+      oname = os.name
+      if not oname.endswith('x'): oname = 'Windows'
+    return oname
+  osName = staticmethod(osName)
+  def expandEnv(instr):
+    outstr = instr
+    m = {'$HOME':'HOME','%HOMEDRIVE%':'HOMEDRIVE','%HOMEPATH%':'HOMEPATH'}
+    for e in m:
+      if outstr.find(e) != -1:
+        if sys.platform.startswith('java'):
+          from java.lang import System
+          repl = System.getenv(m[e])
+        else:
+          import os
+          repl = os.getenv(m[e])
+        if repl != None:
+          outstr = outstr.replace(e, repl)
+    return outstr
+  expandEnv = staticmethod(expandEnv)
+  if sys.platform.startswith('java'):
+    from java.lang import Runnable
+    class Helper(Runnable):
+      def __init__(self, nm, strm):
+        self.nm=nm; self.strm=strm
+      def run(self):
+        from java.io import BufferedReader
+        from java.io import InputStreamReader
+        line = None; br = BufferedReader(InputStreamReader(self.strm))
+        line = br.readLine()
+        while (line != None):
+          print self.nm, line.rstrip()
+          line = br.readLine()
+        br.close()
+  else:
+    def helper(nm, strm):
+      for line in strm: print nm, line.rstrip()
+      if not strm.closed: strm.close()
+    helper = staticmethod(helper)
+  def doExec(cmdrec):
+    cmdLine = []
+    osName = VLAB.osName()
+    if osName.startswith('Windows'):
+      cmd=cmdrec['windows']
+      cmdLine = ['cmd', '/c']
+    else:
+      cmd=cmdrec['linux']
+    cmdLine.append(VLAB.expandEnv(cmd['exe']))
+    for i in cmd['cmdline']:
+      cmdLine.append(VLAB.expandEnv(i))
+
+    print 'cmdLine is [', cmdLine, ']'
+    if sys.platform.startswith('java'):
+      from java.lang import ProcessBuilder
+      from java.lang import Thread
+      from java.io import BufferedWriter
+      from java.io import OutputStreamWriter
+      from java.io import File
+      pb = ProcessBuilder(cmdLine)
+      if 'cwd' in cmd and cmd['cwd'] != None:
+        pb.directory(File(VLAB.expandEnv(cmd['cwd'])))
+      if 'env' in cmd and cmd['env'] != None:
+        env = pb.environment()
+        cmdenv = cmd['env']
+        for e in cmdenv:
+          env[e] = VLAB.expandEnv(cmdenv[e])
+      proc = pb.start()
+      t1 = Thread(VLAB.Helper("out", proc.getInputStream()))
+      t2 = Thread(VLAB.Helper("err", proc.getErrorStream()))
+      t1.start(); t2.start()
+      bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
+      if 'stdin' in cmd and cmd['stdin'] != None:
+        for line in open(VLAB.expandEnv(cmd['stdin']),'r'):
+          bw.write(line)
+        bw.close()
+      exitCode = proc.waitFor()
+      t1.join(); t2.join()
+    else:
+      import threading, subprocess, os
+      if 'cwd' in cmd and cmd['cwd'] != None:
+        os.chdir(VLAB.expandEnv(cmd['cwd']))
+      if 'env' in cmd and cmd['env'] != None:
+        cmdenv = cmd['env']
+        for e in cmdenv:
+          os.putenv(e, VLAB.expandEnv(cmdenv[e]))
+      if 'stdin' in cmd and cmd['stdin'] != None:
+        proc = subprocess.Popen(cmdLine, stdin=open(VLAB.expandEnv(cmd['stdin']),'r'),stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      else:
+        proc = subprocess.Popen(cmdLine, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      t1 = threading.Thread(target=VLAB.helper, args=('out', proc.stdout))
+      t2 = threading.Thread(target=VLAB.helper, args=('err', proc.stderr))
+      t1.start(); t2.start()
+      exitCode = proc.wait()
+      t1.join(); t2.join()
+    print 'exitCode=%d' % exitCode
   doExec = staticmethod(doExec)
 
 ################
@@ -207,8 +304,8 @@ class dobrdf:
                + ' %s = %s;\n' %('lidar.binStart', q['binStart']) \
                + ' %s = %s;\n' %('lidar.nBins', q['nBins'])
     cdata += '}'
+    fp = open(camFile, 'w')
     try:
-      fp = open(camFile, 'w')
       fp.write(cdata)
     finally:
       fp.close()
@@ -244,8 +341,8 @@ class dobrdf:
     key = "sfov"
     if key in q: ldata += '%s = %s\n' %('geometry.fov', q[key])
     ldata += '}'
+    fp = open(lightFile, 'w')
     try:
-      fp = open(lightFile, 'w')
       fp.write(ldata)
     finally:
       fp.close()
@@ -257,18 +354,18 @@ class dobrdf:
    + VLAB.getFullPath(camFile) \
    + ' ' \
    + VLAB.getFullPath(lightFile)
+    fp = open(inpFile, 'w')
     try:
-      fp = open(inpFile, 'w')
       fp.write(idata)
     finally:
       fp.close()
 
   def _writeGrabFile(self, grabFile, args):
     gFilePath = VLAB.getFullPath(grabFile)
-    gdata = """
-cmd = {
+    # 'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
+    gdata = """cmd = {
   'linux' : {
-    'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
+    'cwd'     : None,
     'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
     'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
@@ -279,7 +376,7 @@ cmd = {
   'LD_LIBRARY_PATH' :  '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib',
     }},
   'windows'   : {
-    'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes',
+    'cwd'     : None,
     'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
     'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s' ],
     'stdin'   : '%s',
