@@ -390,8 +390,8 @@ class dobrdf:
     # hack to allow replacing only %s
     escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%\\","\x81\\")
     replaced = escaped % \
-   ('5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
-    '5', args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
+   (args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
+    args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
     gdata = replaced.replace("\x81", "%")
     gdata += 'VLAB.doExec(cmd)\n'
     try:
@@ -538,8 +538,10 @@ class dobrdf:
           self._writeCamFile(nq['camfile'], nq)
           self._writeInputFile(grabme + '.inp', lightfile, nq['camfile'])
           nq = {
-            'wbfile'  : q['wbfile'],
-            'objfile' : q['objfile']
+            'blacksky' : q['blacksky'],
+            'sorder'   : q['sorder'],
+            'objfile'  : q['objfile'],
+            'wbfile'   : q['wbfile']
           }
           self._writeGrabFile(grabme, nq)
           execfile(grabme)
@@ -758,7 +760,7 @@ args = {
    'n'      : 1000,
    'angles' : 'angles.rpv.2.dat',
 }
-#drivers.main(args)
+drivers.main(args)
 
 args = {
         'v' : True,
