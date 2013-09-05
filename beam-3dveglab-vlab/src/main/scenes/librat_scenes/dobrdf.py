@@ -50,6 +50,7 @@ def main():
 	blacksky = ''
 	npixels = 1000000
 	image = 1
+	hips = 1
 	rpp = 1
 	fov = False
 	sorder = 100
