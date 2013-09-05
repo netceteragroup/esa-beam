@@ -4,9 +4,10 @@ set mat = "coniferous_bark deciduous_bark"
 foreach t (*.asc )
 	echo $t
 #set t = tree_0045.asc
-	#dos2unix < $t > x; mv x $t
+	dos2unix < $t > x; mv x $t
 	# check for zero cylinder sizes ....
 	(gawk -v mat="$mat" < $t 'BEGIN{maxx=-1e9;maxy=-1e9;maxz=-1e9;minx=1e9;miny=1e9;minz=1e9;}(NF==8 && $7 > 0.0 ){split(mat,m); print "x 3 usemtl "m[$8]; maxx=max($4,maxx); maxy=max($5,maxy); maxz=max($6,maxz);  minx=min($4,minx); miny=min($5,miny); minz=min($6,minz); print "v "$1, $2, $3; print "v "$4, $5, $6;print "ccyl -2 -1 "$7;}END{printf("%.3f %.3f %.3f %.3f %.3f %.3f\n", minx, maxx, miny, maxy, minz, maxz) > "/dev/stderr";}func max(a,b){ return (a > b ? a : b);}func min(a,b){return (a < b ? a : b);}' > $t.filt) >& /tmp/x.$$
 	set minmax = `gawk < /tmp/x.$$ '{print "xMin="$1" xMax="$2" yMin="$3" yMax="$4" zMin="$5" zMax="$6;}'`
-	gawk -v plantName=$t -f boundObj.awk H=5 $minmax < $t.filt | gawk -f clearEmpties.awk verbosity=1 | gawk '{if($1=="usemtl"){if(mtl==0)print;mtl=1;}else{print;}}' > $t.obj
+	# gawk -v plantName=$t -f boundObj.awk H=5 $minmax < $t.filt | gawk -f clearEmpties.awk verbosity=1 | gawk '{if($1=="usemtl"){if(mtl==0)print;mtl=1;}else{print;}}' > $t.obj
+        gawk -v plantName=$t -f boundObj.awk H=5 $minmax < $t.filt | gawk -f clearEmpties.awk verbosity=1 > $t.obj
 end
