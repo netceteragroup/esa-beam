@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Atmosphere atmosphereType="4" rtInBASimulation="0">
+        <AtmosphereIterations>
+            <AtmosphereTransfertFunctions inputOutputTransfertFunctions="0"/>
+            <AtmosphereProducts atmosphereBRF_TOA="1"
+                atmosphereRadiance_BOA_apresCouplage="0"
+                atmosphereRadiance_BOA_avantCouplage="0" ordreUnAtmos="0"/>
+            <AtmosphereComponents downwardingFluxes="0" upwardingFluxes="0"/>
+            <AtmosphereExpertModeZone extrapol_atmos="1"
+                seuilEclairementAtmos="0.00001" seuilFTAtmos="0.0001"/>
+        </AtmosphereIterations>
+        <AtmosphereGeometry discretisationAtmos="2" heightOfSensor="3.484"/>
+        <AtmosphericOpticalPropertyModel aerosolModel="1"
+            aerosolOptDepthFactor="1" atmosphericModel="1"
+            correctionBandModel="1" databaseFileName="atmosphereDatabase.txt"/>
+    </Atmosphere>
+</DartFile>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Maket dartZone="0" exactlyPeriodicScene="2">
+        <Scene>
+            <CellDimensions x="1" z="1"/>
+            <SceneDimensions x="30" y="30"/>
+        </Scene>
+        <Soil>
+            <OpticalPropertyLink ident="Unvegetated" indexFctPhase="1" type="0"/>
+            <ThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <Topography presenceOfTopography="1">
+                <TopographyProperties fileName="DEM.mp#"/>
+            </Topography>
+            <DEM_properties createTopography="1">
+                <DEMGenerator caseDEM="2" outputFileName="DEM2m.mp#">
+                    <DEM_2 fileName="DEM.mp#" originX="2" originY="2"/>
+                </DEMGenerator>
+            </DEM_properties>
+        </Soil>
+        <LatLon altitude="0.6805" latitude="47.4786" longitude="8.3648"/>
+    </Maket>
+</DartFile>

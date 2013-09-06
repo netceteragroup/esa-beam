@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Coeff_diff>
+        <LambertianMultiFunctions>
+            <LambertianMulti fileName="2D_litter.txt" ident="litter"
+                roStDev="0.000" useMultiplicativeFactorForLUT="1">
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        diffuseTransmittanceFactor="1"
+                        directTransmittanceFactor="1" reflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </LambertianMulti>
+            <LambertianMulti fileName="2D_unvegetated.txt"
+                ident="unvegetated" roStDev="0.000" useMultiplicativeFactorForLUT="1">
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        diffuseTransmittanceFactor="1"
+                        directTransmittanceFactor="1" reflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </LambertianMulti>
+            <LambertianMulti fileName="2D_bark_deciduous.txt"
+                ident="bark_deciduous" roStDev="0.000" useMultiplicativeFactorForLUT="1">
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        diffuseTransmittanceFactor="1"
+                        directTransmittanceFactor="1" reflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </LambertianMulti>
+            <LambertianMulti fileName="2D_bark_coniferous.txt"
+                ident="bark_coniferous" roStDev="0.000" useMultiplicativeFactorForLUT="1">
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        diffuseTransmittanceFactor="1"
+                        directTransmittanceFactor="1" reflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </LambertianMulti>
+        </LambertianMultiFunctions>
+        <LambertianSpecularMultiFunctions/>
+        <HapkeSpecularMultiFunctions/>
+        <RPVMultiFunctions/>
+        <UnderstoryMultiFunctions outputLADFile="0" specularEffects="0" useBunnick="0">
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_understory_veg.txt"
+                ident="turbid_understory_veg" lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Leaf_top.txt" ident="turbid_leaf_top"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Leaf_mid.txt" ident="turbid_leaf_mid"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Leaf_bot.txt" ident="turbid_leaf_bot"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Needle_top.txt" ident="turbid_needle_top"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Needle_mid.txt" ident="turbid_needle_mid"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+            <UnderstoryMulti deltaT="10" dimFoliar="0.01"
+                fileName="3D_Needle_bot.txt" ident="turbid_needle_bot"
+                lad="1" meanT="300" useMultiplicativeFactorForLUT="1">
+                <DirectionalClumpingIndexProperties clumpinga="0"
+                    clumpingb="0" omegaMax="0" omegaMin="1"/>
+                <ProspectExternalModule useProspectExternalModule="0"/>
+                <nodeMultiplicativeFactorForLUT>
+                    <multiplicativeFactorForLUT
+                        LeafTransmittanceFactor="1"
+                        abaxialReflectanceFactor="1" adaxialReflectanceFactor="1"/>
+                </nodeMultiplicativeFactorForLUT>
+            </UnderstoryMulti>
+        </UnderstoryMultiFunctions>
+        <AirMultiFunctions/>
+        <Temperatures>
+            <ThermalFunction deltaT="20.0"
+                idTemperature="thermal_function_290_310" meanT="300.0"/>
+        </Temperatures>
+    </Coeff_diff>
+</DartFile>

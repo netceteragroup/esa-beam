@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartParameterExceptions>
+    <DartParameterException>
+        <Origin>
+            <Name>Maket.Soil.Topography.TopographyProperties.fileName</Name>
+            <Label>Topography filename</Label>
+            <Description>Name of the DEM (Digital Elevation Map). This is a raster map coded in float numbers (4 bytes /pixel) </Description>
+        </Origin>
+        <Message>
+            <OriginMessage>The file 'DEM.mp#' has dimensions that don't match scene's ones. You must resample it !</OriginMessage>
+        </Message>
+    </DartParameterException>
+</DartParameterExceptions>
