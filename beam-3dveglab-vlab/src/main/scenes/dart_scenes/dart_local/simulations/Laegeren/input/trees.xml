@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Trees isTrees="1" sceneModelCharacteristic="2">
+        <Trees_2 laiZone="0" treePositionFileName="trees.txt">
+            <Specie branchesAndTwigsSimulation="0" lai="0.21587" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="4.3808"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="30.3961" crownHeightStDev="0.0"
+                    crownShape="2" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownTruncatedCone baseRadius="4.015"
+                        baseRadiusStDev="0.0" topRadius="0.1" topRadiusStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.20277">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_needle_bot" indexFctPhase="6"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.90879">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_needle_mid" indexFctPhase="5"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.8884">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_needle_top" indexFctPhase="4"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.21666" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="26.817"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="9.1616" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="6.57"
+                        firstAxisStDev="0.0" secondAxis="8.16" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.70765">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.97562">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.3167">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.22892" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="22.6952"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="14.2281" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.44"
+                        firstAxisStDev="0.0" secondAxis="7.65" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.15655">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.61095">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="2.2325">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.1885" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="15.1193"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="19.7969" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="6.77"
+                        firstAxisStDev="0.0" secondAxis="7.05" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.20181">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.80081">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.9974">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.26214" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="20.8926"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="14.0905" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.44"
+                        firstAxisStDev="0.0" secondAxis="7.7" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.44421">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.281">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.2748">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.19125" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="9.4721"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="24.9045" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="6.47"
+                        firstAxisStDev="0.0" secondAxis="7.76" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.4768">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.87689">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.6463">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.19355" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="22.9028"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="13.208" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="6.29"
+                        firstAxisStDev="0.0" secondAxis="7.62" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.65691">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.3144">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.0287">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.22311" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="21.3105"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="11.7712" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.32"
+                        firstAxisStDev="0.0" secondAxis="7.66" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.58029">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.4308">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.98895">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.2703" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="15.6977"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="16.3053" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.02"
+                        firstAxisStDev="0.0" secondAxis="9.61" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.15622">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.87468">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.9691">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.31" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="9.1303"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="23.0539" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.29"
+                        firstAxisStDev="0.0" secondAxis="9.25" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.21049">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.22925">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="2.5603">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.23872" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="15.3661"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="16.5146" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.91"
+                        firstAxisStDev="0.0" secondAxis="7.57" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.20478">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.0367">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.7585">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.2552" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="17.5292"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="16.2753" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.4" firstAxisStDev="0.0"
+                        secondAxis="8.6" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.20285">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.6607">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.1365">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.22561" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="23.388"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="11.0964" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.57"
+                        firstAxisStDev="0.0" secondAxis="7.27" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.45106">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.97746">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.5715">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.25511" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="18.8364"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="14.1737" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.28"
+                        firstAxisStDev="0.0" secondAxis="7.63" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.51288">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.94429">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.5428">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.24263" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="20.6281"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="14.3207" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="7.93"
+                        firstAxisStDev="0.0" secondAxis="7.58" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.54063">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.73456">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.7248">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.23325" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="20.2086"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="12.6501" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.62"
+                        firstAxisStDev="0.0" secondAxis="7.62" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.38058">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.0771">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.5423">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.28995" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="15.9184"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="16.5812" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.57"
+                        firstAxisStDev="0.0" secondAxis="8.52" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.30932">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.89621">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.7945">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.29784" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="21.1296"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="11.0078" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.75"
+                        firstAxisStDev="0.0" secondAxis="8.75" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.3972">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.0879">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.5149">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.25541" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="13.824"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="17.5103" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.5" firstAxisStDev="0.0"
+                        secondAxis="7.72" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.31579">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.0263">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.6579">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.2657" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="14.411"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="16.9525" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.44"
+                        firstAxisStDev="0.0" secondAxis="8.07" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.38329">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.91278">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.7039">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+            <Specie branchesAndTwigsSimulation="0" lai="0.28387" numberOfTreesInWholeScene="1">
+                <OpticalPropertyLink ident="bark_deciduous"
+                    indexFctPhase="2" type="0"/>
+                <ThermalPropertyLink
+                    idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                <Trunk meanTrunkDiameterBelowCrown="0.0"
+                    meanTrunkHeightBelowCrown="14.5961"
+                    stDevMeanTrunkDiameterBelowCrown="0.0"
+                    stDevMeanTrunkHeightBelowCrown="0.0" trunkHeightWithinCrown="0.0"/>
+                <Crown crownHeight="20.4584" crownHeightStDev="0.0"
+                    crownShape="0" instrinsicRotation="0.0" instrinsicRotationStDev="0.0">
+                    <CrownEllipsoid firstAxis="8.12"
+                        firstAxisStDev="0.0" secondAxis="9.07" secondAxisStDev="0.0"/>
+                </Crown>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.51292">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_bot" indexFctPhase="3"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.34"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="0.97281">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="0.9" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_mid" indexFctPhase="2"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+                <CrownLevel distribution="1"
+                    relativeHeightVsCrownHeight="0.33"
+                    relativeTrunkDiameterWithinCrown="0.0" verticalWeightForUf="1.5143">
+                    <LeavesDistribution alpha="0.0" beta="0.0"
+                        gamma="1.0" kappa="1.0"/>
+                    <OpticalPropertyLink ident="bark_deciduous"
+                        indexFctPhase="2" type="0"/>
+                    <VegetationOpticalPropertyLink
+                        ident="turbid_leaf_top" indexFctPhase="1"/>
+                    <ThermalPropertyLink
+                        idTemperature="thermal_function_290_310" indexTemperature="0"/>
+                </CrownLevel>
+            </Specie>
+        </Trees_2>
+    </Trees>
+</DartFile>

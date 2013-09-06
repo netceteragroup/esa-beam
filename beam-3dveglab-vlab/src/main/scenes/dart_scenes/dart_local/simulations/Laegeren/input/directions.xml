@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Directions exactDate="2" numberOfPropagationDirections="100">
+        <ExpertModeZone numberOfAngularSector="10" numberOfLayers="0"/>
+        <SunViewingAngles sunViewingAzimuthAngle="32.6" sunViewingZenithAngle="27.1"/>
+        <HotSpotProperties hotSpotParallelPlane="0"
+            hotSpotPerpendicularPlane="0" oversampleDownwardRegion="0" oversampleUpwardRegion="0"/>
+        <AddedDirections directionType="0" ifSquareShape="1" imageDirection="1">
+            <ZenithAzimuth directionAzimuthalAngle="207.2" directionZenithalAngle="5.75"/>
+            <Square widthDefinition="0">
+                <DefineOmega omega="0.0010"/>
+            </Square>
+        </AddedDirections>
+    </Directions>
+</DartFile>

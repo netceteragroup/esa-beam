@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Phase expertMode="0">
+        <DartInputParameters calculatorMethod="0">
+            <nodefluxtracking gaussSiedelAcceleratingTechnique="1" numberOfIteration="4"/>
+            <SpectralDomainTir temperatureMode="0">
+                <Atmosphere_1 SKYLForTemperatureAssignation="0.0"/>
+            </SpectralDomainTir>
+            <SpectralIntervals>
+                <SpectralIntervalsProperties bandNumber="0"
+                    deltaLambda="0.005493" meanLambda="0.56925"
+                    radiativeBudgetProducts="0" spectralDartMode="0"/>
+            </SpectralIntervals>
+            <ExpertModeZone albedoThreshold="1.0E-5"
+                illuminationRepartitionMode="2"
+                lightPropagationThreshold="1.0E-4"
+                nbRandomPointsPerInteceptionAtmosphere="10"
+                nbSubSubcenterTurbidEmission="40"
+                nbSubcenterIllumination="10" nbSubcenterVolume="2"/>
+            <nodeIlluminationMode illuminationMode="0" irradianceMode="1">
+                <irradianceDatabaseNode irradianceDatabase="TOASolarIrradiance.txt"/>
+            </nodeIlluminationMode>
+        </DartInputParameters>
+        <DartProduct>
+            <dartModuleProducts allIterationsProducts="0"
+                brfProducts="1" lidarProducts="0"
+                order1Products="0" radiativeBudgetProducts="0">
+                <BrfProductsProperties brfProduct="1" extrapolation="1"
+                    horizontalOversampling="1" image="1"
+                    luminanceProducts="1" maximalThetaImages="0.1"
+                    nb_scene="1" outputHapkeFile="0" projection="1"
+                    sensorOversampling="1" sensorPlaneprojection="0">
+                    <ExpertModeZone_Etalement etalement="2"/>
+                    <ExpertModeZone_maskProjection mask_projection="0"/>
+                </BrfProductsProperties>
+            </dartModuleProducts>
+            <maketModuleProducts MNEProducts="0" areaMaketProducts="0"
+                coverRateProducts="0" laiProducts="0"/>
+        </DartProduct>
+    </Phase>
+</DartFile>

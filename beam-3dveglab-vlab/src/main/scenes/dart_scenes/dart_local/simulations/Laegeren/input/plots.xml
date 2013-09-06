@@ -1,0 +1,1066 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Plots isVegetation="0">
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="0.0" y="0.0"/>
+                <Point2D x="2.0" y="0.0"/>
+                <Point2D x="2.0" y="4.0"/>
+                <Point2D x="0.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="0.0" y="4.0"/>
+                <Point2D x="2.0" y="4.0"/>
+                <Point2D x="2.0" y="18.0"/>
+                <Point2D x="0.0" y="18.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="0.0" y="18.0"/>
+                <Point2D x="2.0" y="18.0"/>
+                <Point2D x="2.0" y="20.0"/>
+                <Point2D x="0.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="0.0" y="20.0"/>
+                <Point2D x="2.0" y="20.0"/>
+                <Point2D x="2.0" y="24.0"/>
+                <Point2D x="0.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="0.0" y="24.0"/>
+                <Point2D x="2.0" y="24.0"/>
+                <Point2D x="2.0" y="26.0"/>
+                <Point2D x="0.0" y="26.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="0.0" y="26.0"/>
+                <Point2D x="2.0" y="26.0"/>
+                <Point2D x="2.0" y="30.0"/>
+                <Point2D x="0.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="2.0" y="0.0"/>
+                <Point2D x="4.0" y="0.0"/>
+                <Point2D x="4.0" y="4.0"/>
+                <Point2D x="2.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="2.0" y="4.0"/>
+                <Point2D x="4.0" y="4.0"/>
+                <Point2D x="4.0" y="6.0"/>
+                <Point2D x="2.0" y="6.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="2.0" y="6.0"/>
+                <Point2D x="4.0" y="6.0"/>
+                <Point2D x="4.0" y="8.0"/>
+                <Point2D x="2.0" y="8.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="2.0" y="8.0"/>
+                <Point2D x="4.0" y="8.0"/>
+                <Point2D x="4.0" y="18.0"/>
+                <Point2D x="2.0" y="18.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="2.0" y="18.0"/>
+                <Point2D x="4.0" y="18.0"/>
+                <Point2D x="4.0" y="20.0"/>
+                <Point2D x="2.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="2.0" y="20.0"/>
+                <Point2D x="4.0" y="20.0"/>
+                <Point2D x="4.0" y="24.0"/>
+                <Point2D x="2.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="2.0" y="24.0"/>
+                <Point2D x="4.0" y="24.0"/>
+                <Point2D x="4.0" y="30.0"/>
+                <Point2D x="2.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="4.0" y="0.0"/>
+                <Point2D x="6.0" y="0.0"/>
+                <Point2D x="6.0" y="10.0"/>
+                <Point2D x="4.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="4.0" y="10.0"/>
+                <Point2D x="6.0" y="10.0"/>
+                <Point2D x="6.0" y="20.0"/>
+                <Point2D x="4.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="4.0" y="20.0"/>
+                <Point2D x="6.0" y="20.0"/>
+                <Point2D x="6.0" y="22.0"/>
+                <Point2D x="4.0" y="22.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="4.0" y="22.0"/>
+                <Point2D x="6.0" y="22.0"/>
+                <Point2D x="6.0" y="24.0"/>
+                <Point2D x="4.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="4.0" y="24.0"/>
+                <Point2D x="6.0" y="24.0"/>
+                <Point2D x="6.0" y="26.0"/>
+                <Point2D x="4.0" y="26.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="4.0" y="26.0"/>
+                <Point2D x="6.0" y="26.0"/>
+                <Point2D x="6.0" y="30.0"/>
+                <Point2D x="4.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="6.0" y="0.0"/>
+                <Point2D x="8.0" y="0.0"/>
+                <Point2D x="8.0" y="4.0"/>
+                <Point2D x="6.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="6.0" y="4.0"/>
+                <Point2D x="8.0" y="4.0"/>
+                <Point2D x="8.0" y="10.0"/>
+                <Point2D x="6.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="6.0" y="10.0"/>
+                <Point2D x="8.0" y="10.0"/>
+                <Point2D x="8.0" y="16.0"/>
+                <Point2D x="6.0" y="16.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="6.0" y="16.0"/>
+                <Point2D x="8.0" y="16.0"/>
+                <Point2D x="8.0" y="20.0"/>
+                <Point2D x="6.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="6.0" y="20.0"/>
+                <Point2D x="8.0" y="20.0"/>
+                <Point2D x="8.0" y="22.0"/>
+                <Point2D x="6.0" y="22.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="6.0" y="22.0"/>
+                <Point2D x="8.0" y="22.0"/>
+                <Point2D x="8.0" y="24.0"/>
+                <Point2D x="6.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="6.0" y="24.0"/>
+                <Point2D x="8.0" y="24.0"/>
+                <Point2D x="8.0" y="28.0"/>
+                <Point2D x="6.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="6.0" y="28.0"/>
+                <Point2D x="8.0" y="28.0"/>
+                <Point2D x="8.0" y="30.0"/>
+                <Point2D x="6.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="8.0" y="0.0"/>
+                <Point2D x="10.0" y="0.0"/>
+                <Point2D x="10.0" y="2.0"/>
+                <Point2D x="8.0" y="2.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="8.0" y="2.0"/>
+                <Point2D x="10.0" y="2.0"/>
+                <Point2D x="10.0" y="10.0"/>
+                <Point2D x="8.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="8.0" y="10.0"/>
+                <Point2D x="10.0" y="10.0"/>
+                <Point2D x="10.0" y="16.0"/>
+                <Point2D x="8.0" y="16.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="8.0" y="16.0"/>
+                <Point2D x="10.0" y="16.0"/>
+                <Point2D x="10.0" y="20.0"/>
+                <Point2D x="8.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="8.0" y="20.0"/>
+                <Point2D x="10.0" y="20.0"/>
+                <Point2D x="10.0" y="28.0"/>
+                <Point2D x="8.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="8.0" y="28.0"/>
+                <Point2D x="10.0" y="28.0"/>
+                <Point2D x="10.0" y="30.0"/>
+                <Point2D x="8.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="10.0" y="0.0"/>
+                <Point2D x="12.0" y="0.0"/>
+                <Point2D x="12.0" y="2.0"/>
+                <Point2D x="10.0" y="2.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="10.0" y="2.0"/>
+                <Point2D x="12.0" y="2.0"/>
+                <Point2D x="12.0" y="12.0"/>
+                <Point2D x="10.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="10.0" y="12.0"/>
+                <Point2D x="12.0" y="12.0"/>
+                <Point2D x="12.0" y="30.0"/>
+                <Point2D x="10.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="12.0" y="0.0"/>
+                <Point2D x="14.0" y="0.0"/>
+                <Point2D x="14.0" y="6.0"/>
+                <Point2D x="12.0" y="6.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="12.0" y="6.0"/>
+                <Point2D x="14.0" y="6.0"/>
+                <Point2D x="14.0" y="12.0"/>
+                <Point2D x="12.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="12.0" y="12.0"/>
+                <Point2D x="14.0" y="12.0"/>
+                <Point2D x="14.0" y="28.0"/>
+                <Point2D x="12.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="12.0" y="28.0"/>
+                <Point2D x="14.0" y="28.0"/>
+                <Point2D x="14.0" y="30.0"/>
+                <Point2D x="12.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="14.0" y="0.0"/>
+                <Point2D x="16.0" y="0.0"/>
+                <Point2D x="16.0" y="2.0"/>
+                <Point2D x="14.0" y="2.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="14.0" y="2.0"/>
+                <Point2D x="16.0" y="2.0"/>
+                <Point2D x="16.0" y="8.0"/>
+                <Point2D x="14.0" y="8.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="14.0" y="8.0"/>
+                <Point2D x="16.0" y="8.0"/>
+                <Point2D x="16.0" y="12.0"/>
+                <Point2D x="14.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="14.0" y="12.0"/>
+                <Point2D x="16.0" y="12.0"/>
+                <Point2D x="16.0" y="22.0"/>
+                <Point2D x="14.0" y="22.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="14.0" y="22.0"/>
+                <Point2D x="16.0" y="22.0"/>
+                <Point2D x="16.0" y="24.0"/>
+                <Point2D x="14.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="14.0" y="24.0"/>
+                <Point2D x="16.0" y="24.0"/>
+                <Point2D x="16.0" y="30.0"/>
+                <Point2D x="14.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="16.0" y="0.0"/>
+                <Point2D x="18.0" y="0.0"/>
+                <Point2D x="18.0" y="10.0"/>
+                <Point2D x="16.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="16.0" y="10.0"/>
+                <Point2D x="18.0" y="10.0"/>
+                <Point2D x="18.0" y="20.0"/>
+                <Point2D x="16.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="16.0" y="20.0"/>
+                <Point2D x="18.0" y="20.0"/>
+                <Point2D x="18.0" y="24.0"/>
+                <Point2D x="16.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="16.0" y="24.0"/>
+                <Point2D x="18.0" y="24.0"/>
+                <Point2D x="18.0" y="26.0"/>
+                <Point2D x="16.0" y="26.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="16.0" y="26.0"/>
+                <Point2D x="18.0" y="26.0"/>
+                <Point2D x="18.0" y="30.0"/>
+                <Point2D x="16.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="18.0" y="0.0"/>
+                <Point2D x="20.0" y="0.0"/>
+                <Point2D x="20.0" y="4.0"/>
+                <Point2D x="18.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="18.0" y="4.0"/>
+                <Point2D x="20.0" y="4.0"/>
+                <Point2D x="20.0" y="10.0"/>
+                <Point2D x="18.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="18.0" y="10.0"/>
+                <Point2D x="20.0" y="10.0"/>
+                <Point2D x="20.0" y="20.0"/>
+                <Point2D x="18.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="18.0" y="20.0"/>
+                <Point2D x="20.0" y="20.0"/>
+                <Point2D x="20.0" y="30.0"/>
+                <Point2D x="18.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="20.0" y="0.0"/>
+                <Point2D x="22.0" y="0.0"/>
+                <Point2D x="22.0" y="6.0"/>
+                <Point2D x="20.0" y="6.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="20.0" y="6.0"/>
+                <Point2D x="22.0" y="6.0"/>
+                <Point2D x="22.0" y="10.0"/>
+                <Point2D x="20.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="20.0" y="10.0"/>
+                <Point2D x="22.0" y="10.0"/>
+                <Point2D x="22.0" y="20.0"/>
+                <Point2D x="20.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="20.0" y="20.0"/>
+                <Point2D x="22.0" y="20.0"/>
+                <Point2D x="22.0" y="24.0"/>
+                <Point2D x="20.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="20.0" y="24.0"/>
+                <Point2D x="22.0" y="24.0"/>
+                <Point2D x="22.0" y="28.0"/>
+                <Point2D x="20.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="20.0" y="28.0"/>
+                <Point2D x="22.0" y="28.0"/>
+                <Point2D x="22.0" y="30.0"/>
+                <Point2D x="20.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="22.0" y="0.0"/>
+                <Point2D x="24.0" y="0.0"/>
+                <Point2D x="24.0" y="6.0"/>
+                <Point2D x="22.0" y="6.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="22.0" y="6.0"/>
+                <Point2D x="24.0" y="6.0"/>
+                <Point2D x="24.0" y="12.0"/>
+                <Point2D x="22.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="22.0" y="12.0"/>
+                <Point2D x="24.0" y="12.0"/>
+                <Point2D x="24.0" y="20.0"/>
+                <Point2D x="22.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="22.0" y="20.0"/>
+                <Point2D x="24.0" y="20.0"/>
+                <Point2D x="24.0" y="24.0"/>
+                <Point2D x="22.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="22.0" y="24.0"/>
+                <Point2D x="24.0" y="24.0"/>
+                <Point2D x="24.0" y="30.0"/>
+                <Point2D x="22.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="0.0"/>
+                <Point2D x="26.0" y="0.0"/>
+                <Point2D x="26.0" y="2.0"/>
+                <Point2D x="24.0" y="2.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="2.0"/>
+                <Point2D x="26.0" y="2.0"/>
+                <Point2D x="26.0" y="4.0"/>
+                <Point2D x="24.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="4.0"/>
+                <Point2D x="26.0" y="4.0"/>
+                <Point2D x="26.0" y="8.0"/>
+                <Point2D x="24.0" y="8.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="24.0" y="8.0"/>
+                <Point2D x="26.0" y="8.0"/>
+                <Point2D x="26.0" y="10.0"/>
+                <Point2D x="24.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="10.0"/>
+                <Point2D x="26.0" y="10.0"/>
+                <Point2D x="26.0" y="12.0"/>
+                <Point2D x="24.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="12.0"/>
+                <Point2D x="26.0" y="12.0"/>
+                <Point2D x="26.0" y="20.0"/>
+                <Point2D x="24.0" y="20.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="20.0"/>
+                <Point2D x="26.0" y="20.0"/>
+                <Point2D x="26.0" y="24.0"/>
+                <Point2D x="24.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="24.0"/>
+                <Point2D x="26.0" y="24.0"/>
+                <Point2D x="26.0" y="28.0"/>
+                <Point2D x="24.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="24.0" y="28.0"/>
+                <Point2D x="26.0" y="28.0"/>
+                <Point2D x="26.0" y="30.0"/>
+                <Point2D x="24.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="26.0" y="0.0"/>
+                <Point2D x="28.0" y="0.0"/>
+                <Point2D x="28.0" y="4.0"/>
+                <Point2D x="26.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="26.0" y="4.0"/>
+                <Point2D x="28.0" y="4.0"/>
+                <Point2D x="28.0" y="6.0"/>
+                <Point2D x="26.0" y="6.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="26.0" y="6.0"/>
+                <Point2D x="28.0" y="6.0"/>
+                <Point2D x="28.0" y="8.0"/>
+                <Point2D x="26.0" y="8.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="26.0" y="8.0"/>
+                <Point2D x="28.0" y="8.0"/>
+                <Point2D x="28.0" y="10.0"/>
+                <Point2D x="26.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="26.0" y="10.0"/>
+                <Point2D x="28.0" y="10.0"/>
+                <Point2D x="28.0" y="12.0"/>
+                <Point2D x="26.0" y="12.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="26.0" y="12.0"/>
+                <Point2D x="28.0" y="12.0"/>
+                <Point2D x="28.0" y="26.0"/>
+                <Point2D x="26.0" y="26.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="26.0" y="26.0"/>
+                <Point2D x="28.0" y="26.0"/>
+                <Point2D x="28.0" y="30.0"/>
+                <Point2D x="26.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="28.0" y="0.0"/>
+                <Point2D x="30.0" y="0.0"/>
+                <Point2D x="30.0" y="4.0"/>
+                <Point2D x="28.0" y="4.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="2">
+            <Polygon2D>
+                <Point2D x="28.0" y="4.0"/>
+                <Point2D x="30.0" y="4.0"/>
+                <Point2D x="30.0" y="10.0"/>
+                <Point2D x="28.0" y="10.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <PlotVegetationProperties baseheight="0.0" height="0.5"
+                lai="1.0" stDev="0.0"/>
+            <VegetationOpticalPropertyLink ident="turbid_understory_veg" indexFctPhase="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="28.0" y="10.0"/>
+                <Point2D x="30.0" y="10.0"/>
+                <Point2D x="30.0" y="14.0"/>
+                <Point2D x="28.0" y="14.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="28.0" y="14.0"/>
+                <Point2D x="30.0" y="14.0"/>
+                <Point2D x="30.0" y="24.0"/>
+                <Point2D x="28.0" y="24.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="28.0" y="24.0"/>
+                <Point2D x="30.0" y="24.0"/>
+                <Point2D x="30.0" y="28.0"/>
+                <Point2D x="28.0" y="28.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="Unvegetated"
+                indexFctPhase="1" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <Plot form="0" type="0">
+            <Polygon2D>
+                <Point2D x="28.0" y="28.0"/>
+                <Point2D x="30.0" y="28.0"/>
+                <Point2D x="30.0" y="30.0"/>
+                <Point2D x="28.0" y="30.0"/>
+            </Polygon2D>
+            <GroundOpticalPropertyLink ident="litter" indexFctPhase="0" type="0"/>
+            <GroundThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+        </Plot>
+        <ImportationFichierRaster/>
+    </Plots>
+</DartFile>
