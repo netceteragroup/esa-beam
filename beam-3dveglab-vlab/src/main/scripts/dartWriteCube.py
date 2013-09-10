@@ -379,11 +379,7 @@ class DARTSimulation :
 		sequencePath = VLAB.path.join(self.getAbsolutePath(), DARTEnv.sequenceDirectory)
 		listSequence = [f for f in VLAB.listdir(sequencePath) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(sequencePath, f))) and f.startswith(nom + '_')]
 		
-		def getNumber(x) :
-			nameLength = len(nom) + 1
-			return int( x[nameLength:] )
-		
-		listSequence.sort(key=getNumber)
+		listSequence.sort(lambda a, b: cmp(int(a[len(nom)+1:]),int(b[len(nom)+1:])))
 		listSimuSequence = [DARTSimulation(VLAB.path.join(self.name, DARTEnv.sequenceDirectory, s), self.rootSimulationsDirectory) for s in listSequence]
 		return listSimuSequence
 	
