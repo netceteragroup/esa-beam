@@ -121,16 +121,16 @@ sh build_radtran_binaries.sh
 Build Linux Virtual Image (OPTIONAL)
 ------------------------------------------
 To ensure reproducibility of builds, we use a standard fedora linux install
-build in a virtual machine for development. Here is a script to do it yourself.
+built in a virtual machine for development. Here is a script to do it yourself.
 
 **This block for creating a virtual image is OPTIONAL**
 ```bash
 # OPTIONAL - this is used to create a Fedora linux virtual image so that you can be sure that the build environment setup script below works unmodified 
 wget https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/build_fedora_virtual_image.sh
-# build the virtual image (side-effect - f17-xfce-dev will be ready to start in VirtualBox)
+# build the virtual image (side-effect - f19-xfce-dev will be ready to start in VirtualBox)
 sh build_fedora_virtual_image.sh
 # start up the virtual machine you just created
-VirtualBox --startvm f17-xfce-dev
+VirtualBox --startvm f19-xfce-dev
 # now login to the virtual machine and execute the commands below...
 # if you ssh into it, it is easier to copy/paste from this window :-)
 # ssh -Y fedora@localhost -p 2222
