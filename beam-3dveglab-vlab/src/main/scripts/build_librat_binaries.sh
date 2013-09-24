@@ -3,7 +3,7 @@
 # this script builds librat native binaries for win32, win64 and linux64
 #
 
-VERSION=1_4_1a
+VERSION=1_4_1b
 W32NAME=librat_${VERSION}_windows32-`date +%Y%m%d`
 W64NAME=librat_${VERSION}_windows64-`date +%Y%m%d`
 LINNAME=librat_${VERSION}_linux64-`date +%Y%m%d`
@@ -29,8 +29,8 @@ done
 cd ..
 
 # apply Netcetera windows top level patch, then run configure
-patch < librat-patches/librat-configure.patch
-BPMS=`pwd`/bpms csh -x -f ./configure -mingw32 2>&1 | tee build-win32.log
+patch -b < librat-patches/librat-configure.patch
+BPMS=`pwd`/bpms csh -e -x -f ./configure -mingw32 2>&1 | tee build-win32.log
 mv bpms ${W32NAME}
 zip -r ${W32NAME} ${W32NAME}
 rm -f configure
@@ -38,15 +38,15 @@ rm -f configure
 # get official configure again
 wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
 # apply Netcetera windows top level patch, then run configure
-patch < librat-patches/librat-configure.patch
-BPMS=`pwd`/bpms csh -x -f ./configure -mingw64 2>&1 | tee build-win64.log
+patch -b < librat-patches/librat-configure.patch
+BPMS=`pwd`/bpms csh -e -x -f ./configure -mingw64 2>&1 | tee build-win64.log
 mv bpms ${W64NAME}
 zip -r ${W64NAME} ${W64NAME}
 rm -f configure
 
 # get official configure again
 wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
-BPMS=`pwd`/bpms csh -x -f ./configure 2>&1 | tee build-linux64.log
+BPMS=`pwd`/bpms csh -e -x -f ./configure 2>&1 | tee build-linux64.log
 mv bpms ${LINNAME}
 tar -cf ${LINNAME}.tar ${LINNAME}
 gzip -9 ${LINNAME}.tar
