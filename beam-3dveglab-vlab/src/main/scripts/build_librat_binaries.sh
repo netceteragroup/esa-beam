@@ -22,7 +22,7 @@ wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
 # get Netcetera patches for cross-compiling win32/win64 binaries under linux
 mkdir librat-patches
 cd librat-patches
-for f in `elinks -dump https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scripts/librat-patches | egrep 'http.*\.patch'`; do 
+for f in `elinks -dump https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scripts/librat-patches | egrep 'http.*\.patch|http.*librat-testMe.bat'`; do 
   p=`basename $f`
   wget "https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/scripts/librat-patches/$p"
 done
