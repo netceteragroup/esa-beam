@@ -1,0 +1,73 @@
+--- librat/bpms/src/lib/image/envilib.c.orig	2013-10-01 10:18:24.878351376 +0200
++++ librat-mingw32/bpms/src/lib/image/envilib.c	2013-10-01 10:20:41.241954018 +0200
+@@ -7,6 +7,46 @@
+ #include "hiplib.h"
+ #include <stdlib.h>
+ 
++#ifdef __MINGW32__
++/* This code is public domain -- Will Hartung 4/9/09 */
++size_t getline2(char **lineptr, size_t *n, FILE *stream) {
++  char *bufptr = NULL;
++  char *p = bufptr;
++  size_t size;
++  int c;
++
++  if (lineptr == NULL) { return -1; }
++  if (stream == NULL)  { return -1; }
++  if (n == NULL)       { return -1; }
++  bufptr = *lineptr;
++  size = *n;
++  c = fgetc(stream);
++  if (c == EOF)        { return -1; }
++  if (bufptr == NULL) {
++    bufptr = malloc(128);
++    if (bufptr == NULL) { return -1; }
++    size = 128;
++  }
++  p = bufptr;
++  while(c != EOF) {
++    if ((p - bufptr) > (size - 1)) {
++      size = size + 128;
++      bufptr = realloc(bufptr, size);
++      if (bufptr == NULL) { return -1; }
++    }
++    *p++ = c;
++    if (c == '\n') { break; }
++    c = fgetc(stream);
++  }
++
++  *p++ = '\0';
++  *lineptr = bufptr;
++  *n = size;
++
++  return p - bufptr - 1;
++}
++#endif
++
+ char *strcat2(char *s1,char *s2){
+   /* NB for strcat:
+   ** The string s1 must have sufficient space to hold the result.
+@@ -53,7 +93,11 @@
+   my_string = (char *) calloc (nbytes + 1,sizeof(char));
+   buffer = (char *) calloc (nbytes + 1,sizeof(char));
+   while(bytes_read>0){
++#ifdef __MINGW32__
++    bytes_read = getline2(&my_string, &nbytes,f);
++#else
+     bytes_read = getline(&my_string, &nbytes,f);
++#endif
+     tmp = strchr(my_string,'\r');if(tmp != NULL)*tmp = '\0';
+     tmp = strchr(my_string,'\n');if(tmp != NULL)*tmp = '\0';
+ 
+@@ -75,7 +119,11 @@
+               keepGoing = 0;
+             }else{
+               my_string1 = (char *) calloc (nbytes + 1,sizeof(char));
++#ifdef __MINGW32__
++              bytes_read = getline2(&my_string1, &nbytes,f);
++#else
+               bytes_read = getline(&my_string1, &nbytes,f);
++#endif
+               tmp = strchr(my_string1,'\r');if(tmp != NULL)*tmp = '\0';
+               tmp = strchr(my_string1,'\n');if(tmp != NULL)*tmp = '\0';
+               if(bytes_read == 0){
