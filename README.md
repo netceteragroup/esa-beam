@@ -139,6 +139,7 @@ VirtualBox --startvm f19-xfce-dev
 
 BEAM Plugin Contributing Authors
 -----------------------------------------
+* Cyrill Schenkel
 * Daniel Kuekenbrink 
 * Joshy Cyriac 
 * Marcel Kessler 

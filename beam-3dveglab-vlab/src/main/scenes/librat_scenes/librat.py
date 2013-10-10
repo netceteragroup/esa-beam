@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
@@ -9,18 +9,26 @@
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 # more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see http://www.gnu.org/licenses/
-# 
+#
 # @(#) $Id: $
 #
 # This is a simplified python/jython re-implementation of code written by Mat Disney - for original code see
 #  https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes
-# 
+#
 
-import sys, math
+import sys, math, operator
 
+################
+#
+# when running w/jython and not under beam, add jfreechart jars to path e.g.
+#
+# wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
+# wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jcommon/1.0.16/jcommon-1.0.16.jar
+# jython -Dpython.path=jcommon-1.0.16.jar:jfreechart-1.0.13.jar librat.py
+#
 ################
 # to be merged into VLAB class...
 class VLAB:
@@ -32,6 +40,14 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
+  def listdir(path):
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(path).list()
+    else:
+      import os
+      return os.listdir(path)
+  listdir = staticmethod(listdir)
   def checkFile(fname):
     try:
       fp = open(fname, 'rw')
@@ -81,6 +97,7 @@ class VLAB:
     else:
       import os
       try:
+        # os.O_EXCL => open exclusive => acquire a lock on the file
         fd = os.open(filename, os.O_CREAT|os.O_EXCL|os.O_WRONLY|os.O_TRUNC)
       except:
         return None
@@ -117,7 +134,7 @@ class VLAB:
   def d2r(v):
     if sys.platform.startswith('java'):
       from java.lang import Math
-      return Math.toRadians(v)
+      return Math.toRadians(float(v))
     else:
       return math.radians(v)
   d2r = staticmethod(d2r)
@@ -132,7 +149,7 @@ class VLAB:
      try:
        os.stat(path)
      except:
-       os.makedirs(path) 
+       os.makedirs(path)
   mkDirPath = staticmethod(mkDirPath)
   def fPath(d,n):
     if sys.platform.startswith('java'):
@@ -142,13 +159,13 @@ class VLAB:
       import os
       return os.path.join(d, n)
   fPath = staticmethod(fPath)
-  def savetxt(a,b,fmt):
+  def savetxt(a, b, fmt=False):
     fh = open(a, 'w')
     if not fmt:
       fmt = '%s'
     for row in b:
       for element in row:
-        fh.write(fmt % element + ' ') 
+        fh.write(fmt % element + ' ')
       fh.write('\n')
     fh.close()
   savetxt = staticmethod(savetxt)
@@ -253,6 +270,182 @@ class VLAB:
       t1.join(); t2.join()
     print 'exitCode=%d' % exitCode
   doExec = staticmethod(doExec)
+  def valuesfromfile(path, transpose=False):
+    """Returns a 2D array with the values of the csv file at 'path'.
+
+    Keyword arguments:
+    transpose -- transpose the matrix with the values
+
+    """
+    values = [line.strip().split() for line in open(path)
+              if not line.startswith('#')]
+    values = [[float(value) for value in row] for row in values]
+    if transpose:
+      values = zip(*values)
+    return values
+  valuesfromfile = staticmethod(valuesfromfile)
+  def fabsa(x):
+    """Return the element-wise abs() of the given array."""
+    return map(lambda x : math.fabs(x), x)
+  fabsa = staticmethod(fabsa)
+  def cosa(arcs):
+    """Return the element-wise cos() of 'arcs' array given in degrees."""
+    return map(lambda x : math.cos(VLAB.d2r(x)), arcs)
+  cosa = staticmethod(cosa)
+  def replacerectinarray(array, replacement, xul, yul, xlr, ylr):
+    """Replace the array with the specified rectangle substituted with
+    replacement.
+    (array[xul:xlr,yul:ylr])
+     +---------------+
+     |(xul, yul)     |
+     |               |
+     |     (xlr, ylr)|
+     +---------------+
+    """
+    ri = 0
+    for x in xrange(xul, xlr):
+      array[x][yul:ylr] = replacement[ri]
+      ri += 1
+    return array
+  replacerectinarray = staticmethod(replacerectinarray)
+  def replaceinarray(haystack, predicate, replacement):
+    """Return 'haystack' with 'predicate' matches replaced by 'replacement'"""
+    return map(lambda item : {True: replacement, False: item}[predicate(item)],
+               haystack)
+  replaceinarray = staticmethod(replaceinarray)
+  def sqrta(values):
+    """Return the element-wise sqrt() of the given array."""
+    return map(math.sqrt, values)
+  sqrta = staticmethod(sqrta)
+  def suba(lista, listb):
+    """Subtract the values of a list from the values of another list."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.sub, lista, listb)
+  suba = staticmethod(suba)
+  def adda(lista, listb):
+    """Add the values of a list to the values of another list."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.add, lista, listb)
+  adda = staticmethod(adda)
+  def diva(lista, listb):
+    """Return the element-wise division of 'lista' by 'listb'."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.div, lista, listb)
+  diva = staticmethod(diva)
+  def mula(lista, listb):
+    """Return the element-wise multiplication of 'lista' with 'listb'."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.mul, lista, listb)
+  mula = staticmethod(mula)
+  def powa(values, exponent):
+    """Returns the element-wise exp('exponent') of the given array."""
+    if isinstance(exponent, (list, tuple)):
+      return map(lambda x, y : x ** y, values, exponent)
+    return map(lambda x : x ** exponent, values)
+  powa = staticmethod(powa)
+  def treemap(fn, tree):
+    """Applies `fn' to every value in `tree' which isn't a list and
+    returns a list with the same shape as tree and the value of `fn'
+    applied to the values in their place.
+
+    """
+    result = []
+    for node in tree:
+      if isinstance(node, (list, tuple)):
+        result += [VLAB.treemap(fn, node)]
+      else:
+        result += [fn(node)]
+    return result
+  treemap = staticmethod(treemap)
+  def makemaskeq(array, value):
+    return VLAB.treemap(lambda x : x == value, array)
+  makemaskeq = staticmethod(makemaskeq)
+  def awhere(mask):
+    """Returns the coordinates of the cells which evaluate true."""
+    result = []
+    if isinstance(mask, (list, tuple)):
+      for i, cell in enumerate(mask):
+        result += [[i] + sub for sub in VLAB.awhere(cell)
+                   if isinstance(sub, (list, tuple))]
+      return result
+    else:
+      if mask:
+        return [[]]
+      else:
+        return []
+  awhere = staticmethod(awhere)
+  def aclone(tree):
+    """Make a deep copy of `tree'."""
+    if isinstance(tree, (list, tuple)):
+      return list(map(VLAB.aclone, tree))
+    return tree
+  aclone = staticmethod(aclone)
+  def make_chart(title, x_label, y_label, dataset):
+    if sys.platform.startswith('java'):
+      from org.jfree.chart import ChartFactory, ChartFrame, ChartUtilities
+      from org.jfree.chart.axis import NumberTickUnit
+      from org.jfree.chart.plot import PlotOrientation
+      from org.jfree.data.xy import XYSeries, XYSeriesCollection
+      chart = ChartFactory.createScatterPlot(title, x_label, y_label, dataset,
+                                           PlotOrientation.VERTICAL, True, 
+                                           True, False)
+      plot = chart.getPlot()
+      domain_axis = plot.getDomainAxis()
+      domain_axis.setRange(-70, 70)
+      range_axis = plot.getRangeAxis()
+      range_axis.setRange(0.0, 0.4)
+      range_axis.setTickUnit(NumberTickUnit(0.05))
+      return chart
+    else:
+      # TODO: re-merge original python implementation
+      return None
+  make_chart = staticmethod(make_chart)
+  def make_dataset():
+    if sys.platform.startswith('java'):
+      from org.jfree.data.xy import XYSeriesCollection
+      return XYSeriesCollection()
+    else:
+      # TODO: re-merge original python implementation
+      return None
+  make_dataset = staticmethod(make_dataset)
+  def plot(dataset, x, y, label):
+    if sys.platform.startswith('java'):
+      from org.jfree.data.xy import XYSeries
+      series = XYSeries(label)
+      for next_x, next_y in zip(x, y):
+        series.add(float(next_x), float(next_y))
+      dataset.addSeries(series)
+    else:
+      # TODO: re-merge original python implementation
+      return None
+  plot = staticmethod(plot)
+  def save_chart(chart, filename):
+    if sys.platform.startswith('java'):
+      from java.io import File
+      from org.jfree.chart import ChartUtilities
+      ChartUtilities.saveChartAsPNG(File(filename), chart, 800, 600)
+    else:
+      # TODO: re-merge original python implementation
+      pass
+  save_chart = staticmethod(save_chart)
+  def maskand(array, mask):
+    return map(lambda a, b : a & b, array, mask)
+  maskand = staticmethod(maskand)
+  def unique(array):
+    sortedarray = list(array)
+    sortedarray.sort()
+    result = []
+    def addifunique(x, y):
+      if x != y:
+        result.append(x)
+      return y
+    result.append(reduce(addifunique, sortedarray))
+    return result
+  unique = staticmethod(unique)
 
 ################
 class dobrdf:
@@ -431,15 +624,15 @@ class dobrdf:
       'camera_root'     : 'camera',
       'light_root'      : 'light',
       'grabme_root'     : 'grabme',
-      
+
       'look_xyz'        : (150, 150, 35),
       'location'        : False,
-      'vz'              : -1, 
+      'vz'              : -1,
       'va'              : -1,
       'sz'              : -1,
       'sa'              : -1,
     }
-    for a in args: 
+    for a in args:
       if a == 'look':
         q['look_xyz'] = args[a]
       elif a == 'result':
@@ -466,16 +659,16 @@ class dobrdf:
     objfp = VLAB.checkFile(q['objfile'])
 
     # vz va sz sa
-    ang = [line.strip().split() for line in open(q['anglefile'])]
+    ang = VLAB.valuesfromfile(q['anglefile'])
 
     if 'lookFile' in q:
       lookfp = VLAB.checkFile(q['lookFile'])
-      q['look_xyz'] = [line.strip().split() for line in open(q['lookFile'])]
+      q['look_xyz'] = VLAB.valuesfromfile(q['lookFile'])
 
     if len(q['look_xyz']) == 3:
       q['look_xyz'] = ((q['look_xyz']),)
 
-    if len(ang) < 4 or (len(ang) > 4 and len(ang[1]) != 4):
+    if len(ang) < 4 or (len(ang) > 4 and len(ang[0]) != 4):
       sys.stderr.write("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
       sys.exit([True])
 
@@ -511,18 +704,18 @@ class dobrdf:
           q['camfile'] = VLAB.fPath(q['opdir'], q['camera_root'] + '.' + rooty)
           q['oproot'] = VLAB.fPath(q['opdir'], q['result_root'] + '.' + rooty)
           nq = {
-            'name'             : 'simple camera', 
+            'name'             : 'simple camera',
             'vz'               : q['vz'],
-            'va'               : q['va'], 
-            'integral'         : q['oproot'], 
-            'integral_mode'    : q['mode'], 
-            'npixels'          : q['npixels'], 
-            'rpp'              : q['rpp'], 
-            'boom'             : q['boom'], 
-            'ideal'            : q['ideal'], 
+            'va'               : q['va'],
+            'integral'         : q['oproot'],
+            'integral_mode'    : q['mode'],
+            'npixels'          : q['npixels'],
+            'rpp'              : q['rpp'],
+            'boom'             : q['boom'],
+            'ideal'            : q['ideal'],
             'look_xyz'         : look,
-            'location'         : q['location'], 
-            'fov'              : q['fov'], 
+            'location'         : q['location'],
+            'fov'              : q['fov'],
             'samplingPattern'  : q['samplingPattern'],
             'file'             : q['camfile'],
             'grabme_log'       : q['grabme_log'],
@@ -549,21 +742,123 @@ class dobrdf:
 
 ################
 class dolibradtran:
+  def defaultLRT(self, fp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet):
+    fp.write('solar_file ' + solar_file + '\n')
+    fp.write('dens_column ' + dens_column)
+    fp.write('correlated_k ' + correlated_k)
+    fp.write('rte_solver ' + rte_solver)
+    fp.write('rpv_file ' + rpvfile + '\n')
+    fp.write('deltam ' + deltam)
+    fp.write('nstr ' + nstr)
+    fp.write('zout ' + zout)
+    fp.write('output_user ' + output_user)
+    fp.write(quiet)
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
     print '======> ', me
     for a in args:
       print a, " -> ", args[a]
 
-################
-class dolibradtran:
-  def defaultLRT(self, fp, solar_file, dens_column, correlated_k, rt_solver, rpvfile, deltam, nstr, zout, output_user, quiet):
-    True
-  def main(self, args):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    print '======> ', me
+    q = {
+      'LIBRADTRAN_PATH' : '/data/geospatial_07/mdisney/ESA/3Dveglab/libRadtran-1.7/',
+               'ipfile' : 'libradtran.ip',
+               'opfile' : 'libradtran.ip.op',
+                'opdir' : 'libradtran',
+               'wbfile' : 'wb.MSI.dat',
+            'anglefile' : 'angles.MSI.dat',
+              'rpvfile' : 'rpv.laegeren.libradtran.dat',
+                 'root' : 'libradtran',
+                  'lat' : False,
+                  'lon' : False,
+                 'time' : False,
+                'solar' : 'data/solar_flux/NewGuey2003.dat',
+          'dens_column' : 'O3 300.\n',
+         'correlated_k' : 'LOWTRAN\n',
+           'rte_solver' : 'cdisort\n',
+               'deltam' : 'on\n',
+                 'nstr' : '6\n',
+                 'zout' : 'TOA\n',
+          'output_user' : 'lambda uu\n',
+                'quiet' : 'quiet\n',
+                    'v' : False,
+             'plotfile' : False
+    }
+
     for a in args:
-      print a, " -> ", args[a]
+      if a == 'lrtp':
+        q['LIBRADTRAN_PATH']  = args[a]
+      elif a == 'plot':
+        q['plotfile'] = args[a]
+      elif a == 'rpv':
+        q['rpvfile'] = args[a]
+      else:
+        q[a] = args[a]
+
+    LIBRADTRAN = q['LIBRADTRAN_PATH'] + 'bin/uvspec'
+    solar_file = q['LIBRADTRAN_PATH'] + q['solar']
+
+    VLAB.mkDirPath(q['opdir'])
+
+    # TODO prove that LIBRADTRAN_PATH dir exists
+
+    angfp = VLAB.checkFile(q['anglefile'])
+    wbfp = VLAB.checkFile(q['wbfile'])
+    rpvfp = VLAB.checkFile(q['rpvfile'])
+
+    rpv = VLAB.valuesfromfile(q['rpvfile'])
+    if len(rpv[1]) != 4: # length of index 1 because index 0 is heading
+      sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n"
+                       % (sys.argv[0], q['rpvfile']))
+      sys.exit([True])
+
+    ang = VLAB.valuesfromfile(q['anglefile'], transpose=True)
+    wb = [i[1] for i in VLAB.valuesfromfile(q['wbfile'])]
+
+    if q['v']:
+      if q['lat'] and ['lon'] and ['time']:
+        sys.stderr.write("%s: doing lat lon time, not using sun angles in file %s\n"
+                         % (sys.argv[0], q['anglefile']))
+
+    vz = ang[0]
+    va = VLAB.unique(ang[1])
+    umu = VLAB.cosa(vz)
+
+    opdata = [[0. for i in xrange(2)] for i in xrange(len(wb))]
+
+    for n, w in enumerate(wb):
+      libradtran_ip = os.path.join(q['opdir'], 'ip.' + q['root'] + '_wb_' + str(w))
+      libradtran_op = os.path.join(q['opdir'], 'op.' + q['root'] + '_wb_' + str(w))
+
+      if not os.path.exists(libradtran_ip):
+        libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
+        self.defaultLRT(libradtranfp, solar_file, q['dens_column'], q['correlated_k'], q['rte_solver'], q['rpvfile'], q['deltam'], q['nstr'], q['zout'], q['output_user'], q['quiet'])
+
+        libradtranfp.write(' '.join(['umu'] + map(str, umu)) + '\n')
+        libradtranfp.write(' '.join(['phi'] + map(str, va)) + '\n')
+
+        if lat and lon and time:
+          libradtranfp.write('latitude ' + lat + '\n')
+          libradtranfp.write('longitude ' + lon + '\n')
+          libradtranfp.write('time ' + time + '\n')
+        else:
+          sz = VLAB.unique(ang[2])
+          sa = VLAB.unique(ang[3])
+          libradtranfp.write(' '.join(['sza'] + map(str, sz)) + '\n')
+          libradtranfp.write(' '.join(['phi0'] + map(str, sa)) + '\n')
+
+        libradtranfp.write('wavelength ' + str(w) + '\n')
+        libradtranfp.flush()
+
+        cmd = LIBRADTRAN + ' < ' + libradtran_ip + ' > ' + libradtran_op
+        if q['v']:
+          sys.stderr.write('%s: doing cmd %s\n'%(sys.argv[0],cmd))
+        os.system(cmd)
+        opdata[n] = VLAB.valuesfromfile(libradtran_op, transpose=True)
+
+    if q['plotfile']:
+      if q['v']:
+        sys.stderr.write('%s: writing all results to %s\n'%(sys.argv[0],q['plotfile']))
+      VLAB.savetxt(q['plotfile'], opdata)
 
 ################
 class drivers:
@@ -571,10 +866,10 @@ class drivers:
     me=self.__class__.__name__ +'::'+VLAB.me()
 
     # initialize with defaults
- 
+
     # sun angles for eg UK (lat 51' 0" 0' 0") 1 Jun 2013 10:30 am
     # sun_position -lat 51 -lon 0 -date 01:05:2013 -t 10:30:00
-    # va, sz, sa = 0, 34, 141 
+    # va, sz, sa = 0, 34, 141
     q = {
             'vz' : 0,
             'va' : 0,
@@ -589,7 +884,7 @@ class drivers:
     }
 
     # fill in: lookFile, angFile, xdums, ydims, z, sz, sa, nsamples...
-    for a in args: 
+    for a in args:
       if a == 'angles':
         q['angFile']  = args[a]
       elif a == 'look':
@@ -732,10 +1027,87 @@ class plot:
     print '======> ', me
     for a in args:
       print a, " -> ", args[a]
-  def spec_plot(self,spec,wbspec):
-    True
+
+    q = {
+         'spec' : 'SPECTRAL_TEST/result.laegeren.obj_vz_0.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.full_spectrum.dat.direct',
+       'wbfile' : 'wb.full_spectrum.dat',
+         'root' : 'OLCI_brdf.scene/result.laegeren.obj',
+      'angfile' : 'angles.OLCI.dat',
+       'wbfile' : 'wb.MSI.dat',
+         'spec' : False,
+         'brdf' : True
+    }
+
+    for a in args:
+      if a == 'angles':
+        q['angfile'] = args[a]
+      else:
+        q[a] = args[a]
+
+    if q['spec']:
+      sys.stderr.write("not yet implemented")
+      # self.spec_plot(q['spec'], q['wbfile'])
+
+    if q['brdf']:
+      self.brdf_plot(q['root'], q['angfile'], q['wbfile'])
+
+  # def spec_plot(self,spec,wbspec):
+  #   wbspec_contents = VLAB.valuesfromfile(wbspec, transpose=True)
+
+  #   wb = wbspec_contents[1];
+  #   op1 = spec + '.plot.png'
+
+  #   data = wbspec_contents
+  #   refl = data[1:,].sum(axis=1)
+  #   # TODO Implement rest of function
   def brdf_plot(self,root,angfile,wbfile):
-    True
+    opdat = root + '.brdf.dat'
+    opplot = root + '.brdf.png'
+    ang = VLAB.valuesfromfile(angfile, transpose=True)
+    wb = VLAB.valuesfromfile(wbfile, transpose=True)[1]
+
+    result = [[0. for i in range(len(wb))] for i in range(len(ang[0]))]
+
+    ff = [f for f in VLAB.listdir(root) if f.endswith('.direct')]
+    for f in ff:
+      fsplit = f.split('_')
+      vz = f.split('_')[fsplit.index('vz') + 1]
+      va = f.split('_')[fsplit.index('va') + 1]
+      sz = f.split('_')[fsplit.index('sz') + 1]
+      sa = f.split('_')[fsplit.index('sa') + 1]
+
+      data = VLAB.valuesfromfile(f, transpose=True)
+      refl = [reduce(lambda x, y : x + y, i) for i in data[1:]]
+      result[zip(*VLAB.awhere(
+        VLAB.treemap(lambda x : x == float(vz), ang)))[1][0]] = refl
+      # TODO test and cleanup (brdf_plot)
+      # coords = VLAB.treemap(lambda x : x == float(vz), ang[0])
+      # coords = map(lambda x, y : x & y, coords,
+      #              VLAB.treemap(lambda x : x == float(va), ang[1]))
+      # coords = map(lambda x, y : x & y, coords,
+      #              VLAB.treemap(lambda x : x == float(sz), ang[2]))
+      # coords = map(lambda x, y : x & y, coords,
+      #              VLAB.treemap(lambda x : x == float(sa), ang[3]))
+      coords = VLAB.makemaskeq(ang[0], float(vz))
+      coords = VLAB.maskand(coords, VLAB.makemaskeq(ang[1], float(va)))
+      coords = VLAB.maskand(coords, VLAB.makemaskeq(ang[2], float(sz)))
+      coords = VLAB.maskand(coords, VLAB.makemaskeq(ang[3], float(sa)))
+      coords = VLAB.awhere(coords)
+      result[coords[0][0]] = refl
+    dataset = VLAB.make_dataset()
+    for b in [3, 7]:
+      VLAB.plot(dataset, ang[0], [i[b] for i in result],
+           "waveband: %.1f" % wb [b])
+    chart = VLAB.make_chart("plot.py out", "view zenith angle (deg.)",
+                            u"\u03A1", dataset)
+    sys.stderr.write('%s: plotting brdf to: %s\n'%(sys.argv[0], opplot))
+    sys.stderr.write('%s: saving brdf data to: %s\n'%(sys.argv[0], opdat))
+    outdata = [[0. for i in xrange(len(result[0]) + len(ang))]
+               for j in xrange(len(result))]
+    VLAB.replacerectinarray(outdata, zip(*ang), 0, 0, len(result), len(ang))
+    VLAB.replacerectinarray(outdata, zip(*ang), 0, len(ang), len(result), len(result) + len(ang))
+    VLAB.savetxt(opdat, outdata, fmt='%.4f')
+    VLAB.save_chart(chart, opplot)
 
 class rpv_invert:
   def main(self, args):
@@ -744,6 +1116,140 @@ class rpv_invert:
     for a in args:
       print a, " -> ", args[a]
 
+    # defaults
+    q = {
+	'dataf' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
+	'wbfile' : 'wb.MSI.dat',
+	'wbNum' : 3, # 665 nm in this case
+	'verbose' : 1,
+	'plot' : 1,
+	'show' : 0
+    }
+
+    for a in args:
+      if a == 'wb':
+        q['wbfile'] = args[a]
+      else:
+        q[a] = args[a]
+
+    wb = VLAB.valuesfromfile(q['wbfile'], transpose=True)[1]
+    data = VLAB.valuesfromfile(q['dataf'], transpose=True)
+
+    rho0, k, bigtet, rhoc = 0.03, 1.2, 0.1, 0.2
+
+    if q['three']:
+      params = [rho0, k, bigtet]
+    else:
+      params = [rho0, k, bigtet, rhoc]
+
+    if args['paramfile']:
+      opdat = args['paramfile']
+    else:
+      opdat = q['dataf'] + '.params.dat'
+
+    if q['verbose']: sys.stderr.write('%s: saving params to %s\n'%(sys.argv[0], opdat))
+
+    # create the file if it doesn't exist
+    VLAB.openFileIfNotExists(opdat)
+
+    # open the previously created file
+    opfp = open(opdat, 'w')
+
+    if q['three']:
+      opfp.write('# wb rho0 k bigtet\n')
+    else:
+      opfp.write('# wb rho0 k bigtet rhoc\n')
+
+    ymin, ymax = (0, 0.25)
+
+    for wbNum, band in enumerate(wb):
+      if q['verbose']: sys.stderr.write('%s: doing band %i (%f)\n'%(sys.argv[0], wbNum, band))
+
+      invdata = [[0. for i in xrange(len(data))] for i in xrange(5)]
+      invdata[0:4] = data[0:4]
+      invdata[4] = data[4 + q['wbNum']]
+
+      invdata = [[0. for i in xrange(15)] for i in xrange(5)]
+      invdata[0:4] = [i[0:15] for i in data[0:4]]
+      invdata[4] = data[4 + q['wbNum']][0:15]
+
+      porig = params
+      p_est = params
+      # TODO p_est = minimize using the downhill simplex method (rpv_invert.py:143)
+      if q['three']:
+        # TODO p_est = minimize using the L-BFGS-B algorithm (rpv_invert.py:147)
+        pass
+      else:
+        # TODO p_est = minimize using the L-BFGS-B algorithm (rpv_invert.py:151)
+        pass
+      p_est = [[((x + 1.0) * (y + 1.0) + 2.0) * (x + 1.0) * (y + 1.0) * 0.4 for x in range(4)] for y in range(10)] # dummy data
+      r = self.rpv(p_est[0], invdata)
+      rmse = reduce(lambda x, y : x + y, map(lambda x : x ** 2, VLAB.suba(r, invdata[4])))
+      if q['three']:
+        opfp.write('%.1f %.8f %.8f %.8f\n' % (band, p_est[0][0], p_est[0][1], p_est[0][2]))
+      else:
+        opfp.write('%.1f %.8f %.8f %.8f %.8f\n' % (band, p_est[0][0], p_est[0][1], p_est[0][2], p_est[0][3]))
+
+      if q['plot']:
+        if q['plotfile']:
+          opplot = q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png'
+        else:
+          opplot = dataf + '.inv.wb.' + str(wbNum) + '.png'
+
+        if q['verbose']: sys.stderr.write('%s: plotting to %s\n' % (sys.argv[0], opplot))
+
+        dataset = VLAB.make_dataset()
+        VLAB.plot(dataset, invdata[0], invdata[4], "original")
+        VLAB.plot(dataset, invdata[0], r, "inverted")
+        chart = VLAB.make_chart("", "vza (deg)", u"\u03A1", dataset)
+        dataset = None
+        VLAB.save_chart(chart, opplot)
+        chart = None
+        # TODO test plot code
+  def obj(self, p, x):
+    fwd = rpv(p, x)
+    obs = x[4,:]
+    sse = ((obs - fwd) ** 2).sum()
+    return sse
+  def rpv(self, params, data):
+    if len(params) == 4:
+      rho0, k, bigtet, rhoc = params
+    else:
+      rhoc = 1
+      rho0, k, bigtet = params
+    cosv = VLAB.cosa(data[0])
+    coss = VLAB.fabsa(VLAB.cosa(data[2]))
+    cosv = VLAB.replaceinarray(cosv, lambda x : x == 0, 1e-20)
+    coss = VLAB.replaceinarray(coss, lambda x : x == 0, 1e-20)
+    sins = VLAB.sqrta(map(lambda x : 1. - x ** 2, coss))
+    sinv = VLAB.sqrta(map(lambda x : 1. - x ** 2, cosv))
+    relphi = VLAB.suba(map(VLAB.d2r, data[1]),
+                       map(VLAB.d2r, data[3]))
+    relphi = map(lambda x : {True : 2 * math.pi - x, False : x}
+                 [x > math.pi], relphi)
+    cosp = map(lambda x : -1. * x, VLAB.cosa(relphi))
+    tans = VLAB.diva(sins, coss)
+    tanv = VLAB.diva(sinv, cosv)
+    csmllg = VLAB.adda(VLAB.mula(coss, cosv),
+                       VLAB.mula(VLAB.mula(sins, sinv), cosp))
+    bigg = VLAB.sqrta(
+      VLAB.suba(
+        VLAB.adda(map(lambda x : x ** 2, tans), map(lambda x : x ** 2, tanv)),
+        VLAB.mula(VLAB.mula(map(lambda x : x * 2.0, tans), tanv), cosp)))
+    bgthsq = bigtet ** 2
+    expon = k - 1.0
+    if expon != 0.0:
+      f1 = VLAB.mula(VLAB.powa(VLAB.mula(coss, cosv), expon),
+                     VLAB.powa(VLAB.adda(coss, cosv), expon))
+    else:
+      fi = [1. for i in coss]
+    denom = VLAB.powa(map(lambda x : 1. + bgthsq + 2. * bigtet * x, csmllg),
+                      1.5)
+    f2 = list(denom)
+    f2 = map(lambda x : {True : (1.0 - bgthsq) * 1e20, False : (1.0 - bgthsq) / x}
+             [x == 0.], relphi)
+    f3 = map(lambda x : 1.0 + (1 - rhoc) / (1. + x), bigg)
+    return map(lambda x : rho0 * x, VLAB.mula(VLAB.mula(f1, f2), f3))
 
 ################
 
@@ -760,15 +1266,15 @@ args = {
    'n'      : 1000,
    'angles' : 'angles.rpv.2.dat',
 }
-drivers.main(args)
+# drivers.main(args)
 
 args = {
         'v' : True,
-     'nice' : 19, 
+     'nice' : '',
       'obj' : 'HET01_DIS_UNI_NIR_20.obj',
      'hips' : True,
        'wb' : 'wb.MSI.dat',
-    'ideal' : (80., 80.), 
+    'ideal' : (80., 80.),
      'look' : (0., 0., 0.),
       'rpp' : 4,
   'npixels' : 10000,
@@ -776,29 +1282,32 @@ args = {
    'angles' : 'angles.rpv.2.dat',
     'opdir' : 'rpv.rami'
 }
-dobrdf.main(args)
+# dobrdf.main(args)
 
-args = {
-     'brdf' : True,
-    'angles': 'angles.rpv.2.dat',
-     'root' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj'
-}
-plot.main(args)
+# args = {
+#      'brdf' : True,
+#     'angles': 'angles.rpv.2.dat',
+#      'root' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj'
+# }
+# plot.main(args)
 
 args = {
     'three' : True,
         'v' : True,
      'plot' : True,
-     'data' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
-'paramfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
- 'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params'
+    'dataf' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+'paramfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+ 'plotfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
 }
 rpv_invert.main(args)
 
 args = {
   'opdir' : 'rami.TOA',
       'v' : True,
-    'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
-   'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all'
+    'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+   'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
+    'lat' : 50,
+    'lon' : 0,
+   'time' : "2013 0601 12 00 00"
 }
-dolibradtran.main(args)
+# dolibradtran.main(args)
