@@ -8,73 +8,117 @@ i.e. this only needs to be done once and drives all subsequent simulations. Does
 
 2. Simulate BRDF of canopy at these angles and MSI wavebands for RAMI and Laegeren canopy - via toolbox if required (note 1000 simulations in each case):
 
+DEFAULT ANGLES: angles.rpv.2.dat
+DEFAULT WAVEBAND: wb.MSI.dat
+
 ./dobrdf.py -v -nice 19 -obj laegeren.obj.lai.1 -hips -wb wb.MSI.dat -ideal 300 300 -look 150 150 710 -rpp 4 -npixels 10000 -boom 786000 -angles angles.rpv.2.dat -opdir rpv.laegeren
 ./dobrdf.py -v -nice 19 -obj HET01_DIS_UNI_NIR_20.obj -hips -wb wb.MSI.dat -ideal 80 80 -look 0 0 0 -rpp 4 -npixels 10000 -boom 786000 -angles angles.rpv.2.dat -opdir rpv.rami
 
+
+DART ANGLES: angle.rpv.cosDOM.dat
+FULL SPECTRUM: wb.full_spectrum.1nm.dat
+
+(nice +19 ./dobrdf.py -v -nice 19 -obj HET01_DIS_UNI_NIR_20.obj -wb wb.full_spectrum.1nm.dat -ideal 80 80 -look 0 0 0 -rpp 4 -npixels 10000 -boom 786000 -angles angle.rpv.cosDOM.dat -opdir dart.rpv.rami & ) > & dart.rpv.rami.1.log
+(nice +19 ./dobrdf.py -v -nice 19 -obj laegeren.obj.lai.1 -wb wb.full_spectrum.1nm.dat -ideal 300 300 -look 150 150 710 -rpp 4 -npixels 10000 -boom 786000 -angles angle.rpv.cosDOM.dat -opdir dart.rpv.laegeren & ) > & dart.rpv.laegeren.1.log
+
 3. Collect all the BRDF simulations into a single file using plot.py. This script *should* be provided with the toolbox as it will be the one that allows the user to generate basic spectral or angular plots from the simulated reflectance data. A simple interface to this from the toolbox should be provided if at all possible - it just needs to know the name of the angles file, wavebands file and root file name for the output of the simulations (default wb file is wb.MSI.dat): 
 
-./plot.py -brdf -angles angles.rpv.2.dat -root rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj
-./plot.py -brdf -angles angles.rpv.2.dat -root rpv.laegeren/result.laegeren.obj.lai.1
+DEFAULT REQUIREMENT: angle file (angles.rpv.2.dat) and root name for o/p (rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj)
+PLOT BANDS: 4 and 7 corresponding to entries 4, 7 in the waveband file (default is wb.MSI.dat), corresponding to wavelengths 660nm and 783nm
+./plot.py -brdf -angles angles.rpv.2.dat -wbfile wb.MSI.dat -root rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj -bands 4 7 -v
+./plot.py -brdf -angles angles.rpv.2.dat -wbfile wb.MSI.dat -root rpv.laegeren/result.laegeren.obj.lai.1  -bands 4 7 -v
 
-the outputs in this case are effectively the LUTs of reflectance:
+
+DART ANGLES AND FULL SPECTRUM: note bands to plot in this case are: 650nm and 850nm
+./plot.py -brdf -wbfile wb.full_spectrum.1nm.dat -angles angle.rpv.cosDOM.dat -root dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj -bands 250 450 -v
+./plot.py -brdf -wbfile wb.full_spectrum.1nm.dat -angles angle.rpv.cosDOM.dat -root dart.rpv.laegeren/result.laegeren.obj.lai.1 -bands 250 450 -v
+
+The resulting o/p files are effectively the LUTs of TOC reflectance:
 
 rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat
 rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat
+
+dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat
+dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat
 
 where each line is the input set of angles (vz, va, sz, sa) followed by the simulated TOC BRF for each of the 12 MSI wavebands. The red, NIR simulated TOC BRFs are also plotted in:
 
 rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.png
 rpv.laegeren/result.laegeren.obj.lai.1.brdf.png
 
-4. Invert the 3-parameter RPV model against these BRFs to obtain per band best estimates of the RPV model parameters using rpv_invert.py. Again, this script can be provided with the toolbox I guess, but essentially only needs to be run the once for a particular canopy. This requires scipy and numpy and so is a little more complex than some of the others in terms of dependencies but runs with standard Enthought Python:
+dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.png 
+dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.png
 
+
+4. Invert the 3-parameter RPV model against these TOC BRFs to obtain per band best estimates of the RPV model parameters using rpv_invert.py. Again, this script can be provided with the toolbox I guess, but essentially only needs to be run the once for a particular canopy. This requires scipy and numpy and so is a little more complex than some of the others in terms of dependencies but runs with standard Enthought Python:
+
+DEFAULT: provide TOC data LUT (rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat), rpv parameter file with params at same wavelengths as simulated in TOC data file
 ./rpv_invert.py -three -v -plot -data rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat -paramfile rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plotfile rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params
 ./rpv_invert.py -three -v -plot -data rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat -paramfile rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plotfile rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params
+
+DART ANGLES:
+./rpv_invert.py -three -v -plot -data dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat -paramfile dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plotfile dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params
+./rpv_invert.py -three -v -plot -data dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat -paramfile dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plotfile dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params
 
 which results in files containing per-wavebands estimates of the 3 RPV parameters i.e. wb rho0 k bigtet
 
 rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat
 rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat
 
+dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat
+dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat
+
 and a plot of each waveband of original (librat simulated) BRF, with the corresponding rpv-derived fwd model fit eg for RED band (665nm):
 
 rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.inv.wb.3.png
 rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.inv.wb.3.png
 
+DART ANGLES:
+dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params.inv.wb.3.png
+dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params.inv.wb.3.png
+
+
 5. Finally, use the RPV parameters to simulate the TOA radiance from the original TOC refl:
 
-EITHER for angles specified in an angles file (default: angles.MSI.dat)
-./dolibradtran.py -opdir rami.TOA -v -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA/rpv.rami.libradtran.dat.all
-./dolibradtran.py -opdir laegeren.TOA -v -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA/rpv.laegeren.libradtran.dat.all
+dolibradtran generates an individual input file for libradtran based on:
 
-OR for lat (deg) lon (deg) time YYYY MM DD HH MM SS:
-./dolibradtran.py -opdir rami.TOA -v -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA/rpv.rami.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00"
-./dolibradtran.py -opdir laegeren.TOA -v -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA/rpv.laegeren.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00"
+EITHER angles file [-angles] default is angles.MSI.dat OR lat, lon, time [-lat 50 -lon 0 -time "2013 06 01 12 00 00"]
+PLUS: rpv param file [-rpv] which contains rpv parameters across the required wavelength range
+PLUS: location of libradtran executable and data files including atmos profile [-libradtran_path]
+PLUS: optional waveband file [-wbfile] which is used to determine the upper and lower wavelength range
 
-where dolibradtran generates an individual input file for libradtran based on:
+OUTPUT: LUT of libradtran simulations, at each angle, covering all wavebands (min to max in steps of 1nm) with format of
+vz1 va1 sz1 sa1 wb1 wb2 wb3 ...
+vz2 va2 sz2 sa2 wb1 wb2 wb3 ...
 
-EITHER angles file - default is angles.MSI.dat, can be specified on cmd line OR lat, lon, time
-wavebands - default is wb.MSI.dat (same as for RPV obviously - would need to change this for different wavebands), can be specified on cmd line
-rpv param file - specified as above on cmd line
-location of libradtran executable and data files including atmos profile  - specified as libradtran_path on cmd line
+DEFAULT: angles file (default: angles.MSI.dat i.e. single angle), wbs are determined by start and end wb in default (wb.MSI.dat) BUT step is 1nm - default due to solar spectrum file
+(nice +19 ./dolibradtran.py -v -opdir rami.TOA -angles angles.MSI.dat -wbfile wb.MSI.dat -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA/rpv.rami.libradtran.dat.all &) >& x1.log
+(nice +19 ./dolibradtran.py -v -opdir laegeren.TOA -angles angles.MSI.dat -wbfile wb.MSI.dat -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA/rpv.laegeren.libradtran.dat.all &) >& x2.log
 
-and results in the output of:
-
+OUTPUT:
 rami.TOA/rpv.rami.libradtran.dat.all
 laegeren.TOA/rpv.laegeren.libradtran.dat.all
 
-which are spectral plots of TOA radiance, based on this atmosphere, generated by uvspec (the libradtran executable).
+DART ANGLES and FULL WB: here, we specify the wbfile which gives the upper and lower wb limits (wb.full_spectrum.1nm.dat)
+(nice +19 ./dolibradtran.py -v -angles angle.rpv.cosDOM.dat -wbfile wb.full_spectrum.1nm.dat -opdir dart.rami.TOA -rpv dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot dart.rami.TOA/rpv.rami.libradtran.dat.all &) >& x1.log
+(nice +19 ./dolibradtran.py -v -angles angle.rpv.cosDOM.dat -wbfile wb.full_spectrum.1nm.dat -opdir dart.laegeren.TOA -rpv dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot dart.laegeren.TOA/rpv.laegeren.libradtran.dat.all &) >& x2.log
+
+OUTPUT:
+dart.rami.TOA/rpv.rami.libradtran.dat.all
+dart.laegeren.TOA/rpv.laegeren.libradtran.dat.all
+
+OR for lat (deg) lon (deg) time YYYY MM DD HH MM SS:
+(nice +19 ./dolibradtran.py -v -opdir rami.TOA.date -rpv rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat -plot rami.TOA.date/rpv.rami.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00" &) >& x1.log
+(nice +19 ./dolibradtran.py -v -opdir laegeren.TOA.date -rpv rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat -plot laegeren.TOA.date/rpv.laegeren.libradtran.dat.all -lat 50 -lon 0 -time "2013 06 01 12 00 00" &) >& x2.log
+
+OUTPUT:
+rami.TOA.date/rpv.rami.libradtran.dat.all
+laegeren.TOA.date/rpv.laegeren.libradtran.dat.all
+
+NOTE:
+Because libradtran (uvspec executable) is slow (e.g. ~15 mins for a single angle for full spectrum of wavebands on Intel Xeon 3.0GHz, RHLinux, 64GB RAM), you can run multiple copies of dolibradtran simultaneously - processing proceeds by looking for the next available angle in the specified angle file which does not have an associated op file, it then touches this file into existence and proceeds to do the uvspec simulation. As a consequence, the results can only be collected at the end of processing i.e. after all simulations are run. To do this a separate script is provided:
 
 NEW: DHP simulations:
-
-The lookFile required is the locations of where the DHPs are to be
-simulated i.e. dhp.locations.ondem.dat here.  I've kept the simulation
-basic here (1 ray per pixel and small image) for testing. The locations
-file is what we'd expect the user to provide through the toolbox
-(i.e. list of x, y, z locations of where simulations are to be done).
-
-./dobrdf.py -v -nice 19 -obj laegeren.obj.lai.1 -hips -wb wb.image.dat -dhp -samplingPattern circular -lookFile dhp.locations.ondem.dat -angles angles.MSI.dat -fov 150 -rpp 8 -npixels 4000000 -opdir DHP_TEST
-
-
+./dobrdf.py -v -nice 19 -obj laegeren.obj.lai.1 -hips -wb wb.image.dat -dhp -samplingPattern circular -lookFile dhp.locations.ondem.dat -angles angles.dhp.dat -fov 150 -rpp 8 -npixels 4000000 -opdir DHP_TEST
 
 [M. Disney]

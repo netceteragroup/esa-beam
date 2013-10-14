@@ -55,10 +55,10 @@ def rpv(params,data):
 
 def main():
 
-	dataf = 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat'
+	dataf = 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat'
+
 
 	wbfile = 'wb.MSI.dat'
-	wb = np.genfromtxt(wbfile,unpack=True)[1]
 	wbNum = 3 # 665 nm in this case
 
 	verbose = 1
@@ -66,14 +66,17 @@ def main():
 	show = 0
 	
 	if options.dataf: dataf = options.dataf
-	if options.wbfile:
-		wbfile = options.wbfile
-		wb = np.genfromtxt(wbfile,unpack=True)[1]
+	if options.wbfile: wbfile = options.wbfile
 	if options.wb: wbNum = options.wb
 	if options.v: verbose = 1
 
-	
-	data = np.genfromtxt(dataf,unpack=True)
+	wb = np.genfromtxt(wbfile,comments='#',unpack=True)[1]	
+	data = np.genfromtxt(dataf,comments='#',unpack=True)
+
+	# check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
+	if wb.shape[0] != data.shape[0]-4:
+		sys.stderr.write('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],dataf,wbfile))
+		sys.exit(1)
 	
 	# rpv params
 	rho0, k, bigtet, rhoc = 0.03, 1.2, 0.1, 0.2
@@ -117,11 +120,16 @@ def main():
 	else:
 		#opfp.write('# wb RMSE rho0 k bigtet rhoc\n')
                 opfp.write('# wb rho0 k bigtet rhoc\n')
+
 	ymin, ymax = (0, 0.25)
+	xmin, xmax = (-75., 75)
 	
 	#invert test
 	#which wband?
 	# do per band
+
+	# test
+	#np.savetxt('xxxtest.in.dat',data.T)
 	
 	for wbNum, band in enumerate(wb):
 		if verbose: sys.stderr.write('%s: doing band %i (%f)\n'%(sys.argv[0], wbNum, band))
@@ -130,9 +138,9 @@ def main():
 		invdata[0:4] = np.copy(data[0:4])
 		invdata[4] = np.copy(data[4 + wbNum])
 	
-		invdata = np.zeros((5,15))
-		invdata[0:4] = np.copy(data[0:4,0:15])
-		invdata[4] = np.copy(data[4 + wbNum,0:15])
+		#invdata = np.zeros((5,15))
+		#invdata[0:4] = np.copy(data[0:4,0:15])
+		#invdata[4] = np.copy(data[4 + wbNum,0:15])
 		
 		# now do inversion
 		porig = params
@@ -149,7 +157,13 @@ def main():
 
 		# r is fwd-modelled refl based on rpv params
 		r = rpv(p_est[0],invdata)
-		rmse = ((r - invdata[4])**2).sum()
+		rmse = np.sqrt(((r - invdata[4])**2).sum())
+
+		# test o/p
+		#np.savetxt('xxxtest.orig.dat',invdata.T)
+		#np.savetxt('xxxtest.fwd.dat',r.T)
+		#sys.exit(1)
+
 		if options.three:
 			#opfp.write('%.1f %.8f %.8f %.8f %.8f\n'%(band, rmse, p_est[0][0],p_est[0][1],p_est[0][2]))
                         opfp.write('%.1f %.8f %.8f %.8f\n'%(band, p_est[0][0],p_est[0][1],p_est[0][2]))
@@ -174,6 +188,7 @@ def main():
 			ax.set_xlabel('vza (deg)',fontsize=14)
 			ax.set_ylabel(r'$\rho$',fontsize=20)
 			ax.set_ylim((ymin, ymax))
+			ax.set_xlim((xmin, xmax))
 			ax.text(0.05,0.85,'rmse  = %.6f'%(rmse), transform = ax.transAxes)
 			ax.text(0.05,0.8,'rho0   = %.4f'%(p_est[0][0]),transform = ax.transAxes)
 			ax.text(0.05,0.75,'k      = %.4f'%(p_est[0][1]),transform = ax.transAxes)
