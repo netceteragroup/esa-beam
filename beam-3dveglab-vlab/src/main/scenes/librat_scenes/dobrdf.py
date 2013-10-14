@@ -92,6 +92,8 @@ def main():
 	if options.niceLevel: 
 		if _UNIX_:
 			nice = 'nice +' + np.str(niceLevel)
+                        # temporarily disable
+			nice = ''
 		else:
 			nice = ''
 	if options.samplingPattern:
