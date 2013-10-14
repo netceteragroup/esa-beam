@@ -1,0 +1,23 @@
+To: Mat Disney
+From: Tiangang Yin
+Date: 4 Oct 2013
+Subject: libradtran stuff
+
+Hi Mat
+
+Since DART is not working based on Monte-Carlo selection of directions
+(both sun and view direction), in order to keep the conservation of
+energy, the 4-pi space is discretized into fixed angular sectors. And what
+I did is just to make this discretization cosine-weighted. Therefore,
+DART could only work with these fixed directions, so we have fixed
+26 sun directions and 43 view directions per sun direction (totally
+1118). Both of them are cosine-weighted. This is the difference between
+DART and libradtran. And what I did previously is to make the histogram
+of angle distribution consistent with your Monte-Carlo directions. This
+part is explained in the [cosWDO.pdf] report I send you. If you check the
+3D distribution of my angles, it should be like a regional-converged
+kernels comparing with your directions.
+
+Sincerely,
+Tiangang
+
