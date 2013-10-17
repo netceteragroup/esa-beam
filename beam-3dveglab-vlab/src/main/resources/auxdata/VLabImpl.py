@@ -78,10 +78,10 @@ class VLAB:
   K_YES              = 'Yes'
   K_NO               = 'No'
 
-  K_SENTINEL2        = 'Sentinel-2'
-  K_SENTINEL3        = 'Sentinel-3'
-  K_MODIS            = 'Modis'
-  K_MERIS            = 'Meris'
+  K_SENTINEL2        = 'MSI (Sentinel 2)'
+  K_SENTINEL3        = 'OLCI (Sentinel 3)'
+  K_MODIS            = 'MODIS'
+  K_MERIS            = 'MERIS'
   K_LANDSAT          = 'Landsat'
 
   K_RURAL            = 'Rural'
