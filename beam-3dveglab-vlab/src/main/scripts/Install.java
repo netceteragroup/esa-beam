@@ -197,7 +197,7 @@ public class Install {
   
   private static void install(String repoURL, String manifestUrl) throws Exception {
     String cwd = new File(".").getCanonicalPath();
-    String endPath = "beam-4.10.3:bin".replaceAll(":", Matcher.quoteReplacement(File.separator));
+    String endPath = "beam-4.11:bin".replaceAll(":", Matcher.quoteReplacement(File.separator));
     if (!cwd.endsWith(endPath)) {
       die("Run me from inside a directory ending with: " + endPath + " (not: " + cwd + ")");
     }
