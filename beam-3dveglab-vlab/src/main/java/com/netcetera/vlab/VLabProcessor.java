@@ -50,6 +50,7 @@ public class VLabProcessor extends Processor {
         auxdataInstallDir = super.getDefaultAuxdataInstallDir();
         _logger.info("instantiating VLabProcessor delegate...");
         try {
+			installAuxdata();
 			delegate = (IVLabProcessor) VLabJythonFactory.getJythonObject(
 					JYTHON_PROC_ICLASSNAME, new File(auxdataInstallDir,
 							JYTHON_IMPL_CLASSNAME + ".py").getAbsolutePath(),
@@ -62,7 +63,7 @@ public class VLabProcessor extends Processor {
     }
 
     public void setProgressBarDepth(int progessBarDepth)  { _progressBarDepth = progessBarDepth; }
-    public void initProcessor() throws ProcessorException { installAuxdata(); }
+    public void initProcessor() throws ProcessorException { }
     @Override public void   process(ProgressMonitor pm)   throws ProcessorException {
     	try {
 			delegate.process(pm, getRequest());
