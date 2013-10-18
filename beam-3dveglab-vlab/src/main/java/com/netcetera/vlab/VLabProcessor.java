@@ -36,10 +36,7 @@ public class VLabProcessor extends Processor {
 	
     private static final String JYTHON_PROC_ICLASSNAME = "com.netcetera.vlab.IVLabProcessor";
     private static final String JYTHON_IMPL_CLASSNAME  = "VLabImpl";
-    private static final String VLAB_PROCNAME          = "BEAM VLab Processor";
     private static final String VLAB_SYMNAME           = "beam-vlab";
-    private static final String VLAB_VERSION           = "1.0";
-    private static final String VLAB_COPYRIGHT         = "Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)";
     public  static final String HELP_ID                = "vlab";
     private static final String VLAB_LOGGERID          = "beam.processor.vlab";
     private final Logger _logger                       = Logger.getLogger(VLAB_LOGGERID);
@@ -50,6 +47,16 @@ public class VLabProcessor extends Processor {
     private static IVLabProcessor delegate;
 
     public VLabProcessor() {
+        auxdataInstallDir = super.getDefaultAuxdataInstallDir();
+        _logger.info("instantiating VLabProcessor delegate...");
+        try {
+			delegate = (IVLabProcessor) VLabJythonFactory.getJythonObject(
+					JYTHON_PROC_ICLASSNAME, new File(auxdataInstallDir,
+							JYTHON_IMPL_CLASSNAME + ".py").getAbsolutePath(),
+					JYTHON_IMPL_CLASSNAME);
+        } catch (Exception e) {
+        	throw new RuntimeException(e.getMessage() + "\n__________\n" + StringUtils.join(e.getStackTrace(), "\n"));
+        }
         _progressBarDepth = 3;
         setDefaultHelpId(HELP_ID);
     }
@@ -64,26 +71,16 @@ public class VLabProcessor extends Processor {
 		}
     }
     @Override public String getUITitle()                  { return delegate.getUITitle(); }
-    // @TODO: see why we're not having the delegate handle these too
-    @Override public String getName()                     { return VLAB_PROCNAME; }
-    @Override public String getSymbolicName()             { return VLAB_SYMNAME; }
-    @Override public String getVersion()                  { return VLAB_VERSION; }
-    @Override public String getCopyrightInformation()     { return VLAB_COPYRIGHT; }
+    @Override public String getName()                     { return delegate.getName(); }
+    @Override public String getVersion()                  { return delegate.getVersion(); }
+    @Override public String getCopyrightInformation()     { return delegate.getCopyrightInformation(); }
     @Override public int getProgressDepth()               { return _progressBarDepth; }
+    // @TODO: see why delegate.getSymbolicName() doesn't work
+    @Override public String getSymbolicName()             { return VLAB_SYMNAME; }
   
     @Override
     public ProcessorUI createUI() throws ProcessorException {
-        auxdataInstallDir = super.getAuxdataInstallDir();
-        _logger.info("instantiating ProcessorUI delegate...");
         if (_processorUI == null) { _processorUI = new VLabUi(); }
-        try {
-			delegate = (IVLabProcessor) VLabJythonFactory.getJythonObject(
-					JYTHON_PROC_ICLASSNAME, new File(auxdataInstallDir,
-							JYTHON_IMPL_CLASSNAME + ".py").getAbsolutePath(),
-					JYTHON_IMPL_CLASSNAME);
-        } catch (Exception e) {
-        	throw new ProcessorException(e.getMessage() + "\n__________\n" + StringUtils.join(e.getStackTrace(), "\n"));
-        }
         return _processorUI;
     }
 }

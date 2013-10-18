@@ -51,12 +51,12 @@ from javax             import swing
 ## Vegetation Lab constants, "data model", utilities etc
 ##
 class VLAB:
-  COPYRIGHT_INFO     = ''
+  COPYRIGHT_INFO     = 'Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)'
   PROCESSOR_NAME     = 'BEAM VLab Processor'
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '0.1'
+  VERSION_STRING     = '1.0 (2013-10-18)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
