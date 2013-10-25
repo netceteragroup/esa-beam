@@ -450,6 +450,45 @@ class VLAB:
     result.append(reduce(addifunique, sortedarray))
     return result
   unique = staticmethod(unique)
+  def ravel(a):
+    def add(a, i):
+      if not(isinstance(a, (list, tuple))):
+        a = [a]
+      if isinstance(i, (list, tuple)):
+        return a + ravel(i)
+      else:
+        return a + [i]
+    return reduce(add, a)
+  ravel = staticmethod(ravel)
+  def min_l_bfgs_b(f, initial_guess, args=(), bounds=None, epsilon=1e-8):
+    """The `approx_grad' is not yet implemented, because it's not yet
+used."""
+    if sys.platform.startswith('java'):
+      from lbfgsb import DifferentiableFunction, FunctionValues, Bound
+      class function(DifferentiableFunction):
+        def __init__(self, function, args=()):
+          self.function = function
+          self.args = args
+        def getValues(self, x):
+          f = self.function(x, *self.args)
+          g = VLAB.approx_fprime(x, self.function, epsilon, *self.args)
+          return FunctionValues(f, g)
+      min = Minimizer()
+      min.setBounds([Bound(bound[0], bound[1]) for bound in bounds])
+      result = min.run(function(f, args), VLAB.ravel(initial_guess))
+      return result.point
+  min_l_bfgs_b = staticmethod(min_l_bfgs_b)
+  def approx_fprime(xk, f, epsilon, *args):
+    f0 = f(*((xk,) + args))
+    grad = [0. for i in xrange(len(xk))]
+    ei = [0. for i in xrange(len(xk))]
+    for k in xrange(len(xk)):
+      ei[k] = 1.0
+      d = map(lambda i : i * epsilon, ei)
+      grad[k] = (f(*((xk + d,) + args)) - f0) / d[k]
+      ei[k] = 0.0
+    return grad
+  approx_fprime = staticmethod(approx_fprime)
 
 ################
 class dobrdf:
