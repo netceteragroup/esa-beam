@@ -87,7 +87,8 @@ class dobrdf:
     try:
       VLAB.copyfile(q['fname'], '%s_%s' % (q['fname'], time.time()))
     except Exception:
-      sys.exc_clear()
+      if not sys.platform.startswith('java'):
+        sys.exc_clear()
     fp = open(q['fname'], 'w')
     fp.write(mdata)
     fp.close()
@@ -147,7 +148,8 @@ class dobrdf:
     try:
       VLAB.copyfile(q['fname'], '%s_%s' % (q['fname'], time.time()))
     except Exception:
-      sys.exc_clear()
+      if not sys.platform.startswith('java'):
+        sys.exc_clear()
     fp = open(q['fname'], 'w')
     fp.write(pdata)
     fp.close()
@@ -200,7 +202,8 @@ class dobrdf:
     try:
       VLAB.copyfile(q['fname'], '%s_%s' % (q['fname'], time.time()))
     except Exception:
-      sys.exc_clear()
+      if not sys.platform.startswith('java'):
+        sys.exc_clear()
     fp = open(q['fname'], 'w')
     fp.write(adata)
     fp.close()
@@ -233,7 +236,8 @@ class dobrdf:
     try:
       VLAB.copyfile(q['fname'], '%s_%s' % (q['fname'], time.time()))
     except Exception:
-      sys.exc_clear()
+      if not sys.platform.startswith('java'):
+        sys.exc_clear()
     fp = open(q['fname'], 'w')
     fp.write(ddata)
     fp.close()
