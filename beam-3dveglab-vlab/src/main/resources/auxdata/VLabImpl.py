@@ -15,7 +15,7 @@
 # 
 # @(#) $Id: $
 #
-# Authors: Daniel Kueckenbrink, Joshy Cyriac, Marcel Kessler, Jason Brazile
+# Authors: Cyril Schenkel, Daniel Kueckenbrink, Joshy Cyriac, Marcel Kessler, Jason Brazile
 #
 import sys
 
@@ -88,6 +88,24 @@ class VLAB:
   K_MARITIME         = 'Maritime'
   K_URBAN            = 'Urban'
   K_TROPOSPHERIC     = 'Tropospheric'
+
+  ERR                = 'error'
+  DBG                = 'debug'
+  INF                = 'info'
+
+  if sys.platform.startswith('java'):
+    from java.util.logging import Logger
+    logger = Logger.getLogger(LOGGER_NAME)
+  else:
+    logger = logging.getLogger(LOGGER_NAME)
+    logger.setLevel(logging.DEBUG)
+    # logfh = logging.FileHandler('%s.log' % VLAB.LOGGER_NAME)
+    # logfh.setLevel(logging.DEBUG)
+    # VLAB.logger.addHandler(logfh)
+    logch = logging.StreamHandler()
+    logch.setLevel(logging.DEBUG)
+    logger.addHandler(logch)
+
   plst = []
 
   model = (
@@ -161,15 +179,6 @@ class VLAB:
               exec('P_' + nm + ' = nm')
               exec('L_' + nm + ' = lbl')
               plst.append(nm)
-
-  def dependsOn(who,what):
-    if (not (File(VLAB.expandEnv(what))).exists()):
-      (Logger.getLogger(VLAB.LOGGER_NAME)).info("Error: \"%s\" expected \"%s\" to exist" % ( who, VLAB.expandEnv(what) ))
-  dependsOn = staticmethod(dependsOn)
-  def created(who,what):
-    if (not (File(VLAB.expandEnv(what))).exists()):
-      (Logger.getLogger(VLAB.LOGGER_NAME)).info("Error: \"%s\" failed to generate \"%s\"" % ( who, VLAB.expandEnv(what) ))
-  created = staticmethod(created)
   def me():
     nm = ''
     try:
@@ -198,8 +207,7 @@ class VLAB:
             self.writer.write(line + System.getProperty('line.separator'))
             self.writer.flush()
           else:
-            (Logger.getLogger(VLAB.LOGGER_NAME)).info(
-              self.stype + ": " + line + System.getProperty('line.separator'))
+            VLAB.logger.info(self.stype + ": " + line)
           line = br.readLine()
         if self.writer != None:
           self.writer.close()
@@ -282,13 +290,12 @@ class VLAB:
 ##
 class DUMMY:
   def __init__(self):
-    self._log = Logger.getLogger(VLAB.LOGGER_NAME)
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me + ": constructor completed...")
+    VLAB.logger.info('VLAB %s: constructor completed' % me)
 
-  def doTopOfCanopyBRF(self, params):
+  def doProcessing(self, params):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
+    VLAB.logger.info('VLAB %s' % me)
 
     cmd = {
     'linux' : {
@@ -312,46 +319,18 @@ class DUMMY:
     }
     VLAB.doExec(cmd)
 
-
 ##
 ## DART-specific integration glue
 ##
 class DART:
   def __init__(self):
-    self._log = Logger.getLogger(VLAB.LOGGER_NAME)
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me + ": constructor completed...")
+    VLAB.logger.info('VLAB %s: constructor completed...' % me)
 
-  def _createScene(self):
+  def doProcessing(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
-    VLAB.dependsOn(me, "locations.dat")
-    VLAB.dependsOn(me, "soil.dat")
-    self._log.info(me + ": executing...")
-    #
-    # [more would happen here]
-    #
-    VLAB.created(me,   "object_3d.obj")
 
-  def _runSimulation(self):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/atmosphere.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/coeff_diff.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/directions.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/inversion.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/log.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/maket.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/object_3d.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/phase.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/plots.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/sequence_apex.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/trees.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/triangleFile.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/urban.xml')
-    VLAB.dependsOn(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/input/water.xml')
-
-    self._log.info(me + ": executing...")
+    VLAB.logger.info('VLAB %s: executing...' % me)
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/lignes_commande/linux',
@@ -374,9 +353,7 @@ class DART:
     }
     VLAB.doExec(cmd)
 
-    VLAB.created(me, '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/output/BAND0')
-
-    self._log.info(me + ": executing...")
+    VLAB.logger.info('VLAB %s: executing...' % me)
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/dart_local/simulations/Laegeren/output',
@@ -400,23 +377,16 @@ class DART:
     }
     VLAB.doExec(cmd)
 
-  def doTopOfCanopyBRF(self, params):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
-    self._createScene()
-    self._runSimulation()
-
 ##
 ## librat-specific integration glue
 ##
 class LIBRAT:
   def __init__(self):
-    self._log = Logger.getLogger(VLAB.LOGGER_NAME)
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me + ": constructor completed...")
+    VLAB.logger.info('VLAB %s: constructor completed...' % me)
 
   def _cmdHelper(self, cmdLine):
-    self._log.info("commandLine is " + ' '.join(cmdLine))
+    VLAB.logger.info('VLAB commandLine is %s ' % ' '.join(cmdLine))
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
@@ -441,16 +411,16 @@ class LIBRAT:
     }
     VLAB.doExec(cmd)
 
-  def doTopOfCanopyBRF(self, params):
+  def doProcessing(self, params):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me)
+    VLAB.logger.info('VLAB %s' % me)
 
     if params[VLAB.P_3dScene] == VLAB.K_RAMI:
       doRami = True
     else:
       doRami = False
 
-    self._log.info(me + ": scene is " + params[VLAB.P_3dScene])
+    VLAB.logger.info('VLAB %s: scene is %s' % (me, params[VLAB.P_3dScene]))
 
     # 1. generate cosine-weighted angular samplines of view/illum hemisphere
     cmdline = ['./drivers.py', '-random', '-n', '1000', '-angles', 'angles.rpv.2.dat']
@@ -458,9 +428,9 @@ class LIBRAT:
 
     # 2. simulate BRDF 
     if doRami:
-      cmdline = ['./dobrdf.py', '-v', '-obj', 'HET01_DIS_UNI_NIR_20.obj', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '80', '80', '-look',  '0', '0', '0', '-rpp', '4', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.rami']
+      cmdline = ['./dobrdf.py', '-v', '-obj', 'HET01_DIS_UNI_NIR_20.obj', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '80', '80', '-look',  '0', '0', '0', '-rpp', '1', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.rami']
     else:
-      cmdline = ['./dobrdf.py', '-v', '-obj', 'laegeren.obj.lai.1', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '300', '300', '-look', '150', '150', '710', '-rpp', '4', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.laegeren']
+      cmdline = ['./dobrdf.py', '-v', '-obj', 'laegeren.obj.lai.1', '-hips', '-wb', 'wb.MSI.dat', '-ideal', '300', '300', '-look', '150', '150', '710', '-rpp', '1', '-npixels', '10000', '-boom', '786000', '-angles', 'angles.rpv.2.dat', '-opdir', 'rpv.laegeren']
 
     self._cmdHelper(cmdline)
 
@@ -485,49 +455,10 @@ class LIBRAT:
       cmdline = ['./dolibradtran.py', '-opdir', 'laegeren.TOA', '-v', '-rpv', 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', '-plot', 'laegeren.TOA/rpv.laegeren.libradtran.dat.all', '-lat', '50', '-lon', '0', '-time', '2013 06 01 12 00 00']
     self._cmdHelper(cmdline)
 
-##
-## libradtran-specific integration glue
-##
-class RADTRAN:
-  def __init__(self):
-    self._log = Logger.getLogger(VLAB.LOGGER_NAME)
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    self._log.info(me + ": constructor completed...")
-    self._log.info(me + ": returning...")
-
-  def doTopOfAtmosphereBRF(self):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    VLAB.dependsOn(me, "input.dat");
-    self._log.info(me + ": executing...")
-
-    cmd = {
-    'linux' : {
-      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples',
-      'exe'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/bin/uvspec',
-      'cmdline' : [],
-      'stdin'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR.INP',
-      'stdout'  : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt',
-      'stderr'  : None,
-      'env'     : None
-    },
-    'windows' : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\bin\\uvspec.exe',
-      'cmdline' : [],
-      'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR.INP',
-      'stdout'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR-BEAM-OUTPUT.txt',
-      'stderr'  : None,
-      'env'     : None
-    }
-    }
-    VLAB.doExec(cmd)
-
-    VLAB.created(me, '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt')
-
 # allow testing outside of beam
 if System.getProperty("beam.version") == None:
 
-  print "Running doExec() test..."
+  VLAB.logger.info("Running doExec() test...")
   cmd = {
   'linux' : {
     'cwd'     : '$HOME',
@@ -553,13 +484,13 @@ if System.getProperty("beam.version") == None:
   params = {}
   params[VLAB.P_3dScene] = VLAB.K_RAMI
 
-  #print "Running DUMMY.doTopOfCanopy() test..."
+  #VLAB.logger.info("Running DUMMY.doProcessing() test...")
   #rtProcessor = DUMMY()
-  #rtProcessor.doTopOfCanopyBRF(params)
+  #rtProcessor.doProcessing(params)
 
-  print "Running LIBRAT.doTopOfCanopy() test..."
+  VLAB.logger.info("Running LIBRAT.doProcessing() test...")
   rtProcessor = LIBRAT()
-  rtProcessor.doTopOfCanopyBRF(params)
+  rtProcessor.doProcessing(params)
 
 else:
 
@@ -607,9 +538,8 @@ else:
   class VLabImpl(IVLabProcessor):
 
     def __init__(self):
-      self._log = Logger.getLogger(VLAB.LOGGER_NAME)
       me=self.__class__.__name__ +'::'+VLAB.me()
-      self._log.info(me + ": constructor completed...")
+      VLAB.logger.info('VLAB %s: VLabImpl constructor' % me)
 
     def getName(self):
       return VLAB.PROCESSOR_NAME
@@ -630,12 +560,12 @@ else:
       me=self.__class__.__name__ +'::'+VLAB.me()
       return r.getParameter(k).getValueAsText()
 
-    def _doBRF(self, pm, req):
+    def _doProcessing(self, pm, req):
       me=self.__class__.__name__ +'::'+VLAB.me()
       params = {}
       params[VLAB.P_3dScene] = self._getP(req, VLAB.P_3dScene)
       processor = self._getP(req, VLAB.P_RTProcessor)
-      self._log.info(me + ": processor is <" + processor + ">")
+      VLAB.logger.info('VLAB %s: processor is <%s' % (me, processor))
       if processor == VLAB.K_DART:
         rtProcessor = DART()
       elif processor == VLAB.K_LIBRAT:
@@ -645,28 +575,25 @@ else:
       else:
         raise RuntimeException('unknown processor: <' + processor + '>')
 
-      pm.beginTask("Computing top of canopy BRF...", 10)
-      rtProcessor.doTopOfCanopyBRF(params)
-      radProcessor = RADTRAN()
-      pm.beginTask("Computing top of atmosphere BRF...", 10)
+      pm.beginTask("Computing BRF...", 10)
+      rtProcessor.doProcessing(params)
       # ensure at least 1 second to ensure progress popup feedback
       try:
         Thread.sleep(1000); 
       except JException, e:
         raise RuntimeException(e.getMessage())
-      radProcessor.doTopOfAtmosphereBRF()
 
     def process(self, pm, req):
-      self._log.info("inside process...")
+      VLAB.logger.info('VLAB inside process...')
       me=self.__class__.__name__ +'::'+VLAB.me()
       ProcessorUtils.setProcessorLoggingHandler(VLAB.DEFAULT_LOG_PREFIX, 
         req, self.getName(), self.getVersion(), self.getCopyrightInformation())
 
-      #self._log.info("Parameter list:")
       #for i in range(req.getNumParameters()):
-      #  self._log.info(req.getParameterAt(i).getName() + " = " + req.getParameterAt(i).getValueAsText())
+      #  VLAB.logger.info(req.getParameterAt(i).getName() + " = " + req.getParameterAt(i).getValueAsText())
 
-      self._log.info(me + ': ' + ProcessorConstants.LOG_MSG_START_REQUEST)
+      #VLAB.logger.info(me + ': ' + ProcessorConstants.LOG_MSG_START_REQUEST)
+      VLAB.logger.info('VLAB %s: %s' %(me, ProcessorConstants.LOG_MSG_START_REQUEST))
       pm.beginTask("Running 3D Vegetation Lab Processor...", 10)
 
       # ensure at least 1 second to ensure progress popup feedback
@@ -675,9 +602,10 @@ else:
       except JException, e:
         raise RuntimeException(e.getMessage())
 
-      self._doBRF(pm, req)
+      self._doProcessing(pm, req)
 
-      self._log.info(me + ': ' + ProcessorConstants.LOG_MSG_FINISHED_REQUEST)
+      #VLAB.logger.info(me + ': ' + ProcessorConstants.LOG_MSG_FINISHED_REQUEST)
+      VLAB.logger.info('VLAB %s : %s' % (me, ProcessorConstants.LOG_MSG_FINISHED_REQUEST))
       pm.done()
 
   ##
@@ -685,14 +613,13 @@ else:
   ##
   class VLabUiImpl(IVLabProcessorUi):
     def __init__(self):
-      self._log            = Logger.getLogger(VLAB.LOGGER_NAME)
       self._reqElemFac     = VLabRequestElementFactory() 
       self._defaultFactory = DefaultRequestElementFactory.getInstance()
       self._requestFile    = File('')
       self.pmap            = {} 
 
       me=self.__class__.__name__ +'::'+VLAB.me()
-      self._log.info(me + ": constructor completed...")
+      VLAB.logger.info('VLAB %s: VLabUiImpl constructor' % me)
 
     def getGuiComponent(self):
       self._paramOutputProduct = self._reqElemFac.createDefaultOutputProductParameter()
@@ -800,11 +727,10 @@ else:
   ##
   class VLabRequestElementFactory(RequestElementFactory):
     def __init__(self):
-      self._log            = Logger.getLogger(VLAB.LOGGER_NAME)
       self._defaultFactory = DefaultRequestElementFactory.getInstance()
       self.pMap = {}
       me=self.__class__.__name__ +'::'+VLAB.me()
-      self._log.info(me + ": constructor completed...")
+      VLAB.logger.info('VLAB %s: VLabRequestElementFactory constructor' % me)
       
     def getInstance(self):
       return VLabRequestElementFactory()
@@ -816,7 +742,7 @@ else:
         if (value != None):
           param.setValueAsText(value, None)
       except IllegalArgumentException, e:
-        self._log.info(e.getMessage)
+        VLAB.logger.info('VLAB %s' % e.getMessage)
         raise RequestElementFactoryException(e.getMessage())
       return param
       
@@ -864,13 +790,13 @@ else:
       if (paramProps == None):
         if (parameterName.endsWith(VLAB.P_EXPRESSION)):
           ''
-          self._log.info("has to be implemented!!")
+          VLAB.logger.info('%s: to be implemented' % VLAB.P_EXPRESSION)
         elif (parameterName.endsWith(VLAB.P_CONDITION)):
           ''
-          self._log.info("has to be implemented!!")
+          VLAB.logger.info('%s: to be implemented' % VLAB.P_CONDITION)
         elif (parameterName.endsWith(VLAB.P_OUTPUT)):
           ''
-          self._log.info( "has to be implemented!!")
+          VLAB.logger.info('%s: to be implemented' & VLAB.P_OUTPUT)
 
       if (paramProps == None):
         raise IllegalArgumentException("Invalid parameter name '" + parameterName + "'.")
