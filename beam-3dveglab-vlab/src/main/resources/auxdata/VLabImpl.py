@@ -171,12 +171,13 @@ class VLAB:
               exec('P_' + nm + ' = nm')
               exec('L_' + nm + ' = lbl')
               plst.append(nm)
+
   def __init__(self):
     self.cmap = {}
     self.vmap = {}
-    self.plst = []
 
   def me():
+    """Returns name of currently executing method"""
     nm = ''
     try:
       raise ZeroDivisionError
@@ -184,7 +185,149 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
+  def listdir(path):
+    """list files in the directory given by path"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(path).list()
+    else:
+      import os
+      return os.listdir(path)
+  listdir = staticmethod(listdir)
+  def checkFile(fname):
+    """open a file if it exists, otherwise die"""
+    try:
+      fp = open(fname, 'rw')
+      return fp
+    except IOError, e:
+      raise RuntimeException(e)
+  checkFile = staticmethod(checkFile)
+  def fileExists(fname):
+    """check if fname exists as a file"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(fname).exists()
+    else:
+      import os
+      return os.path.exists(fname)
+  fileExists = staticmethod(fileExists)
+  def getFullPath(fname):
+    """return canonical/absolute path of given fname"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(fname).getCanonicalPath()
+    else:
+      import os
+      return os.path.abspath(fname)
+  getFullPath = staticmethod(getFullPath)
+  def frange(end, start=0, inc=0):
+    """a jython-compatible range function with float increments"""
+    import math
+    if not start:
+      start = end + 0.0
+      end = 0.0
+    else: end += 0.0
+    if not inc:
+      inc = 1.0
+    count = int(math.ceil((start - end) / inc))
+    L = [None] * count
+    L[0] = end
+    for i in (xrange(1,count)):
+      L[i] = L[i-1] + inc
+    return L
+  frange = staticmethod(frange)
+  def openFileIfNotExists(filename):
+    """open file exclusively"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      if File(filename).createNewFile():
+        return open(filename)
+      else:
+        return None
+    else:
+      import os
+      try:
+        # os.O_EXCL => open exclusive => acquire a lock on the file
+        fd = os.open(filename, os.O_CREAT|os.O_EXCL|os.O_WRONLY|os.O_TRUNC)
+      except:
+        return None
+      fobj = os.fdopen(fd,'w')
+      return fobj
+  openFileIfNotExists = staticmethod(openFileIfNotExists)
+  def rndInit(seed = None):
+    """initialize the randon number generator"""
+    if sys.platform.startswith('java'):
+      from java.util import Random
+      if seed == None:
+        return Random()
+      else:
+        return Random(seed)
+    else:
+      import random
+      random.seed(seed)
+      return None
+  rndInit = staticmethod(rndInit)
+  def rndNextFloat(randState):
+    """return the next pseudo-random floating point number in the sequence"""
+    if sys.platform.startswith('java'):
+      from java.util import Random
+      return randState.nextFloat()
+    else:
+      import random
+      return random.random()
+  rndNextFloat = staticmethod(rndNextFloat)
+  def r2d(v):
+    """jython-compatible conversion of radians to degrees"""
+    if sys.platform.startswith('java'):
+      from java.lang import Math
+      return Math.toDegrees(v)
+    else:
+      return math.degrees(v)
+  r2d = staticmethod(r2d)
+  def d2r(v):
+    """jython-compatible conversion of degrees to radians"""
+    if sys.platform.startswith('java'):
+      from java.lang import Math
+      return Math.toRadians(float(v))
+    else:
+      return math.radians(v)
+  d2r = staticmethod(d2r)
+  def mkDirPath(path):
+    """create directory (including non-existing parents) for the given path"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      if not File(path).isDirectory():
+        if not File(path).mkdirs():
+          raise RuntimeExecption('failed to mkdir %s' % path)
+    else:
+      import os
+      try:
+        os.stat(path)
+      except:
+        os.makedirs(path)
+  mkDirPath = staticmethod(mkDirPath)
+  def fPath(d,n):
+    """get file path of the file defined by directory d and file name n"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      return File(d, n).getPath()
+    else:
+      import os
+      return os.path.join(d, n)
+  fPath = staticmethod(fPath)
+  def savetxt(a, b, fmt=False):
+    """save text b in a text file named a"""
+    fh = open(a, 'w')
+    if not fmt:
+      fmt = '%s'
+    for row in b:
+      for element in row:
+        fh.write(fmt % element + ' ')
+      fh.write('\n')
+    fh.close()
+  savetxt = staticmethod(savetxt)
   def osName():
+    """return which OS we are currently running on"""
     if sys.platform.startswith('java'):
       from java.lang import System
       oname = System.getProperty('os.name')
@@ -195,11 +338,17 @@ class VLAB:
     return oname
   osName = staticmethod(osName)
   def expandEnv(instr):
+    """potentially expand environment variables in the given string"""
     outstr = instr
     m = {'$HOME':'HOME','%HOMEDRIVE%':'HOMEDRIVE','%HOMEPATH%':'HOMEPATH'}
     for e in m:
       if outstr.find(e) != -1:
-        repl = System.getenv(m[e])
+        if sys.platform.startswith('java'):
+          from java.lang import System
+          repl = System.getenv(m[e])
+        else:
+          import os
+          repl = os.getenv(m[e])
         if repl != None:
           outstr = outstr.replace(e, repl)
     return outstr
@@ -211,6 +360,7 @@ class VLAB:
       def __init__(self, nm, strm):
         self.nm=nm; self.strm=strm
       def run(self):
+        """helper class for slurping up child streams"""
         from java.io import BufferedReader
         from java.io import InputStreamReader
         line = None; br = BufferedReader(InputStreamReader(self.strm))
@@ -221,10 +371,12 @@ class VLAB:
         br.close()
   else:
     def helper(nm, strm):
-      for line in strm: VLAB.logger.info('%s %s' %( nm, line.rstrip()))
+      """helper class for slurping up child streams"""
+      for line in strm: VLAB.logger.info('%s %s' %(nm, line.rstrip()))
       if not strm.closed: strm.close()
     helper = staticmethod(helper)
   def doExec(cmdrec):
+    """run the specified external program under windows or unix"""
     cmdLine = []
     osName = VLAB.osName()
     if osName.startswith('Windows'):
@@ -282,19 +434,279 @@ class VLAB:
     VLAB.logger.info('exitCode=%d' % exitCode)
   doExec = staticmethod(doExec)
 
+  def valuesfromfile(path, transpose=False):
+    """Returns a 2D array with the values of the csv file at 'path'.
+
+    Keyword arguments:
+    transpose -- transpose the matrix with the values
+
+    """
+    values = [line.strip().split() for line in open(path)
+              if not line.startswith('#')]
+    values = [[float(value) for value in row] for row in values]
+    if transpose:
+      values = zip(*values)
+    return values
+  valuesfromfile = staticmethod(valuesfromfile)
+  def fabsa(x):
+    """Return the element-wise abs() of the given array."""
+    return map(lambda x : math.fabs(x), x)
+  fabsa = staticmethod(fabsa)
+  def cosa(arcs):
+    """Return the element-wise cos() of 'arcs' array given in degrees."""
+    return map(lambda x : math.cos(VLAB.d2r(x)), arcs)
+  cosa = staticmethod(cosa)
+  def replacerectinarray(array, replacement, xul, yul, xlr, ylr):
+    """Replace the array with the specified rectangle substituted with
+    replacement.
+    (array[xul:xlr,yul:ylr])
+     +---------------+
+     |(xul, yul)     |
+     |               |
+     |     (xlr, ylr)|
+     +---------------+
+    """
+    ri = 0
+    for x in xrange(xul, xlr):
+      array[x][yul:ylr] = replacement[ri]
+      ri += 1
+    return array
+  replacerectinarray = staticmethod(replacerectinarray)
+  def replaceinarray(haystack, predicate, replacement):
+    """Return 'haystack' with 'predicate' matches replaced by 'replacement'"""
+    return map(lambda item : {True: replacement, False: item}[predicate(item)],
+               haystack)
+  replaceinarray = staticmethod(replaceinarray)
+  def sqrta(values):
+    """Return the element-wise sqrt() of the given array."""
+    return map(math.sqrt, values)
+  sqrta = staticmethod(sqrta)
+  def suba(lista, listb):
+    """Subtract the values of a list from the values of another list."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.sub, lista, listb)
+  suba = staticmethod(suba)
+  def adda(lista, listb):
+    """Add the values of a list to the values of another list."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.add, lista, listb)
+  adda = staticmethod(adda)
+  def diva(lista, listb):
+    """Return the element-wise division of 'lista' by 'listb'."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.div, lista, listb)
+  diva = staticmethod(diva)
+  def mula(lista, listb):
+    """Return the element-wise multiplication of 'lista' with 'listb'."""
+    if len(lista) != len(listb):
+      raise ValueError("Arguments have to be of same length.")
+    return map(operator.mul, lista, listb)
+  mula = staticmethod(mula)
+  def powa(values, exponent):
+    """Returns the element-wise exp('exponent') of the given array."""
+    if isinstance(exponent, (list, tuple)):
+      return map(lambda x, y : x ** y, values, exponent)
+    return map(lambda x : x ** exponent, values)
+  powa = staticmethod(powa)
+  def treemap(fn, tree):
+    """Applies `fn' to every value in `tree' which isn't a list and
+    returns a list with the same shape as tree and the value of `fn'
+    applied to the values in their place.
+
+    """
+    result = []
+    for node in tree:
+      if isinstance(node, (list, tuple)):
+        result += [VLAB.treemap(fn, node)]
+      else:
+        result += [fn(node)]
+    return result
+  treemap = staticmethod(treemap)
+  def makemaskeq(array, value):
+    return VLAB.treemap(lambda x : x == value, array)
+  makemaskeq = staticmethod(makemaskeq)
+  def awhere(mask):
+    """Returns the coordinates of the cells which evaluate true."""
+    result = []
+    if isinstance(mask, (list, tuple)):
+      for i, cell in enumerate(mask):
+        result += [[i] + sub for sub in VLAB.awhere(cell)
+                   if isinstance(sub, (list, tuple))]
+      return result
+    else:
+      if mask:
+        return [[]]
+      else:
+        return []
+  awhere = staticmethod(awhere)
+  def aclone(tree):
+    """Make a deep copy of `tree'."""
+    if isinstance(tree, (list, tuple)):
+      return list(map(VLAB.aclone, tree))
+    return tree
+  aclone = staticmethod(aclone)
+  def make_chart(title, x_label, y_label, dataset):
+    """Helper for creating Charts"""
+    if sys.platform.startswith('java'):
+      from org.jfree.chart import ChartFactory, ChartFrame, ChartUtilities
+      from org.jfree.chart.axis import NumberTickUnit
+      from org.jfree.chart.plot import PlotOrientation
+      from org.jfree.data.xy import XYSeries, XYSeriesCollection
+      chart = ChartFactory.createScatterPlot(title, x_label, y_label, dataset,
+                                           PlotOrientation.VERTICAL, True, 
+                                           True, False)
+      plot = chart.getPlot()
+      domain_axis = plot.getDomainAxis()
+      domain_axis.setRange(-70, 70)
+      range_axis = plot.getRangeAxis()
+      range_axis.setRange(0.0, 0.4)
+      range_axis.setTickUnit(NumberTickUnit(0.05))
+      return chart
+    else:
+      # TODO: re-merge original python implementation
+      raise Exception("original make_chart()")
+      return None
+  make_chart = staticmethod(make_chart)
+  def make_dataset():
+    """Dataset helper for supporting chart creation"""
+    if sys.platform.startswith('java'):
+      from org.jfree.data.xy import XYSeriesCollection
+      return XYSeriesCollection()
+    else:
+      # TODO: re-merge original python implementation
+      raise Exception("original make_dataset()")
+      return None
+  make_dataset = staticmethod(make_dataset)
+  def plot(dataset, x, y, label):
+    """plot dataset with x and y values and the given label"""
+    if sys.platform.startswith('java'):
+      from org.jfree.data.xy import XYSeries
+      series = XYSeries(label)
+      for next_x, next_y in zip(x, y):
+        series.add(float(next_x), float(next_y))
+      dataset.addSeries(series)
+    else:
+      # TODO: re-merge original python implementation
+      raise Exception("original plot()")
+      return None
+  plot = staticmethod(plot)
+  def save_chart(chart, filename):
+    """save the generated chart in the given filename"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      from org.jfree.chart import ChartUtilities
+      ChartUtilities.saveChartAsPNG(File(filename), chart, 800, 600)
+    else:
+      # TODO: re-merge original python implementation
+      raise Exception("save_chart")
+      pass
+  save_chart = staticmethod(save_chart)
+  def maskand(array, mask):
+    return map(lambda a, b : a & b, array, mask)
+  maskand = staticmethod(maskand)
+  def unique(array):
+    """return unique values in the given input array"""
+    sortedarray = list(array)
+    sortedarray.sort()
+    result = []
+    def addifunique(x, y):
+      if x != y:
+        result.append(x)
+      return y
+    result.append(reduce(addifunique, sortedarray))
+    return result
+  unique = staticmethod(unique)
+  def ravel(a):
+    def add(a, i):
+      if not(isinstance(a, (list, tuple))):
+        a = [a]
+      if isinstance(i, (list, tuple)):
+        return a + ravel(i)
+      else:
+        return a + [i]
+    return reduce(add, a)
+  ravel = staticmethod(ravel)
+  def min_l_bfgs_b(f, initial_guess, args=(), bounds=None, epsilon=1e-8):
+    """The `approx_grad' is not yet implemented, because it's not yet
+used."""
+    if sys.platform.startswith('java'):
+      from lbfgsb import DifferentiableFunction, FunctionValues, Bound
+      class function(DifferentiableFunction):
+        def __init__(self, function, args=()):
+          self.function = function
+          self.args = args
+        def getValues(self, x):
+          f = self.function(x, *self.args)
+          g = VLAB.approx_fprime(x, self.function, epsilon, *self.args)
+          return FunctionValues(f, g)
+      min = Minimizer()
+      min.setBounds([Bound(bound[0], bound[1]) for bound in bounds])
+      result = min.run(function(f, args), VLAB.ravel(initial_guess))
+      return result.point
+  min_l_bfgs_b = staticmethod(min_l_bfgs_b)
+  def approx_fprime(xk, f, epsilon, *args):
+    f0 = f(*((xk,) + args))
+    grad = [0. for i in xrange(len(xk))]
+    ei = [0. for i in xrange(len(xk))]
+    for k in xrange(len(xk)):
+      ei[k] = 1.0
+      d = map(lambda i : i * epsilon, ei)
+      grad[k] = (f(*((xk + d,) + args)) - f0) / d[k]
+      ei[k] = 0.0
+    return grad
+  approx_fprime = staticmethod(approx_fprime)
+
+
+################################################################
+
   def fakebye(self, event):
-    VLAB.logger.info('Bye')
+    """fake beam callback for existing the program"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: exiting' % me)
     sys.exit()
+
+  def fakeDoProcessing(self, params):
+    """fake beam helper for driving processing in test mode"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
+    VLAB.logger.info('params: %s' % params)
+    if params[VLAB.P_RTProcessor] == VLAB.K_DART:
+      rtProcessor = DART()
+    elif params[VLAB.P_RTProcessor] == VLAB.K_LIBRAT:
+      rtProcessor = LIBRAT()
+    elif params[VLAB.P_RTProcessor] == VLAB.K_DUMMY:
+      rtProcessor = DUMMY()
+    else:
+      raise RuntimeException('unknown processor: <%s>' % params[VLAB.P_RTProcessor])
+    rtProcessor.doProcessing(None, params)
+    VLAB.logger.info('%s : %s' % (me, 'finished'))
 
   def fakerun(self, event):
-    VLAB.logger.info('Fakerun')
-    sys.exit()
+    """fake beam callback for running a processor"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+    params = {}
+    for i in self.plst:
+      if type(self.vmap[i]) == str:
+         params[i] = self.cmap[i].text
+      elif type(self.vmap[i]) == tuple:
+         lst = self.vmap[i]
+         params[i] = lst[self.cmap[i].selectedIndex]
+    self.fakeDoProcessing(params)
 
   def fakebeam(self):
+    """fake beam Swing GUI"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
     from javax import swing
     from java  import awt
 
-    v = 5; h = 10; self.window = swing.JFrame("3D VegLab")
+    v = 5; h = 10; self.window = swing.JFrame(VLAB.PROCESSOR_NAME)
     self.window.windowClosing = self.fakebye
     self.window.contentPane.layout = awt.BorderLayout()
     tabbedPane = swing.JTabbedPane()
@@ -344,16 +756,71 @@ class VLAB:
     self.window.pack(); self.window.show()
 
   def selftests(self):
-    VLAB.logger.info('Running self tests...')
+    """run a pre-defined set of tests"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
+    # scenario 1
+    params = {
+      VLAB.P_3dScene             : 'Default RAMI', 
+      VLAB.P_AtmosphereCO2       : '1.6', 
+      VLAB.P_ViewingAzimuth      : '0.0', 
+      VLAB.P_AtmosphereWater     : '0.0', 
+      VLAB.P_OutputPrefix        : 'RAMI_', 
+      VLAB.P_ViewingZenith       : '20.0', 
+      VLAB.P_AtmosphereAerosol   : 'Rural', 
+      VLAB.P_DHP_Zenith          : '20.0', 
+      VLAB.P_SceneYW             : '100', 
+      VLAB.P_DHP_3dScene         : 'Default RAMI', 
+      VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10', 
+      VLAB.P_OutputDirectory     : '', 
+      VLAB.P_AtmosphereOzone     : '300', 
+      VLAB.P_AtmosphereDay       : '214', 
+      VLAB.P_SceneLocFile        : '', 
+      VLAB.P_SceneYC             : '100', 
+      VLAB.P_DHP_OutputDirectory : '', 
+      VLAB.P_DHP_OutputPrefix    : 'RAMI00_', 
+      VLAB.P_AtmosphereLat       : '47.4781', 
+      VLAB.P_AtmosphereLong      : '8.3650', 
+      VLAB.P_RTProcessor         : VLAB.K_DUMMY,
+      VLAB.P_SceneXW             : '50', 
+      VLAB.P_IlluminationAzimuth : '0.0', 
+      VLAB.P_Sensor              : 'MSI (Sentinel 2)', 
+      VLAB.P_AsciiFile           : 'Yes', 
+      VLAB.P_ImageFile           : 'Yes', 
+      VLAB.P_SceneXC             : '-50', 
+      VLAB.P_DHP_Y               : '0', 
+      VLAB.P_DHP_X               : '0', 
+      VLAB.P_DHP_ImageFile       : 'Yes', 
+      VLAB.P_DHP_AsciiFile       : 'Yes', 
+      VLAB.P_DHP_Resolution      : '100x100', 
+      VLAB.P_DHP_Azimuth         : '0.0', 
+      VLAB.P_IlluminationZenith  : '20.0', 
+      VLAB.P_DHP_RTProcessor     : VLAB.K_DUMMY,
+      VLAB.P_DHP_Height          : '0', 
+      VLAB.P_DHP_Orientation     : '0', 
+      VLAB.P_ScenePixel          : '8'
+    }
+    self.fakeDoProcessing(params)
+
+    # scenario 2
+    params[VLAB.P_RTProcessor] = VLAB.K_LIBRAT
+    self.fakeDoProcessing(params)
+
+    # scenario 3
+    params[VLAB.P_RTProcessor] = VLAB.K_DART
+    self.fakeDoProcessing(params)
+
 
 class DUMMY:
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
   def doProcessing(self, pm, args):
+    """do processing for DUMMY processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
 
-    VLAB.logger.info('%s: running...' % me)
+    VLAB.logger.info('%s: doExec() on %s' % (me, args))
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/',
@@ -376,7 +843,8 @@ class DUMMY:
     }
     VLAB.doExec(cmd)
 
-    pm.beginTask("Computing BRF...", 10)
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
     VLAB.logger.info('%s: finished running...' % me)
@@ -386,8 +854,11 @@ class DART:
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
   def doProcessing(self, pm, args):
+    """do processing for DART processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
-    pm.beginTask("Computing BRF...", 10)
+
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
     VLAB.logger.info('%s: running...' % me)
@@ -397,14 +868,19 @@ class LIBRAT:
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
   def doProcessing(self, pm, args):
+    """do processing for LIBRAT processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
-    pm.beginTask("Computing BRF...", 10)
+
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
     VLAB.logger.info('%s: running...' % me)
   
+#### MAIN DISPATCH ####################################################
+
 if not sys.platform.startswith('java'):
-  VLAB.logger.info('%s: NOT JYTHON and NOT BEAM' % VLAB.me)
+  VLAB.logger.info('%s: Mode: not jython and not BEAM' % VLAB.me)
   vlab = VLAB()
   vlab.selftests()
 else:
@@ -412,15 +888,17 @@ else:
   beamVer = System.getProperty('beam.version')
   if beamVer == None:
     if System.getProperty('vlab.fakebeam') != None:
-      VLAB.logger.info('%s: JYTHON and FAKE BEAM' % VLAB.me)
+      VLAB.logger.info('%s: Mode: jython and fake BEAM' % VLAB.me)
       vlab = VLAB()
       vlab.fakebeam()
     else:
-      VLAB.logger.info('%s: JYTHON and NOT BEAM' % VLAB.me)
+      VLAB.logger.info('%s: Mode: jython and not BEAM' % VLAB.me)
       vlab = VLAB()
       vlab.selftests()
   else:
-    VLAB.logger.info('%s: JYTHON and BEAM version %s' % (VLAB.me, beamVer))
+    VLAB.logger.info('%s: Mode: jython and BEAM v%s' % (VLAB.me, beamVer))
+
+### BEAM-only code ####################################################
 
     #
     # BEAM-specific code from here to the end...
@@ -524,7 +1002,7 @@ else:
         #  VLAB.log(req.getParameterAt(i).getName() + " = " + req.getParameterAt(i).getValueAsText())
   
         VLAB.logger.info('%s: %s' % (me, ProcessorConstants.LOG_MSG_START_REQUEST))
-        pm.beginTask("Running 3D Vegetation Lab Processor...", 10)
+        pm.beginTask('Running %s...' % VLAB.PROCESSOR_NAME, 10)
         VLAB.logger.info('%s: after pm.beginTask' % me)
   
         # ensure at least 1 second to ensure progress popup feedback
