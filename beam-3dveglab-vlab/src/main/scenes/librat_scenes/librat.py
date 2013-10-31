@@ -19,7 +19,7 @@
 #  https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes
 #
 
-import sys, math, operator
+import sys, math, operator, nelmin
 
 ################
 #
@@ -464,7 +464,7 @@ class VLAB:
     """The `approx_grad' is not yet implemented, because it's not yet
 used."""
     if sys.platform.startswith('java'):
-      from lbfgsb import DifferentiableFunction, FunctionValues, Bound
+      from lbfgsb import DifferentiableFunction, FunctionValues, Bound, Minimizer
       class function(DifferentiableFunction):
         def __init__(self, function, args=()):
           self.function = function
@@ -479,13 +479,13 @@ used."""
       return result.point
   min_l_bfgs_b = staticmethod(min_l_bfgs_b)
   def approx_fprime(xk, f, epsilon, *args):
-    f0 = f(*((xk,) + args))
+    f0 = f(xk, *args)
     grad = [0. for i in xrange(len(xk))]
     ei = [0. for i in xrange(len(xk))]
     for k in xrange(len(xk)):
       ei[k] = 1.0
       d = map(lambda i : i * epsilon, ei)
-      grad[k] = (f(*((xk + d,) + args)) - f0) / d[k]
+      grad[k] = (f(VLAB.adda(xk, d), *args) - f0) / d[k]
       ei[k] = 0.0
     return grad
   approx_fprime = staticmethod(approx_fprime)
@@ -1282,24 +1282,17 @@ class rpv_invert:
 
       porig = params
       p_est = params
-      # TODO p_est = minimize using the downhill simplex method (rpv_invert.py:143)
-      # raise Exception("p_est = scipy.optimize.fmin(obj,params,args=(invdata,))")
+      p_est = nelmin.minimize(self.obj, params, args=(invdata,))[0]
       if q['three']:
-        # TODO p_est = minimize using the L-BFGS-B algorithm (rpv_invert.py:147)
-        # raise Exception(" p_est = scipy.optimize.fmin_l_bfgs_b(obj,p_est,args=(invdata,),approx_grad=1, bounds=((0., None), (0., None),(None, None)))")
-        pass
+        p_est = VLAB.min_l_bfgs_b(self.obj, p_est, args=(invdata,), bounds=((0., None), (0., None), (None, None)))
       else:
-        # TODO p_est = minimize using the L-BFGS-B algorithm (rpv_invert.py:151)
-        # raise Exception("p_est = scipy.optimize.fmin_l_bfgs_b(obj,p_est,args=(invdata,),approx_grad=1, bounds=((0., None), (0., None),(None, None),(None, None)))")
-        pass
-      # DUMMY DATA
-      p_est = [[((x + 1.0) * (y + 1.0) + 2.0) * (x + 1.0) * (y + 1.0) * 0.4 for x in range(4)] for y in range(10)] 
-      r = self.rpv(p_est[0], invdata)
+        p_est = VLAB.min_l_bfgs_b(self.obj, p_est, args=(invdata,), bounds=((0., None), (0., None),(None, None), (None, None)))
+      r = self.rpv(p_est, invdata)
       rmse = math.sqrt(reduce(lambda x, y : x + y, map(lambda x : x ** 2, VLAB.suba(r, invdata[4]))))
       if q['three']:
-        opfp.write('%.1f %.8f %.8f %.8f\n' % (band, p_est[0][0], p_est[0][1], p_est[0][2]))
+        opfp.write('%.1f %.8f %.8f %.8f\n' % (band, p_est[0], p_est[1], p_est[2]))
       else:
-        opfp.write('%.1f %.8f %.8f %.8f %.8f\n' % (band, p_est[0][0], p_est[0][1], p_est[0][2], p_est[0][3]))
+        opfp.write('%.1f %.8f %.8f %.8f %.8f\n' % (band, p_est[0], p_est[1], p_est[2], p_est[3]))
       if q['plot']:
         if q['plotfile']:
           opplot = q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png'
@@ -1318,9 +1311,11 @@ class rpv_invert:
         # TODO test plot code
     opfp.close()
   def obj(self, p, x):
-    fwd = rpv(p, x)
-    obs = x[4,:]
-    sse = ((obs - fwd) ** 2).sum()
+    fwd = self.rpv(p, x)
+    obs = x[4]
+    sse = reduce(lambda x, y : x + y,
+                 map(lambda x : x ** 2,
+                     VLAB.suba(obs, fwd)))
     return sse
   def rpv(self, params, data):
     if len(params) == 4:
