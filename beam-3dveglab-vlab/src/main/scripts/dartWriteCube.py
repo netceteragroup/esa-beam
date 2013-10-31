@@ -19,13 +19,13 @@
 # converted to "BEAM-limited jython" by Jason Brazile
 #
 #==============================================================================
-#title            :DARTDao.py
+#title            :Dart_DARTDao.py
 #description      :This script can be used to recover DART images and spectral bands
 #coding       :utf-8
 #author           :Nicolas Lauret, (Fabian Schneider)
 #date             :20130328
 #version          :1.0
-#usage            :see DartImages.py
+#usage            :see Dart_DartImages.py
 #==============================================================================
 
 import sys, math, array, time, struct
@@ -130,15 +130,15 @@ class VLAB:
         return os.path.split(path)
     split = staticmethod(split)
 
-def enum(**enums):
+def Dart_enum(**enums):
   return type('Enum', (), enums)
 
-ProjectionPlane = enum(SENSOR_PLANE=0, ORTHOPROJECTION=1, BOA_PLANE=2)
-DataUnit = enum(BRF_TAPP=0, RADIANCE=1)
-DataLevel = enum(BOA=0, SENSOR=1, TOA=2, ATMOSPHERE_ONLY=3)
-SpectralBandMode = enum(VISIBLE=0, VISIBLE_AND_THERMAL=1, THERMAL=2)
+Dart_ProjectionPlane = Dart_enum(SENSOR_PLANE=0, ORTHOPROJECTION=1, BOA_PLANE=2)
+Dart_DataUnit = Dart_enum(BRF_TAPP=0, RADIANCE=1)
+Dart_DataLevel = Dart_enum(BOA=0, SENSOR=1, TOA=2, ATMOSPHERE_ONLY=3)
+Dart_SpectralBandMode = Dart_enum(VISIBLE=0, VISIBLE_AND_THERMAL=1, THERMAL=2)
 
-class DARTEnv : 
+class Dart_DARTEnv : 
   dartLocal = VLAB.getenv('DART_LOCAL')
   #dartLocal = 'F:\\dart_local\\'
   
@@ -176,15 +176,15 @@ class DARTEnv :
   propertiesFile = 'simulation.properties.txt'
 
 # Class SpectralBand
-class SpectralBand:
+class Dart_SpectralBand:
   def __init__(self) :
     self.index = 0
     self.lambdaMin = 0.
     self.lambdaMax = 0.
-    self.mode = SpectralBandMode.VISIBLE
+    self.mode = Dart_SpectralBandMode.VISIBLE
   
   def __str__(self):
-    return 'SpectralBand(' + str(self.index) + ': [' + str(self.lambdaMin) + '; ' + str(self.lambdaMax) + ']; ' + str(self.mode) + ')'
+    return 'Dart_SpectralBand(' + str(self.index) + ': [' + str(self.lambdaMin) + '; ' + str(self.lambdaMax) + ']; ' + str(self.mode) + ')'
   
   def getCentralWaveLength(self):
     return (self.lambdaMax + self.lambdaMin) / 2.
@@ -193,7 +193,7 @@ class SpectralBand:
     return (self.lambdaMax - self.lambdaMin)
 
 # Class Direction
-class Direction :
+class Dart_Direction :
   def __init__(self, theta, phi, solidAngle = 1, angularSector = 1, index = -1) :
     self.theta = theta
     self.phi = phi
@@ -202,13 +202,13 @@ class Direction :
     self.index = index
   
   def __str__(self):
-    return 'Direction(' + str(self.theta) + ', ' + str(self.phi) + ')'
+    return 'Dart_Direction(' + str(self.theta) + ', ' + str(self.phi) + ')'
   
   def equal(self, dir2) :
     return abs(self.theta - dir2.theta) < 0.001 and abs(self.phi - dir2.phi) < 0.001
 
 # Class BRF, Tapp, Radiance, per direction
-class BRF :
+class Dart_BRF :
   def __init__(self) :
     self.valeursParDirections = []
   
@@ -231,7 +231,8 @@ class BRF :
     return self.valeursParDirections[indiceDirection]
 
 # Classe Images par direction
-class Images :
+# FIXME Is this class still needed?
+class Dart_Images :
   def __init__(self) :
     self.matrice2DparDirections = []
   
@@ -244,7 +245,8 @@ class Images :
         return matriceCourante
 
 # Classe Bilan Radiatif par type
-class BilanRadiatif :
+# FIXME Is this class still needed?
+class Dart_BilanRadiatif :
   def __init__(self) :
     self.matriceParType = []
   
@@ -260,25 +262,25 @@ class BilanRadiatif :
         return True
     return False
 
-def getModeFromString(modeString):
+def Dart_getModeFromString(modeString):
   if modeString == 'T':
-    return SpectralBandMode.THERMAL
+    return Dart_SpectralBandMode.THERMAL
   elif modeString == 'R+T':
-    return SpectralBandMode.VISIBLE_AND_THERMAL
+    return Dart_SpectralBandMode.VISIBLE_AND_THERMAL
   else :
-    return SpectralBandMode.VISIBLE
+    return Dart_SpectralBandMode.VISIBLE
 
-def getNumMaxIteration(path) :
-  dirList = [f for f in VLAB.listdir(path) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(path, f))) and f.startswith(DARTEnv.iterRootDirectory) and f != DARTEnv.iterRootDirectory + 'X']
+def Dart_getNumMaxIteration(path) :
+  dirList = [f for f in VLAB.listdir(path) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(path, f))) and f.startswith(Dart_DARTEnv.iterRootDirectory) and f != Dart_DARTEnv.iterRootDirectory + 'X']
   
   maxIter = -1
   for rep in dirList :
-    numIter = int(rep.split(DARTEnv.iterRootDirectory)[1])
+    numIter = int(rep.split(Dart_DARTEnv.iterRootDirectory)[1])
   if numIter > maxIter :
     maxIter = numIter
   return maxIter
 
-def readProperties(propertyPath):
+def Dart_readProperties(propertyPath):
   # propFile= file(propertyPath, "rU" )
   propFile= file(propertyPath, "r" )
   propDict= dict()
@@ -296,7 +298,7 @@ def readProperties(propertyPath):
   propFile.close()
   return propDict;
 
-def readPropertiesFromFile(stringFile):
+def Dart_readPropertiesFromFile(stringFile):
   properties = StringIO.StringIO(stringFile)
   propertiesLines = properties.readlines()
   propertiesDico = {}
@@ -305,7 +307,7 @@ def readPropertiesFromFile(stringFile):
     propertiesDico[prop] = valeur
   return propertiesDico
 
-class DARTSimulation :
+class Dart_DARTSimulation :
   def __init__(self, name, rootSimulations) :
     self.name = name
     self.rootSimulationsDirectory = rootSimulations
@@ -322,23 +324,23 @@ class DARTSimulation :
       for directory in dirList:
         # On test si le dossier contient des dossiers output, input et/ou sequence
         # On relance la methode recursivement sur les eventuels autres dossiers (hors input, output et sequence)
-        if (directory == DARTEnv.inputDirectory) or (directory == DARTEnv.outputDirectory) or (directory == DARTEnv.sequenceDirectory) :
+        if (directory == Dart_DARTEnv.inputDirectory) or (directory == Dart_DARTEnv.outputDirectory) or (directory == Dart_DARTEnv.sequenceDirectory) :
           return True
     return False
   
   def getProperties(self):
-    return readProperties(VLAB.path.join(self.getAbsolutePath(), DARTEnv.outputDirectory, DARTEnv.propertiesFile))
+    return Dart_readProperties(VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.outputDirectory, Dart_DARTEnv.propertiesFile))
   
   def getSpectralBands(self):   
     properties = self.getProperties()
     nbSpectralBand = int(properties['phase.nbSpectralBands'])
     bandes = []
     for numBand in range(nbSpectralBand):
-      bande = SpectralBand()
+      bande = Dart_SpectralBand()
       bande.index = numBand
       bande.lambdaMin = float(properties['dart.band' + str(numBand) + '.lambdaMin'])
       bande.lambdaMax = float(properties['dart.band' + str(numBand) + '.lambdaMax'])
-      bande.mode = getModeFromString(properties['dart.band' + str(numBand) + '.mode'])
+      bande.mode = Dart_getModeFromString(properties['dart.band' + str(numBand) + '.mode'])
       bandes.append(bande)
     return bandes
   
@@ -351,7 +353,7 @@ class DARTSimulation :
     nbDD = int(properties['direction.numberOfDirections'])
     discretizedDirections = []
     for i in range(nbDD) :
-      discretizedDirections.append(Direction(float(properties['direction.direction' + str(i) +'.thetaCenter']), float(properties['direction.direction' + str(i) +'.phiCenter']), solidAngle = float(properties['direction.direction' + str(i) +'.omega']), angularSector = int(properties['direction.direction' + str(i) +'.angularSector']), index = i))
+      discretizedDirections.append(Dart_Direction(float(properties['direction.direction' + str(i) +'.thetaCenter']), float(properties['direction.direction' + str(i) +'.phiCenter']), solidAngle = float(properties['direction.direction' + str(i) +'.omega']), angularSector = int(properties['direction.direction' + str(i) +'.angularSector']), index = i))
     return discretizedDirections
   
   def getUserDirections(self) :
@@ -360,11 +362,11 @@ class DARTSimulation :
     userDirections = []
     for i in range(nbUD) :
       additionalSpotIndex = int(properties['direction.additionalSpot' + str(i) + '.directionIndex'])
-      userDirections.append(Direction(float(properties['direction.direction' + str(additionalSpotIndex) +'.thetaCenter']), float(properties['direction.direction' + str(additionalSpotIndex) +'.phiCenter']), index = additionalSpotIndex))
+      userDirections.append(Dart_Direction(float(properties['direction.direction' + str(additionalSpotIndex) +'.thetaCenter']), float(properties['direction.direction' + str(additionalSpotIndex) +'.phiCenter']), index = additionalSpotIndex))
     return userDirections
   
   def listNomsSequences(self) :
-    sequencePath = VLAB.path.join(self.getAbsolutePath(), DARTEnv.sequenceDirectory)
+    sequencePath = VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.sequenceDirectory)
     listNom = []
     if (VLAB.path.exists(sequencePath)) :
       dirList=[f for f in VLAB.listdir(sequencePath) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(sequencePath, f)))]
@@ -376,77 +378,77 @@ class DARTSimulation :
     return listNom
   
   def listSequences(self, nom) :
-    sequencePath = VLAB.path.join(self.getAbsolutePath(), DARTEnv.sequenceDirectory)
+    sequencePath = VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.sequenceDirectory)
     listSequence = [f for f in VLAB.listdir(sequencePath) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(sequencePath, f))) and f.startswith(nom + '_')]
     
     listSequence.sort(lambda a, b: cmp(int(a[len(nom)+1:]),int(b[len(nom)+1:])))
-    listSimuSequence = [DARTSimulation(VLAB.path.join(self.name, DARTEnv.sequenceDirectory, s), self.rootSimulationsDirectory) for s in listSequence]
+    listSimuSequence = [Dart_DARTSimulation(VLAB.path.join(self.name, Dart_DARTEnv.sequenceDirectory, s), self.rootSimulationsDirectory) for s in listSequence]
     return listSimuSequence
   
   def getSequence(self, nomSequence, numeroSequence) :
-    return DARTSimulation(VLAB.path.join(self.name, DARTEnv.sequenceDirectory, nomSequence + '_' + str(numeroSequence)), self.rootSimulationsDirectory);
+    return Dart_DARTSimulation(VLAB.path.join(self.name, Dart_DARTEnv.sequenceDirectory, nomSequence + '_' + str(numeroSequence)), self.rootSimulationsDirectory);
   
-  def getSubdirectory(self, spectralBand = 0, dataType = DataUnit.BRF_TAPP, level = DataLevel.BOA, iteration = 'last') :
+  def getSubdirectory(self, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last') :
     simulationPath = self.getAbsolutePath()
-    bandPath = VLAB.path.join(simulationPath, DARTEnv.outputDirectory, DARTEnv.bandRootDirectory + str(spectralBand))
+    bandPath = VLAB.path.join(simulationPath, Dart_DARTEnv.outputDirectory, Dart_DARTEnv.bandRootDirectory + str(spectralBand))
     brfPath = ''
-    if dataType == DataUnit.RADIANCE :
-      brfPath = VLAB.path.join(bandPath, DARTEnv.radianceDirectory)
-      if (level == DataLevel.TOA or level == DataLevel.ATMOSPHERE_ONLY) :
-        brfPath = VLAB.path.join(brfPath, DARTEnv.toaDirectory) # Radiance/TOA
-      elif (level == DataLevel.SENSOR) :
-        brfPath = VLAB.path.join(brfPath, DARTEnv.sensorDirectory) # Radiance/SENSOR
+    if dataType == Dart_DataUnit.RADIANCE :
+      brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.radianceDirectory)
+      if (level == Dart_DataLevel.TOA or level == Dart_DataLevel.ATMOSPHERE_ONLY) :
+        brfPath = VLAB.path.join(brfPath, Dart_DARTEnv.toaDirectory) # Radiance/TOA
+      elif (level == Dart_DataLevel.SENSOR) :
+        brfPath = VLAB.path.join(brfPath, Dart_DARTEnv.sensorDirectory) # Radiance/SENSOR
       elif (not iteration == 'last') :
         brfPath = VLAB.path.join(brfPath, iteration) # Radiance/ITER...
       else :
         # Recherche du dossier COUPL
-        tmpPath = VLAB.path.join(brfPath, DARTEnv.couplDirectory) # Radiance/COUPL
+        tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.couplDirectory) # Radiance/COUPL
         if (not VLAB.path.exists(tmpPath)) :
         # Recherche du dossier ITERX
-          tmpPath = VLAB.path.join(brfPath, DARTEnv.iterRootDirectory + 'X') # Radiance/ITERX
+          tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.iterRootDirectory + 'X') # Radiance/ITERX
           if (not VLAB.path.exists(tmpPath)) :
             # Recherche du dossier ITER de plus fort nombre
-            tmpPath = VLAB.path.join(brfPath, DARTEnv.iterRootDirectory + str(getNumMaxIteration(brfPath)))
+            tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.iterRootDirectory + str(Dart_getNumMaxIteration(brfPath)))
         brfPath = tmpPath;
     else :
-      if (level == DataLevel.BOA) :
+      if (level == Dart_DataLevel.BOA) :
         # Test de la presence d'un dossier brf, sinon tapp
-        brfPath = VLAB.path.join(bandPath, DARTEnv.brfDirectory)
+        brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.brfDirectory)
         if (not VLAB.path.exists(brfPath)) :
           # on essaie le dossier tapp
-          brfPath = VLAB.path.join(bandPath, DARTEnv.tappDirectory)
+          brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.tappDirectory)
         if (not iteration == 'last') :
           brfPath = VLAB.path.join(brfPath, iteration) # BRF_TAPP/ITER...
         else :
-          tmpPath = VLAB.path.join(brfPath, DARTEnv.couplDirectory) # BRF_TAPP/COUPL
+          tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.couplDirectory) # BRF_TAPP/COUPL
           if (not VLAB.path.exists(tmpPath)) :
             # Recherche du dossier ITERX
-            tmpPath = VLAB.path.join(brfPath, DARTEnv.iterRootDirectory + 'X') # BRF_TAPP/ITERX
+            tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.iterRootDirectory + 'X') # BRF_TAPP/ITERX
             if (not VLAB.path.exists(tmpPath)) :
               # Recherche du dossier ITER de plus fort nombre
-              tmpPath = VLAB.path.join(brfPath, DARTEnv.iterRootDirectory + str(getNumMaxIteration(brfPath)))
+              tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.iterRootDirectory + str(Dart_getNumMaxIteration(brfPath)))
           brfPath = tmpPath;
-      elif (level == DataLevel.SENSOR) :
-        brfPath = VLAB.path.join(bandPath, DARTEnv.sensorDirectory) # SENSOR
+      elif (level == Dart_DataLevel.SENSOR) :
+        brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.sensorDirectory) # SENSOR
       else :
-        brfPath = VLAB.path.join(bandPath, DARTEnv.toaDirectory) # TOA
+        brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.toaDirectory) # TOA
     
     return brfPath
   
-  def getAveragePerDirection(self, spectralBand = 0, dataType = DataUnit.BRF_TAPP, level = DataLevel.BOA, iteration = 'last') :
+  def getAveragePerDirection(self, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last') :
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
-    brf = BRF()
+    brf = Dart_BRF()
     if (VLAB.path.exists(brfPath)) :
       # recherche du nom de fichier contenant le brf/tapp/radiance
-      if (dataType == DataUnit.RADIANCE) :
-        if (level == DataLevel.ATMOSPHERE_ONLY):
-          brfPath = VLAB.path.join(brfPath, DARTEnv.radianceAtmoFile)
+      if (dataType == Dart_DataUnit.RADIANCE) :
+        if (level == Dart_DataLevel.ATMOSPHERE_ONLY):
+          brfPath = VLAB.path.join(brfPath, Dart_DARTEnv.radianceAtmoFile)
         else:
-          brfPath = VLAB.path.join(brfPath, DARTEnv.radianceFile)
+          brfPath = VLAB.path.join(brfPath, Dart_DARTEnv.radianceFile)
       else :
-        tmpPath = VLAB.path.join(brfPath, DARTEnv.brfFile)
+        tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.brfFile)
         if (not VLAB.path.exists(tmpPath)) :
-          tmpPath = VLAB.path.join(brfPath, DARTEnv.tappFile)
+          tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.tappFile)
         brfPath = tmpPath
       
       if (VLAB.path.exists(brfPath) and VLAB.path.isfile(brfPath)) :
@@ -455,7 +457,7 @@ class DARTSimulation :
         lines = fichierBRF.readlines()
         for line in lines :
           split = line.split()
-          brf.addValeurDansDirection(Direction(float(split[0]), float(split[1])), float(split[2]))
+          brf.addValeurDansDirection(Dart_Direction(float(split[0]), float(split[1])), float(split[2]))
         fichierBRF.close()
     return brf
   
@@ -474,16 +476,16 @@ class DARTSimulation :
         imageIndex = imageIndex + 1
     return imageName
   
-  def getImageMinMaxInDirection(self, direction, spectralBand = 0, dataType = DataUnit.BRF_TAPP, level = DataLevel.BOA, iteration = 'last', projectionPlane=ProjectionPlane.SENSOR_PLANE) :
+  def getImageMinMaxInDirection(self, direction, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last', projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE) :
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
     minImage = None
     maxImage = None
     if (VLAB.path.exists(brfPath)) :
-      imageDirPath = VLAB.path.join(brfPath, DARTEnv.imageDirectoy)
-      if (projectionPlane == ProjectionPlane.ORTHOPROJECTION):
-        imageDirPath = VLAB.path.join(imageDirPath, DARTEnv.orthoProjectedImageDirectory)
-      elif (projectionPlane == ProjectionPlane.BOA_PLANE):
-        imageDirPath = VLAB.path.join(imageDirPath, DARTEnv.nonProjectedImageDirectory)
+      imageDirPath = VLAB.path.join(brfPath, Dart_DARTEnv.imageDirectoy)
+      if (projectionPlane == Dart_ProjectionPlane.ORTHOPROJECTION):
+        imageDirPath = VLAB.path.join(imageDirPath, Dart_DARTEnv.orthoProjectedImageDirectory)
+      elif (projectionPlane == Dart_ProjectionPlane.BOA_PLANE):
+        imageDirPath = VLAB.path.join(imageDirPath, Dart_DARTEnv.nonProjectedImageDirectory)
       imageName = self.getImageNameInDirection(direction)
       mprPath = VLAB.path.join(imageDirPath, imageName + '.mpr')
       if (VLAB.path.exists(mprPath)):
@@ -500,15 +502,15 @@ class DARTSimulation :
         mprFile.close()
     return (minImage, maxImage)
 
-  def getImageInDirection(self, direction, spectralBand = 0, dataType = DataUnit.BRF_TAPP, level = DataLevel.BOA, iteration = 'last', projectionPlane=ProjectionPlane.SENSOR_PLANE):
+  def getImageInDirection(self, direction, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last', projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE):
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
     data = []
     if (VLAB.path.exists(brfPath)):
-      imageDirPath = VLAB.path.join(brfPath, DARTEnv.imageDirectoy)
-      if (projectionPlane == ProjectionPlane.ORTHOPROJECTION):
-        imageDirPath = VLAB.path.join(imageDirPath, DARTEnv.orthoProjectedImageDirectory)
-      elif (projectionPlane == ProjectionPlane.BOA_PLANE):
-        imageDirPath = VLAB.path.join(imageDirPath, DARTEnv.nonProjectedImageDirectory)
+      imageDirPath = VLAB.path.join(brfPath, Dart_DARTEnv.imageDirectoy)
+      if (projectionPlane == Dart_ProjectionPlane.ORTHOPROJECTION):
+        imageDirPath = VLAB.path.join(imageDirPath, Dart_DARTEnv.orthoProjectedImageDirectory)
+      elif (projectionPlane == Dart_ProjectionPlane.BOA_PLANE):
+        imageDirPath = VLAB.path.join(imageDirPath, Dart_DARTEnv.nonProjectedImageDirectory)
       imageName = self.getImageNameInDirection(direction)
       # Recovery of the size of the image, in pixels
       mprPath = VLAB.path.join(imageDirPath, imageName + '.mpr')
@@ -535,7 +537,7 @@ class DARTSimulation :
           mpSharpFile.close()
     return data
 
-class DARTRootSimulationDirectory :
+class Dart_DARTRootSimulationDirectory :
   def __init__(self) :
     pass
   
@@ -543,7 +545,7 @@ class DARTRootSimulationDirectory :
     return VLAB.path.normcase(VLAB.path.normpath(path1)) == VLAB.path.normcase(VLAB.path.normpath(path2))
   
   def getAbsolutePath(self) :
-    return VLAB.path.join(DARTEnv.dartLocal, DARTEnv.simulationsDirectory)
+    return VLAB.path.join(Dart_DARTEnv.dartLocal, Dart_DARTEnv.simulationsDirectory)
   
   def getSimulationsList(self) :
     rootSimulationPath = self.getAbsolutePath()
@@ -566,7 +568,7 @@ class DARTRootSimulationDirectory :
     for directory in dirList:
       # On test si le dossier contient des dossiers output, input et/ou sequence
       # On relance la methode recursivement sur les eventuels autres dossiers (hors input, output et sequence)
-      if (directory != DARTEnv.inputDirectory) and (directory != DARTEnv.outputDirectory) and (directory != DARTEnv.sequenceDirectory) :
+      if (directory != Dart_DARTEnv.inputDirectory) and (directory != Dart_DARTEnv.outputDirectory) and (directory != Dart_DARTEnv.sequenceDirectory) :
         self.listSimulationsInPath(listSimulations, VLAB.path.join(path, directory))
       else :
         isSimulation = True
@@ -597,14 +599,14 @@ class DARTRootSimulationDirectory :
             simulationName = VLAB.path.join(tail, simulationName)
           else :
             simulationName = ''
-    return DARTSimulation(simulationName, self)
+    return Dart_DARTSimulation(simulationName, self)
 
-class DARTDao :
+class Dart_DARTDao :
   def __init__(self) :
     pass
   
   def getRootSimulationDirectory(self) :
-    return DARTRootSimulationDirectory()
+    return Dart_DARTRootSimulationDirectory()
     
   def getSimulationsList(self) :
     return self.getRootSimulationDirectory().getSimulationsList()
@@ -612,8 +614,9 @@ class DARTDao :
   def getSimulation(self, name) :
     return self.getRootSimulationDirectory().getSimulation(name)
 
-def Bandes(simulationProperties):
-  propertiesDico = readPropertiesFromFile(simulationProperties)
+# FIXME Is this class still needed?
+def Dart_Bandes(simulationProperties):
+  propertiesDico = Dart_readPropertiesFromFile(simulationProperties)
   i = int(propertiesDico['phase.nbSpectralBands'])
   bandes = []
   for j in range(i):
@@ -626,9 +629,9 @@ def Bandes(simulationProperties):
   return bandes
 
 #==============================================================================
-#title            :DartImages.py
+#title            :Dart_DartImages.py
 #description      :This script can be used to write a *.bsq binary file and a corresponding ENVI header *.hdr from DART output images
-#required scripts :DARTDao.py
+#required scripts :Dart_DARTDao.py
 #author           :Fabian Schneider, Nicolas Lauret
 #date             :20130328
 #version          :1.0
@@ -636,7 +639,7 @@ def Bandes(simulationProperties):
 #==============================================================================
 
 
-class DartImages :
+class Dart_DartImages :
   def __init__(self) :
     pass
 
@@ -656,53 +659,53 @@ class DartImages :
       i += 1
     return ltype(l)
 
-  def getImagesBandsAsList( self, DartInfo, ImageInfo ) :
+  def getImagesBandsAsList( self, Dart_DartInfo, Dart_ImageInfo ) :
 
-    simulation = DARTDao().getSimulation( DartInfo.simulationName )
+    simulation = Dart_DARTDao().getSimulation( Dart_DartInfo.simulationName )
 
     imagesList = []
     spectralBandsList = []
     
-    if DartInfo.isSequence:
-      sequencesList = simulation.listSequences( DartInfo.sequenceName )
+    if Dart_DartInfo.isSequence:
+      sequencesList = simulation.listSequences( Dart_DartInfo.sequenceName )
       
       for sequence in sequencesList:
         # Recover the number of Spectral Band
         spectralBands = sequence.getSpectralBands()
     
         # Recover the Directions
-        if ImageInfo.isUserDirection:
+        if Dart_ImageInfo.isUserDirection:
           directions = sequence.getUserDirections()
         else:
           directions = simulation.getDiscretizedDirection()
   
         # Recover the images in the defined direction for each spectral band
         for band in spectralBands:
-          imagesList.append(sequence.getImageInDirection( directions[ ImageInfo.directionNumber ], band.index, ImageInfo.dataType, ImageInfo.imageLevel, ImageInfo.iteration, ImageInfo.projectionPlane ))
+          imagesList.append(sequence.getImageInDirection( directions[ Dart_ImageInfo.directionNumber ], band.index, Dart_ImageInfo.dataType, Dart_ImageInfo.imageLevel, Dart_ImageInfo.iteration, Dart_ImageInfo.projectionPlane ))
           spectralBandsList.append( band )
     else:
       # Recover the number of Spectral Band
       spectralBands = simulation.getSpectralBands()
 
       # Recover the Directions
-      if ImageInfo.isUserDirection:
+      if Dart_ImageInfo.isUserDirection:
         directions = sequence.getUserDirections()
       else:
         directions = simulation.getDiscretizedDirection()
 
       # Recover the images in the defined direction for each spectral band
       for band in spectralBands:
-        imagesList.append(simulation.getImageInDirection( directions[ ImageInfo.directionNumber ], band.index, ImageInfo.dataType, ImageInfo.imageLevel, ImageInfo.iteration, ImageInfo.projectionPlane ))
+        imagesList.append(simulation.getImageInDirection( directions[ Dart_ImageInfo.directionNumber ], band.index, Dart_ImageInfo.dataType, Dart_ImageInfo.imageLevel, Dart_ImageInfo.iteration, Dart_ImageInfo.projectionPlane ))
         spectralBandsList.append( band )
 
     return imagesList, spectralBandsList
   
-  def writeDataCube( self, DartInfo, ImageInfo, HeaderInfo ) :
+  def writeDataCube( self, Dart_DartInfo, Dart_ImageInfo, Dart_HeaderInfo ) :
     
-    imagesList, spectralBandsList = self.getImagesBandsAsList( DartInfo, ImageInfo )
+    imagesList, spectralBandsList = self.getImagesBandsAsList( Dart_DartInfo, Dart_ImageInfo )
     
     # write BSQ binary file
-    fout = open( DartInfo.outputFilename + '.bsq', 'wb')
+    fout = open( Dart_DartInfo.outputFilename + '.bsq', 'wb')
     flatarray = array('f', self.flatten( imagesList ))
     flatarray.tofile(fout)
     fout.close()
@@ -727,9 +730,9 @@ class DartImages :
       fwhm += str( band.getBandWidth()*1000 ) + ', '
 
     # write ENVI header file
-    fout = open( DartInfo.outputFilename + '.hdr', 'w')
+    fout = open( Dart_DartInfo.outputFilename + '.hdr', 'w')
     fout.writelines( 'ENVI ' + '\n' )
-    fout.writelines( 'description = { ' + HeaderInfo.description + ' }' + '\n' )
+    fout.writelines( 'description = { ' + Dart_HeaderInfo.description + ' }' + '\n' )
     fout.writelines( 'samples = ' + str( samples ) + '\n' )
     fout.writelines( 'lines = ' + str( lines ) + '\n' )
     fout.writelines( 'bands = ' + str( bands ) + '\n' )
@@ -737,11 +740,11 @@ class DartImages :
     fout.writelines( 'file type = ' + fileType + '\n' )
     fout.writelines( 'data type = ' + str( dataType ) + '\n' )
     fout.writelines( 'interleave = ' + interleave + '\n' )
-    fout.writelines( 'sensor type = ' + HeaderInfo.sensorType + '\n' )
+    fout.writelines( 'sensor type = ' + Dart_HeaderInfo.sensorType + '\n' )
     fout.writelines( 'byte order = ' + str( byteOrder ) + '\n' )
     fout.writelines( 'x start = ' + str( xStart ) + '\n' )
     fout.writelines( 'y start = ' + str( yStart ) + '\n' )
-    fout.writelines( 'map info = {' + HeaderInfo.projectionName + ', ' + str( HeaderInfo.xReferencePixel ) + ', ' + str( HeaderInfo.yReferencePixel ) + ', ' + str( HeaderInfo.xReferenceCoordinate ) + ', ' + str( HeaderInfo.yReferenceCoordinate ) + ', ' + str( HeaderInfo.xPixelSize ) + ', ' + str( HeaderInfo.yPixelSize ) + ', ' + HeaderInfo.pixelUnits + ' }' + '\n' )
+    fout.writelines( 'map info = {' + Dart_HeaderInfo.projectionName + ', ' + str( Dart_HeaderInfo.xReferencePixel ) + ', ' + str( Dart_HeaderInfo.yReferencePixel ) + ', ' + str( Dart_HeaderInfo.xReferenceCoordinate ) + ', ' + str( Dart_HeaderInfo.yReferenceCoordinate ) + ', ' + str( Dart_HeaderInfo.xPixelSize ) + ', ' + str( Dart_HeaderInfo.yPixelSize ) + ', ' + Dart_HeaderInfo.pixelUnits + ' }' + '\n' )
     fout.writelines( 'default bands = ' + defaultBands + '\n' )
     fout.writelines( 'wavelength units = ' + wavelengthUnits + '\n' )
     fout.writelines( 'wavelength = { ' + wavelength[:-2] + ' }' + '\n' )
@@ -751,7 +754,7 @@ class DartImages :
 #==============================================================================
 #title            :writeDataCube.py
 #description      :This script writes a *.bsq binary file and a corresponding ENVI header *.hdr from DART output images
-#required scripts :DartImages.py + DARTDao.py
+#required scripts :Dart_DartImages.py + Dart_DARTDao.py
 #author           :Fabian Schneider
 #date             :20130328
 #version          :1.0
@@ -759,24 +762,24 @@ class DartImages :
 #==============================================================================
 
 
-class DartInfo :
+class Dart_DartInfo :
   
   simulationName = 'DartSimulation30m_Laegeren' # name of the DART simulation
   isSequence = False            # options: True = images shall be restored from a sequence // False = images shall be restored from the simulation output only
   sequenceName = 'sequence_apex'      # name of the sequence within the simulation (if there is one)
   outputFilename = 'DartOutput'     # name of the output file that is written
 
-class ImageInfo :
+class Dart_ImageInfo :
 
-  imageLevel = DataLevel.SENSOR         # options: BOA = bottom of atmosphere // SENSOR = at sensor // TOA = top of atmosphere // ATMOSPHERE_ONLY
+  imageLevel = Dart_DataLevel.SENSOR         # options: BOA = bottom of atmosphere // SENSOR = at sensor // TOA = top of atmosphere // ATMOSPHERE_ONLY
   isUserDirection = False             # options: True = images of a user defined direction // False = images of a discretisized direction
   directionNumber = 0               # number of the direction starting at 0, e.g. 0 = first direction
-  dataType = DataUnit.RADIANCE          # options: BRF_TAPP = bidirectional reflectance factor [0 1] // RADIANCE = radiance [W/m2]
+  dataType = Dart_DataUnit.RADIANCE          # options: BRF_TAPP = bidirectional reflectance factor [0 1] // RADIANCE = radiance [W/m2]
   iteration = 'last'                # last iteration product
-  projectionPlane=ProjectionPlane.SENSOR_PLANE  # options: SENSOR_PLANE = image in the sensor plane // ORTHOPROJECTION = orthorectified image // BOA_PLANE = non-projected image on the BOA plane
+  projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE  # options: SENSOR_PLANE = image in the sensor plane // ORTHOPROJECTION = orthorectified image // BOA_PLANE = non-projected image on the BOA plane
 
 # see more information on http://geol.hu/data/online_help/ENVI_Header_Format.html
-class HeaderInfo :
+class Dart_HeaderInfo :
 
   description = 'some text'       # description of the file
   sensorType = 'APEX'           # specific sensor type like IKONOS, QuickBird, RADARSAT  
@@ -784,9 +787,9 @@ class HeaderInfo :
   xReferencePixel = 1           # x pixel corresponding to the reference x-coordinate
   yReferencePixel = 1           # y pixel corresponding to the reference y-coordinate
   xReferenceCoordinate = 2669660.0000   # reference pixel x location in file coordinates
-  yReferenceCoordinate = 1259210.0000		# reference pixel y location in file coordinates
-	xPixelSize = 1							# pixel size in x direction
-	yPixelSize = 1							# pixel size in y direction
-	pixelUnits = 'units=Meters'
+  yReferenceCoordinate = 1259210.0000   # reference pixel y location in file coordinates
+  xPixelSize = 1							# pixel size in x direction
+  yPixelSize = 1							# pixel size in y direction
+  pixelUnits = 'units=Meters'
 
-DartImages().writeDataCube( DartInfo, ImageInfo, HeaderInfo )
+Dart_DartImages().writeDataCube( Dart_DartInfo, Dart_ImageInfo, Dart_HeaderInfo )
