@@ -4,7 +4,9 @@ import sys, os, argparse, glob
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize
+import nelmin
 
+debug = True
 
 # objective function - requires params, x (array of angles) and y (array of obs)
 def obj(p,x):
@@ -145,7 +147,16 @@ def main():
 		# now do inversion
 		porig = params
 		p_est = params
+
+                nm = None
+                if debug:
+                        nm = nelmin.minimize(obj, params, args=(invdata,))[0]
 		p_est = scipy.optimize.fmin(obj,params,args=(invdata,))
+                if debug:
+                        print " scipy.optimize.fmin (old) | nelmin.minimize (new)"
+                        print "-------------------------------------------------------"
+                        for values in zip(p_est, nm):
+                                print "% 0.23f | % 0.23f" % values
 		#p_est = scipy.optimize.fmin_l_bfgs_b(obj,params,args=(invdata,),approx_grad=1, disp=1)
 		#p_est = scipy.optimize.fmin_l_bfgs_b(obj,p_est,args=(invdata,),approx_grad=1)
 		if options.three:
