@@ -65,7 +65,7 @@ For IT Developers
 
 Full development environment
 ------------------------------------------
-This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. The first script automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
+This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. The [first script](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/build_beam_binaries.sh) automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 
 **See below for OPTIONAL step on creating a linux virtual image**
 
@@ -84,8 +84,7 @@ sh build_beam_vlab_binaries.sh
 
 Build Dependent Software from Source
 ------------------------------------------
-Most of the plugin's dependent software is open source and can be compiled yourself. Here are scripts that we used to build the binary snapshots.
-
+Most of the plugin's dependent software is open source and can be compiled yourself. Here are scripts that we used to build the binary snapshots of [librat](http://www2.geog.ucl.ac.uk/~plewis/bpms/src/lib/) and [libradtran](http://www.libradtran.org/doku.php)
 
 ```bash
 # Run this compilation script (Fedora 64bit linux + cross compile for win32 )
