@@ -13,19 +13,19 @@ This plugin has been written in a way that nearly everything can be coded in pyt
 * It is easy to try changes yourself - just edit a single file and restart Beam - no development environment or tools needed
 * If your like your change, it is easy to email us your modified python file
 
-That means you should be able to make any logic changes to the plugin by editing the [$HOME/.beam/beam-vlab/auxdata/VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been installed in your BEAM auxdata directory and restarting the BEAM application e.g. $HOME/beam-4.11/bin/visat. 
+You can directly make logic changes to the plugin by editing the [${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) jython implementation that will have been installed in your BEAM auxdata directory and restarting the BEAM application e.g. ${HOME}/beam-4.11/bin/visat. 
 
 Example change: add an additional sensor 
 ---------------------------
 You only need the typical binary installation for this.
 
 1. Perform [binary only installation](https://github.com/netceteragroup/esa-beam#binary-installation)
-2. Enable logging (in beam-4.11/config/beam.config, uncomment beam.logLevel = INFO)
-3. in [$HOME/.beam/beam-vlab/auxdata/VLabImpl.py]() search for "Sentinel 2" (aka K_SENTINEL2) and everywhere it appears, add your new one e.g. "Sentinel 99" aka K_SENTINEL99
+2. Enable logging (in ${HOME}/beam-4.11/config/beam.config, uncomment beam.logLevel = INFO)
+3. in [${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py]() search for "Sentinel 2" (aka K_SENTINEL2) and everywhere it appears, add your new one e.g. "Sentinel 99" aka K_SENTINEL99
 4. You should see your change after selecting the 3D VegLab processor from within BEAM
 5. If not, you can add logging e.g. VLAB.logger.info('hello %s' % 'world')
-6. And check logfiles in $HOME/.beam/log/ and $HOME/beam-4.11/log/
-7. mailx -s "my esa-beam 3dveglab updates" info@netcetera.com < $HOME/.beam/beam-vlab/auxdata/VLabImpl.py
+6. And check logfiles in ${HOME}/.beam/log/ and ${HOME}/beam-4.11/log/
+7. mailx -s "my esa-beam 3dveglab updates" info@netcetera.com < ${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py
 
 Caveats
 ---------------------------
@@ -33,19 +33,19 @@ Since we are using the jython variant that ships with BEAM, there are limitation
 * No 3rd-party modules like numpy, matplotlib, etc
 * Not even some typically native python libraries like os, copy, ...
 
-But, in the BEAM case, you have access to anything that BEAM (and Java) provides. We have made use of BEAM's jfreechart java library to plot results for example.
+But, in the BEAM case, you have access to anything that BEAM (and Java) provides. We have made use of the BEAM-provided jfreechart java library to plot some auxilliary information for example.
 
 For testing purposes, we try to ensure the code can execute from both jython and python. Here is an example of a helper fileExists() routine we have written to support this.
 
 ```python
-  def fileExists(fname):
-    """check if fname exists as a file"""
-    if sys.platform.startswith('java'):
-      from java.io import File
-      return File(fname).exists()
-    else:
-      import os
-      return os.path.exists(fname)
+def fileExists(fname):
+  """check if fname exists as a file"""
+  if sys.platform.startswith('java'):
+    from java.io import File
+    return File(fname).exists()
+  else:
+    import os
+    return os.path.exists(fname)
 ```
 
 Testing
@@ -116,14 +116,6 @@ VirtualBox --startvm f19-xfce-dev
 # ssh -Y fedora@localhost -p 2222
 
 ```
-
-BEAM Plugin Contributing Authors
------------------------------------------
-* Cyrill Schenkel
-* Daniel Kuekenbrink 
-* Joshy Cyriac 
-* Marcel Kessler 
-* Jason Brazile
 
 License
 -----------------------------------------

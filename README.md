@@ -72,7 +72,10 @@ There are two modes of development, which are described in [a separate README](h
 
 BEAM Plugin Contributing Authors
 -----------------------------------------
+* Mat Disney
 * Cyrill Schenkel
+* Fabian Schneider
+* Nicolas Lauret
 * Daniel Kuekenbrink 
 * Joshy Cyriac 
 * Marcel Kessler 
