@@ -36,7 +36,6 @@ Netcetera
 """
 
 from math import sqrt
-from copy import copy
 
 #-----------------------------------------------------------------------
 # The public face of the minimizer...
@@ -153,7 +152,7 @@ class VLAB:
         VLAB.Minimize_take_a_step(smplx, Kreflect, Kextend, Kcontract)
       # Pick out the current best vertex.
       i_best = smplx.lowest()
-      x_best = copy(smplx.get_vertex(i_best))
+      x_best = list(smplx.get_vertex(i_best))
       f_best = smplx.f_list[i_best]
       # Check the scatter of vertex values to see if we are
       # close enough to call it quits.
@@ -191,12 +190,12 @@ class Minimize_NMSimplex:
     self.N = len(x)
     self.vertex_list = []
     self.f_list = []
-    self.dx = copy(dx)
+    self.dx = list(dx)
     self.f = lambda x : f(x, *args)
     self.nfe = 0
     self.nrestarts = 0
     for i in range(self.N + 1):
-      p = copy(x)
+      p = list(x)
       if i >= 1: p[i-1] += dx[i-1]
       self.vertex_list.append(p)
       self.f_list.append(f(p, *args))
@@ -213,7 +212,7 @@ class Minimize_NMSimplex:
     self.vertex_list = []
     self.f_list = []
     for i in range(self.N + 1):
-      p = copy(x)
+      p = list(x)
       if i >= 1: p[i-1] += self.dx[i-1]
       self.vertex_list.append(p)
       self.f_list.append(self.f(p))
@@ -222,10 +221,10 @@ class Minimize_NMSimplex:
     return
   
   def get_vertex(self, i):
-    return copy(self.vertex_list[i])
+    return list(self.vertex_list[i])
 
   def replace_vertex(self, i, x, fvalue):
-    self.vertex_list[i] = copy(x)
+    self.vertex_list[i] = list(x)
     self.f_list[i] = fvalue
     return
 
