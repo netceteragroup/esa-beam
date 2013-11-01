@@ -19,7 +19,7 @@
 #  https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes
 #
 
-import sys, math, operator, nelmin
+import sys, math, operator, time
 
 ################
 #
@@ -32,6 +32,25 @@ import sys, math, operator, nelmin
 ################
 # to be merged into VLAB class...
 class VLAB:
+
+  LOGGER_NAME        = 'beam.processor.vlab'
+  DBG                = 'debug'
+  INF                = 'info'
+  ERR                = 'error'
+  if sys.platform.startswith('java'):
+    from java.util.logging import Logger
+    logger = Logger.getLogger(LOGGER_NAME)
+  else:
+    import logging
+    logger = logging.getLogger(LOGGER_NAME)
+    logger.setLevel(logging.DEBUG)
+    logch = logging.StreamHandler()
+    logch.setLevel(logging.DEBUG)
+    logger.addHandler(logch)
+    #logfh = logging.FileHandler('%s.log' % LOGGER_NAME)
+    #logfh.setLevel(logging.DEBUG)
+    #logger.addHander(logfh)
+
   def me():
     nm = ''
     try:
@@ -490,8 +509,332 @@ used."""
     return grad
   approx_fprime = staticmethod(approx_fprime)
 
+  ###########################################################################
+  # 
+  # Minimize_* functions...
+  #
+  # Nelder-Mead simplex minimization of a nonlinear (multivariate) function.
+  # 
+  # The programming interface is via the minimize() function; see below.
+  # 
+  # This code has been adapted from the C-coded nelmin.c which was
+  # adapted from the Fortran-coded nelmin.f which was, in turn, adapted
+  # from the papers
+  # 
+  #   J.A. Nelder and R. Mead (1965)
+  #   A simplex method for function minimization.
+  #   Computer Journal, Volume 7, pp 308-313.
+  # 
+  #   R. O'Neill (1971)
+  #   Algorithm AS47. Function minimization using a simplex algorithm.
+  #   Applied Statistics, Volume 20, pp 338-345.
+  # 
+  # and some examples are in
+  # 
+  #   D.M. Olsson and L.S. Nelson (1975)
+  #   The Nelder-Mead Simplex procedure for function minimization.
+  #   Technometrics, Volume 17 No. 1, pp 45-51.
+  #    
+  # For a fairly recent and popular incarnation of this minimizer,
+  # see the amoeba function in the famous "Numerical Recipes" text.
+  # 
+  # P. Jacobs
+  # School of Engineering, The University of Queensland
+  # 07-Jan-04
+  # 
+  # Modifications by C. Schenkel
+  # Netcetera
+  # 31-Oct-13
+  # 
+  ###########################################################################
+  def Minimize_create_new_point(c1, p1, c2, p2):
+    """
+    Create a new N-dimensional point as a weighting of points p1 and p2.
+    """
+    p_new = []
+    for j in range(len(p1)):
+      p_new.append(c1 * p1[j] + c2 * p2[j])
+    return p_new
+  Minimize_create_new_point = staticmethod(Minimize_create_new_point)
+
+  def Minimize_take_a_step(smplx, Kreflect, Kextend, Kcontract):
+    """
+    Try to move away from the worst point in the simplex.
+  
+    The new point will be inserted into the simplex (in place).
+    """
+    i_low = smplx.lowest()
+    i_high = smplx.highest()
+    x_high = smplx.vertex_list[i_high]
+    f_high = smplx.f_list[i_high]
+    # Centroid of simplex excluding worst point.
+    x_mid = smplx.centroid(i_high)
+    f_mid = smplx.f(x_mid)
+    smplx.nfe += 1
+  
+    # First, try moving away from worst point by
+    # reflection through centroid
+    x_refl = VLAB.Minimize_create_new_point(1.0+Kreflect, x_mid, -Kreflect, x_high)
+    f_refl = smplx.f(x_refl)
+    smplx.nfe += 1
+    if f_refl < f_mid:
+      # The reflection through the centroid is good,
+      # try to extend in the same direction.
+      x_ext = VLAB.Minimize_create_new_point(Kextend, x_refl, 1.0-Kextend, x_mid)
+      f_ext = smplx.f(x_ext)
+      smplx.nfe += 1
+      if f_ext < f_refl:
+        # Keep the extension because it's best.
+        smplx.replace_vertex(i_high, x_ext, f_ext)
+      else:
+        # Settle for the original reflection.
+        smplx.replace_vertex(i_high, x_refl, f_refl)
+    else:
+      # The reflection is not going in the right direction, it seems.
+      # See how many vertices are better than the reflected point.
+      count = 0
+      for i in range(smplx.N+1):
+        if smplx.f_list[i] > f_refl: count += 1
+      if count <= 1:
+        # Not too many points are higher than the original reflection.
+        # Try a contraction on the reflection-side of the centroid.
+        x_con = VLAB.Minimize_create_new_point(1.0-Kcontract, x_mid, Kcontract, x_high)
+        f_con = smplx.f(x_con)
+        smplx.nfe += 1
+        if f_con < f_high:
+          # At least we haven't gone uphill; accept.
+          smplx.replace_vertex(i_high, x_con, f_con)
+        else:
+          # We have not been successful in taking a single step.
+          # Contract the simplex about the current lowest point.
+          smplx.contract_about_one_point(i_low)
+      else:
+        # Retain the original reflection because there are many
+        # vertices with higher values of the objective function.
+        smplx.replace_vertex(i_high, x_refl, f_refl)
+    return
+  Minimize_take_a_step = staticmethod(Minimize_take_a_step)
+  
+  def Minimize_minimize(f, x, dx=None, tol=1.0e-6,
+         maxfe=300, n_check=20, delta=0.001,
+         Kreflect=1.0, Kextend=2.0, Kcontract=0.5, args=()):
+    """
+    Locate a minimum of the objective function, f.
+  
+    Input:
+    f   : user-specified function f(x)
+    x   : list of N coordinates
+    args  : Extra arguments passed to f, i.e. ``f(x, *args)''.
+    dx    : list of N increments to apply to x when forming
+          the initial simplex.  Their magnitudes determine the size
+          and shape of the initial simplex.
+    tol   : the terminating limit for the standard-deviation
+          of the simplex function values.
+    maxfe : maximum number of function evaluations that we will allow
+    n_check : number of steps between convergence checks
+    delta : magnitude of the perturbations for checking a local minimum
+          and for the scale reduction when restarting
+    Kreflect, Kextend, Kcontract: coefficients for locating the new vertex
+  
+    Output:
+    Returns a tuple consisting of
+    [0] a list of coordinates for the best x location,
+      corresponding to min(f(x)),
+    [1] the function value at that point,
+    [2] a flag to indicate if convergence was achieved
+    [3] the number of function evaluations and
+    [4] the number of restarts (with scale reduction)
+    """
+    converged = 0
+    N = len(x)
+    if dx == None:
+      dx = [0.1] * N
+    smplx = Minimize_NMSimplex(x, dx, f, args)
+  
+    while (not converged) and (smplx.nfe < maxfe):
+      # Take some steps and then check for convergence.
+      for i in range(n_check):
+        VLAB.Minimize_take_a_step(smplx, Kreflect, Kextend, Kcontract)
+      # Pick out the current best vertex.
+      i_best = smplx.lowest()
+      x_best = copy(smplx.get_vertex(i_best))
+      f_best = smplx.f_list[i_best]
+      # Check the scatter of vertex values to see if we are
+      # close enough to call it quits.
+      mean, stddev = smplx.f_statistics()
+      if stddev < tol:
+        # All of the points are close together but we need to
+        # test more carefully.
+        converged = smplx.test_for_minimum(i_best, delta)
+        if not converged:
+          # The function evaluations are all very close together
+          # but we are not at a true minimum; rescale the simplex.
+          smplx.rescale(delta)
+    
+    return x_best, f_best, converged, smplx.nfe, smplx.nrestarts
+  Minimize_minimize = staticmethod(Minimize_minimize)
+  
+#-----------------------------------------------------------------------
+# Use a class to keep the data tidy and conveniently accessible...
+# See Jacobs et al. reference above
+# 
+
+class Minimize_NMSimplex:
+  """
+  Stores the (nonlinear) simplex as a list of lists.
+
+  In an N-dimensional problem, each vertex is a list of N coordinates
+  and the simplex consists of N+1 vertices.
+  """
+  def __init__(self, x, dx, f, args):
+    """
+    Initialize the simplex.
+
+    Set up the vertices about the user-specified vertex, x,
+    and the set of step-sizes dx.
+    f is a user-specified objective function f(x).
+    """
+    self.N = len(x)
+    self.vertex_list = []
+    self.f_list = []
+    self.dx = copy(dx)
+    self.f = lambda x : f(x, *args)
+    self.nfe = 0
+    self.nrestarts = 0
+    for i in range(self.N + 1):
+      p = copy(x)
+      if i >= 1: p[i-1] += dx[i-1]
+      self.vertex_list.append(p)
+      self.f_list.append(f(p, *args))
+      self.nfe += 1
+
+  def rescale(self, ratio):
+    """
+    Pick out the current minimum and rebuild the simplex about that point.
+    """
+    i_min = self.lowest()
+    for i in range(self.N):
+      self.dx[i] *= ratio
+    x = self.get_vertex(i_min)
+    self.vertex_list = []
+    self.f_list = []
+    for i in range(self.N + 1):
+      p = copy(x)
+      if i >= 1: p[i-1] += self.dx[i-1]
+      self.vertex_list.append(p)
+      self.f_list.append(self.f(p))
+      self.nfe += 1
+    self.nrestarts += 1
+    return
+  
+  def get_vertex(self, i):
+    return copy(self.vertex_list[i])
+
+  def replace_vertex(self, i, x, fvalue):
+    self.vertex_list[i] = copy(x)
+    self.f_list[i] = fvalue
+    return
+
+  def lowest(self, exclude=-1):
+    """
+    Returns the index of the lowest vertex, excluding the one specified.
+    """
+    if exclude == 0:
+      indx = 1
+    else:
+      indx = 0
+    lowest_f_value = self.f_list[indx]
+    for i in range(self.N + 1):
+      if i == exclude: continue
+      if self.f_list[i] < lowest_f_value:
+        lowest_f_value = self.f_list[i]
+        indx = i
+    return indx
+
+  def highest(self, exclude=-1):
+    """
+    Returns the index of the highest vertex, excluding the one specified.
+    """
+    if exclude == 0:
+      indx = 1
+    else:
+      indx = 0
+    highest_f_value = self.f_list[indx]
+    for i in range(self.N + 1):
+      if i == exclude: continue
+      if self.f_list[i] > highest_f_value:
+        highest_f_value = self.f_list[i]
+        indx = i
+    return indx
+
+  def f_statistics(self):
+    """
+    Returns mean and standard deviation of the vertex fn values.
+    """
+    sum = 0.0
+    for i in range(self.N + 1):
+      sum += self.f_list[i]
+    mean = sum / (self.N + 1)
+    sum = 0.0
+    for i in range(self.N +1):
+      diff = self.f_list[i] - mean
+      sum += diff * diff
+    std_dev = sqrt(sum / self.N)
+    return mean, std_dev
+
+  def centroid(self, exclude=-1):
+    """
+    Returns the centroid of all vertices excluding the one specified.
+    """
+    xmid = [0.0]*self.N
+    for i in range(self.N + 1):
+      if i == exclude: continue
+      for j in range(self.N):
+        xmid[j] += self.vertex_list[i][j]
+    for j in range(self.N):
+      xmid[j] /= self.N
+    return xmid
+  
+  def contract_about_one_point(self, i_con):
+    """
+    Contract the simplex about the vertex i_con.
+    """
+    p_con = self.vertex_list[i_con]
+    for i in range(self.N + 1):
+      if i == i_con: continue
+      p = self.vertex_list[i]
+      for j in range(self.N):
+        p[j] = 0.5 * (p[j] + p_con[j])
+      self.f_list[i] = self.f(p)
+      self.nfe += 1
+    return
+
+  def test_for_minimum(self, i_min, delta):
+    """
+    Perturb the minimum vertex and check that it is a local minimum.
+    """
+    is_minimum = 1  # Assume it is true and test for failure.
+    f_min = self.f_list[i_min]
+    for j in range(self.N):
+      # Check either side of the minimum, perturbing one
+      # coordinate at a time.
+      p = self.get_vertex(i_min)
+      p[j] += self.dx[j] * delta
+      f_p = self.f(p)
+      self.nfe += 1
+      if f_p < f_min:
+        is_minimum = 0
+        break
+      p[j] -= self.dx[j] * delta * 2
+      f_p = self.f(p)
+      self.nfe += 1
+      if f_p < f_min:
+        is_minimum = 0
+        break
+    return is_minimum
+  
 ################
-class dobrdf:
+class Librat_dobrdf:
   def _writeCamFile(self, camFile, args):
 
     # defaults
@@ -784,7 +1127,7 @@ class dobrdf:
     print 'done'
 
 ################
-class dolibradtran:
+class Librat_dolibradtran:
   def defaultLRT(self, fp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet):
     fp.write('solar_file ' + solar_file + '\n')
     fp.write('dens_column ' + dens_column)
@@ -961,7 +1304,7 @@ class dolibradtran:
       plotfilefp.close()
 
 ################
-class drivers:
+class Librat_drivers:
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
 
@@ -1121,7 +1464,7 @@ class drivers:
       look = zip(*looktrans)
       VLAB.savetxt(q['lookFile'],look,fmt='%.1f')
 
-class plot:
+class Librat_plot:
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
     print '======> ', me
@@ -1210,7 +1553,7 @@ class plot:
     VLAB.savetxt(opdat, outdata, fmt='%.4f')
     VLAB.save_chart(chart, opplot)
 
-class rpv_invert:
+class Librat_rpv_invert:
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
     print '======> ', me
@@ -1282,7 +1625,7 @@ class rpv_invert:
 
       porig = params
       p_est = params
-      p_est = nelmin.minimize(self.obj, params, args=(invdata,))[0]
+      p_est = VLAB.Minimize_minimize(self.obj, params, args=(invdata,))[0]
       if q['three']:
         p_est = VLAB.min_l_bfgs_b(self.obj, p_est, args=(invdata,), bounds=((0., None), (0., None), (None, None)))
       else:
@@ -1359,63 +1702,84 @@ class rpv_invert:
 
 ################
 
-# Test
+class LIBRAT:
+  """Integration glue for calling external DART programs"""
+  def __init__(self):
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: constructor completed...' % me)
 
-drivers      = drivers()
-dobrdf       = dobrdf()
-plot         = plot()
-rpv_invert   = rpv_invert()
-dolibradtran = dolibradtran()
+  def doProcessing(self, pm, args):
+    """do processing for DART processor"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
 
-args = {
-   'random' : True,
-   'n'      : 1000,
-   'angles' : 'angles.rpv.2.dat',
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
+    # ensure at least 1 second to ensure progress popup feedback
+    time.sleep(1)
+
+    drivers      = Librat_drivers()
+    dobrdf       = Librat_dobrdf()
+    plot         = Librat_plot()
+    rpv_invert   = Librat_rpv_invert()
+    dolibradtran = Librat_dolibradtran()
+    
+    args = {
+       'random' : True,
+       'n'      : 1000,
+       'angles' : 'angles.rpv.2.dat',
+    }
+    drivers.main(args)
+    
+    args = {
+            'v' : True,
+         'nice' : '19',
+          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
+         'hips' : True,
+           'wb' : 'wb.MSI.dat',
+        'ideal' : (300., 300.),
+         'look' : (150., 150., 710.),
+          'rpp' : 4,
+      'npixels' : 10000,
+         'boom' : 786000,
+       'angles' : 'angles.rpv.2.dat',
+        'opdir' : 'rpv.rami'
+    }
+    # dobrdf.main(args)
+    
+    args = {
+         'brdf' : True,
+       'angles' : 'angles.rpv.2.dat',
+       'wbfile' : 'wb.MSI.dat',
+        'bands' : (4., 7.),
+         'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj'
+    }
+    plot.main(args)
+    
+    args = {
+        'three' : True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+    'paramfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+     'plotfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
+    }
+    rpv_invert.main(args)
+    
+    args = {
+      'opdir' : 'rami.TOA',
+          'v' : True,
+        'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+       'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
+        'lat' : 50,
+        'lon' : 0,
+       'time' : "2013 0601 12 00 00"
+    }
+    dolibradtran.main(args)
+    VLAB.logger.info('%s: Done' % me)
+
+librat = LIBRAT()
+
+params = {
 }
-drivers.main(args)
+librat.doProcessing(None, params)
 
-args = {
-        'v' : True,
-     'nice' : '19',
-      'obj' : 'HET01_DIS_UNI_NIR_20.obj',
-     'hips' : True,
-       'wb' : 'wb.MSI.dat',
-    'ideal' : (300., 300.),
-     'look' : (150., 150., 710.),
-      'rpp' : 4,
-  'npixels' : 10000,
-     'boom' : 786000,
-   'angles' : 'angles.rpv.2.dat',
-    'opdir' : 'rpv.rami'
-}
-# dobrdf.main(args)
-
-args = {
-     'brdf' : True,
-   'angles' : 'angles.rpv.2.dat',
-   'wbfile' : 'wb.MSI.dat',
-    'bands' : (4., 7.),
-     'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj'
-}
-plot.main(args)
-
-args = {
-    'three' : True,
-        'v' : True,
-     'plot' : True,
-    'dataf' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
-'paramfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
- 'plotfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
-}
-rpv_invert.main(args)
-
-args = {
-  'opdir' : 'rami.TOA',
-      'v' : True,
-    'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
-   'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
-    'lat' : 50,
-    'lon' : 0,
-   'time' : "2013 0601 12 00 00"
-}
-dolibradtran.main(args)
