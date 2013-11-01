@@ -1,9 +1,9 @@
-Developer Info for the 3D VegLab BEAM processor
+Developer Info for beam-3dveglab-vlab
 =======================================
 
 Developer information is split into 2 sections
-* [Scientific Developers](https://github.com/netceteragroup/esa-beam#scientific-developers)
-* [IT Developers](https://github.com/netceteragroup/esa-beam#it-developers)
+* [Scientific Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-scientific-developers-)
+* [IT Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-it-developers)
 
 For Scientific Developers 
 ---------------------------
@@ -25,7 +25,7 @@ You only need the typical binary installation for this.
 4. You should see your change after selecting the 3D VegLab processor from within BEAM
 5. If not, you can add logging e.g. VLAB.logger.info('hello %s' % 'world')
 6. And check logfiles in $HOME/.beam/log/ and $HOME/beam-4.11/log/
-7. mailx -s "my 3dvlab updates" jason.brazile@netcetera.com < $HOME/.beam/beam-vlab/auxdata/VLabImpl.py
+7. mailx -s "my esa-beam 3dveglab updates" info@netcetera.com < $HOME/.beam/beam-vlab/auxdata/VLabImpl.py
 
 Caveats
 ---------------------------
@@ -52,15 +52,13 @@ Testing
 ---------------------------
 Since nearly everything is implemented in that single python file, we were able to provide alternatives to testing.
 
-1. From within BEAM, using log statements (as described above)
+1. From within BEAM, using log statements (as described in the "Example change" above)
 2. Standalone "headless" (either jython or python)
-```bash
-jython -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py
-```
+```jython -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py```
 3. Standalone with a "fake" swing-based GUI (jython only)
-jython -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py
+```jython -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py```
 
-In case 2 above, search for the method named selftests() to see (or change) which tests will be run in a GUI-less way (with log messages appearing on the console from where the code is run).
+For case 2, search for the method selftests() to see (or change) which tests will be run in a GUI-less way (with log messages appearing on the console from where the command is run).
 
 For IT Developers
 ---------------------------
