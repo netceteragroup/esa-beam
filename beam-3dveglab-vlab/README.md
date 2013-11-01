@@ -2,8 +2,8 @@ Developer Info for beam-3dveglab-vlab
 =======================================
 
 Developer information is split into 2 sections
-* [Scientific Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-scientific-developers-)
-* [IT Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-it-developers)
+* [For Scientific Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-scientific-developers-)
+* [For IT Developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-it-developers)
 
 For Scientific Developers 
 ---------------------------
@@ -63,7 +63,7 @@ For case 2, search for the method selftests() to see (or change) which tests wil
 For IT Developers
 ---------------------------
 
-Developer - complete variant: Full development environment
+Full development environment
 ------------------------------------------
 This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. The first script automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 

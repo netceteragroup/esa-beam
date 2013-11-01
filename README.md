@@ -9,14 +9,11 @@ This repository contains plugin modules developed by Netcetera Zurich for versio
 Binary Installation
 ---------------------------
 
-Binary installation of the 3D Vegetation Lab plugin is automated but involves
- * copying/replacing the plugin jar file in the beam/modules directory
- * clean first-time plugin run to create/unpack .beam/beam-vlab/auxdata/
+Binary installation of the 3D Vegetation Lab plugin is automated [in Java](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/Install.java) and involves
+ * copying/replacing the plugin jar file in your beam/modules directory
+ * clean first-time plugin run to create/unpack $HOME/.beam/beam-vlab/auxdata/
  * fetch/unpack latest versions of dependent 3rd party software into auxdata
  * create command line wrappers in the bin directory for batch operation
-
-These were handled by complicated .bat (win32) and shell (linux64) scripts.
-The process is now easier and more robust as a command-line java app.
 
 Binary Installation (windows version)
 ------------------------------------------
@@ -69,8 +66,8 @@ The BEAM Vegetation Lab plugin relies on the following 3rd party software. Binar
 For 3D Vegetation Lab Developers
 ------------------------------------------
 There are two modes of development, which are described in [a separate README](https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/README.md)
- 1. Development for Scientists (in python - changing the single jython implementation file, restarting BEAM, browsing log files)
- 2. Development for BEAM developers (in Java and python - full development, including Java plugin infrastructure, help files, support scripts, etc.)
+ 1. [Development for Scientists](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-scientific-developers-) (in python - changing the single jython implementation file, restarting BEAM, browsing log files)
+ 2. [Development for BEAM developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-it-developers) (in Java and python - full development, including Java plugin infrastructure, help files, support scripts, etc.)
 
 
 BEAM Plugin Contributing Authors
