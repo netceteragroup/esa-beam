@@ -42,6 +42,8 @@ import sys, math, operator, array, time, struct
 from array import array
 
 class VLAB:
+  """VLAB contains conf. constants, static utility methods, and test methods"""
+
   COPYRIGHT_INFO     = 'Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)'
   PROCESSOR_NAME     = 'BEAM VLab Processor'
   PROCESSOR_SNAME    = 'beam-vlab'
@@ -357,21 +359,29 @@ class VLAB:
   if sys.platform.startswith('java'):
     from java.lang import Runnable
     class Helper(Runnable):
-      def __init__(self, nm, strm):
-        self.nm=nm; self.strm=strm
+      def __init__(self, nm, strm, fName):
+        self.nm=nm; self.strm=strm; self.fp=None
+        if fName != None:
+          self.fp = open(fName, 'w')
       def run(self):
         """helper class for slurping up child streams"""
         from java.io import BufferedReader
         from java.io import InputStreamReader
+        from java.lang import System
         line = None; br = BufferedReader(InputStreamReader(self.strm))
         line = br.readLine()
         while (line != None):
+          if self.fp != None:
+            self.fp.write(line + System.lineSeparator())
+            self.fp.flush()
           VLAB.logger.info('%s %s' %(self.nm, line.rstrip()))
           line = br.readLine()
         br.close()
+        if self.fp != None:
+          self.fp.close()
   else:
     def helper(nm, strm):
-      """helper class for slurping up child streams"""
+      """helper method for slurping up child streams"""
       for line in strm: VLAB.logger.info('%s %s' %(nm, line.rstrip()))
       if not strm.closed: strm.close()
     helper = staticmethod(helper)
@@ -384,7 +394,10 @@ class VLAB:
       cmdLine = ['cmd', '/c']
     else:
       cmd=cmdrec['linux']
-    cmdLine.append(VLAB.expandEnv(cmd['exe']))
+    exe = VLAB.expandEnv(cmd['exe'])
+    if not VLAB.fileExists(exe):
+      raise RuntimeException('Cannot find exe "%s"' % exe)
+    cmdLine.append(exe)
     for i in cmd['cmdline']:
       cmdLine.append(VLAB.expandEnv(i))
 
@@ -404,16 +417,31 @@ class VLAB:
         for e in cmdenv:
           env[e] = VLAB.expandEnv(cmdenv[e])
       proc = pb.start()
-      t1 = Thread(VLAB.Helper("out", proc.getInputStream()))
-      t2 = Thread(VLAB.Helper("err", proc.getErrorStream()))
-      t1.start(); t2.start()
+      stdoutfName = None
+      if 'stdout' in cmd and cmd['stdout'] != None:
+        stdoutfName = VLAB.expandEnv(cmd['stdout'])
+      stderrfName = None
+      if 'stderr' in cmd and cmd['stderr'] != None:
+        stderrfName = VLAB.expandEnv(cmd['stderr'])
+      outs = Thread(VLAB.Helper('out', proc.getInputStream(), stdoutfName))
+      errs = Thread(VLAB.Helper('err', proc.getErrorStream(), stderrfName))
+      outs.start(); errs.start()
       bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
       if 'stdin' in cmd and cmd['stdin'] != None:
-        for line in open(VLAB.expandEnv(cmd['stdin']),'r'):
+        inFile = VLAB.expandEnv(cmd['stdin'])
+        if 'cwd' in cmd and cmd['cwd'] != None:
+          if not VLAB.fileExists(inFile):
+            # try pre-pending the cwd
+            inFile = VLAB.fPath(VLAB.expandEnv(cmd['cwd']), inFile)
+            if not VLAB.fileExists(inFile):
+              raise RuntimeException('Cannot find stdin "%s"' % cmd['cwd'])
+        fp = open(inFile, 'r')
+        for line in fp:
           bw.write(line)
         bw.close()
+        fp.close()
       exitCode = proc.waitFor()
-      t1.join(); t2.join()
+      outs.join(); errs.join()
     else:
       import threading, subprocess, os
       if 'cwd' in cmd and cmd['cwd'] != None:
@@ -635,6 +663,7 @@ used."""
     if sys.platform.startswith('java'):
       from lbfgsb import DifferentiableFunction, FunctionValues, Bound
       class function(DifferentiableFunction):
+        """A helper for handling functions for the l_bfgs_b fortran library"""
         def __init__(self, function, args=()):
           self.function = function
           self.args = args
@@ -659,8 +688,9 @@ used."""
     return grad
   approx_fprime = staticmethod(approx_fprime)
 
-
-################################################################
+  #
+  # from here to "VLAB end" is used only for testing
+  #
 
   def fakebye(self, event):
     """fake beam callback for existing the program"""
@@ -755,6 +785,7 @@ used."""
         tab.add(p)
     self.window.pack(); self.window.show()
 
+  # TESTS
   def selftests(self):
     """run a pre-defined set of tests"""
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -811,8 +842,11 @@ used."""
     params[VLAB.P_RTProcessor] = VLAB.K_DART
     self.fakeDoProcessing(params)
 
+#### VLAB end ################################################################
 
+#### DUMMY start #############################################################
 class DUMMY:
+  """A dummy processor for testing the VLAB plugin """
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
@@ -849,7 +883,12 @@ class DUMMY:
     time.sleep(1)
     VLAB.logger.info('%s: finished running...' % me)
 
+#### DUMMY end ###############################################################
+
+#### DART start ##############################################################
+
 class DART:
+  """Integration glue for calling external DART programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
@@ -863,7 +902,12 @@ class DART:
     time.sleep(1)
     VLAB.logger.info('%s: running...' % me)
 
+#### DART end ################################################################
+
+#### LIBRAT start ############################################################
+
 class LIBRAT:
+  """Integration glue for calling external LIBRAT programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
@@ -875,7 +919,39 @@ class LIBRAT:
       pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
+
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib/',
+        'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
+      }},
+    'windows'   : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\ratstart.exe',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
+     }}
+    }
+    VLAB.doExec(cmd)
+
     VLAB.logger.info('%s: running...' % me)
+
+#### LIBRAT end ##############################################################
   
 #### MAIN DISPATCH ####################################################
 
@@ -901,7 +977,7 @@ else:
 ### BEAM-only code ####################################################
 
     #
-    # BEAM-specific code from here to the end...
+    # BEAM-specific code from here to end of file...
     #
 
     from java              import awt
@@ -968,6 +1044,7 @@ else:
     ## BEAM-defined Processor implementation
     ##
     class VLabImpl(IVLabProcessor):
+      """Implements the BEAM Processor interface"""
   
       def __init__(self):
         me=self.__class__.__name__ +'::'+VLAB.me()
@@ -1032,6 +1109,7 @@ else:
     ## BEAM-defined UI Implementation
     ##
     class VLabUiImpl(IVLabProcessorUi):
+      """Implements the BEAM ProcessorUI interface"""
       def __init__(self):
         self._reqElemFac     = VLabRequestElementFactory() 
         self._defaultFactory = DefaultRequestElementFactory.getInstance()
@@ -1146,6 +1224,7 @@ else:
     ## BEAM-defined mangement of processing parameters (aka request element)
     ##
     class VLabRequestElementFactory(RequestElementFactory):
+      """Implements the BEAM RequestElementFactory interface"""
       def __init__(self):
         self._defaultFactory = DefaultRequestElementFactory.getInstance()
         self.pMap = {}
