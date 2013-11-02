@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)
-#
+# 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
@@ -9,34 +9,81 @@
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 # more details.
-#
+# 
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see http://www.gnu.org/licenses/
-#
+# 
 # @(#) $Id: $
 #
-# This is a simplified python/jython re-implementation of code written by Mat Disney - for original code see
-#  https://github.com/netceteragroup/esa-beam/tree/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes
+
+##############################################################################
+# Two ways to run it:
+# 
+# 1. standalone tests - headless (either jython or python)
+#
+#    jython -Dpython.path=jcommon-1.0.16.jar:jfreechart-1.0.13.jar librat.py
+#    python librat.py
+#
+# 2. standalone with a 'fake' swing-based gui
+# 
+#    jython -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar librat.py
+#
+# Those BEAM-supplied jars can also be obtained like this:
+#    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
+#    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jcommon/1.0.16/jcommon-1.0.16.jar
+#
 #
 
-import sys, math, operator, time
+import sys, math, operator, array, time, struct
+from array import array
 
-################
-#
-# when running w/jython and not under beam, add jfreechart jars to path e.g.
-#
-# wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
-# wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jcommon/1.0.16/jcommon-1.0.16.jar
-# jython -Dpython.path=jcommon-1.0.16.jar:jfreechart-1.0.13.jar librat.py
-#
-################
-# to be merged into VLAB class...
 class VLAB:
+  """VLAB contains conf. constants, static utility methods, and test methods"""
 
+  COPYRIGHT_INFO     = 'Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)'
+  PROCESSOR_NAME     = 'BEAM VLab Processor'
+  PROCESSOR_SNAME    = 'beam-vlab'
+  REQUEST_TYPE       = 'VLAB'
+  UI_TITLE           = 'VLab - Processor'
+  VERSION_STRING     = '1.0 (29 Oct 2013)'
+  DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
-  DBG                = 'debug'
+
+  D_PRODNAME         = 'vlab_out.dim'
+  P_CONDITION        = '.condition'
+  P_EXPRESSION       = '.expression'
+  P_OUTPUT           = '.output'
+
+  JCB                = 'JComboBox'
+  JTF                = 'JTextField'
+
+  K_LIBRAT           = 'librat'
+  K_DART             = 'dart'
+  K_DUMMY            = 'dummy'
+
+  K_LAEGEREN         = 'Laegeren'
+  K_RAMI             = 'Default RAMI'
+
+  K_YES              = 'Yes'
+  K_NO               = 'No'
+
+  K_SENTINEL2        = 'MSI (Sentinel 2)'
+  K_SENTINEL3        = 'OLCI (Sentinel 3)'
+  K_MODIS            = 'MODIS'
+  K_MERIS            = 'MERIS'
+  K_LANDSAT          = 'Landsat'
+
+  K_RURAL            = 'Rural'
+  K_MARITIME         = 'Maritime'
+  K_URBAN            = 'Urban'
+  K_TROPOSPHERIC     = 'Tropospheric'
+
+  DBG                = 'debug' 
   INF                = 'info'
   ERR                = 'error'
+
+  plst               = []
+
   if sys.platform.startswith('java'):
     from java.util.logging import Logger
     logger = Logger.getLogger(LOGGER_NAME)
@@ -51,7 +98,84 @@ class VLAB:
     #logfh.setLevel(logging.DEBUG)
     #logger.addHander(logfh)
 
+  model = (
+{'Forward Modeling': (
+{'Model Selection': (
+ ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN)),
+ ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
+{'Spectral Characteristics': (
+ ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
+ ('Bands',             'Bands',               JTF, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10'))},
+{'Viewing Characteristics': (
+ ('Zenith',            'ViewingZenith',       JTF, '20.0'),
+ ('Azimuth',           'ViewingAzimuth',      JTF, '0.0'))},
+{'Illumination Characteristics':(
+ ('Zenith',            'IlluminationZenith',  JTF, '20.0'),
+ ('Azimuth',           'IlluminationAzimuth', JTF, '0.0'))},
+{'Scene Parameters': (
+ ('Pixel Size',        'ScenePixel',          JTF, '8'),
+ ('(Alt A) Filename',  'SceneLocFile',        JTF, ''),
+ ('(Alt B) XC',        'SceneXC',             JTF, '-50'),
+ ('(Alt B) XW',        'SceneXW',             JTF, '50'),
+ ('(Alt B) YC',        'SceneYC',             JTF, '100'),
+ ('(Alt B) YW',        'SceneYW',             JTF, '100'))},
+{'Atmospheric Parameters': (
+ ('Day of Year',       'AtmosphereDay',       JTF, '214'),
+ (),
+ ('Lat',               'AtmosphereLat',       JTF, '47.4781'),
+ ('Long',              'AtmosphereLong',      JTF, '8.3650'),
+ ('CO2 Mixing Ratio',  'AtmosphereCO2',       JTF, '1.6'),
+ ('Aerosol Profile',   'AtmosphereAerosol',   JCB, (K_RURAL, K_MARITIME, K_URBAN, K_TROPOSPHERIC)),
+ ('Water Vapor',       'AtmosphereWater',     JTF, '0.0'),
+ ('Ozone Column',      'AtmosphereOzone',     JTF, '300'))},
+{'Output Parameters': (
+ ('Result file prefix','OutputPrefix',        JTF, 'RAMI_'),
+ ('Result Directory',  'OutputDirectory',     JTF, ''),
+ ('Image file',        'ImageFile',           JCB, (K_YES, K_NO)),
+ ('Ascii file',        'AsciiFile',           JCB, (K_YES, K_NO)))}
+)},
+{'DHP Simulation': (
+{'Model Selection': (
+ ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGEREN)),
+ (),
+ ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
+ (),
+ ('Resolution',        'DHP_Resolution',      JTF, '100x100'),
+ ())},
+{'DHP Location': (
+ ('X',                 'DHP_X',               JTF, '0'),
+ ('Y',                 'DHP_Y',               JTF, '0'))},
+{'DHP Properties': (
+ ('Zenith',            'DHP_Zenith',          JTF, '20.0'),
+ ('Azimuth',           'DHP_Azimuth',         JTF, '0.0'))},
+{'DHP Imaging Plane': (
+ ('Orientation',       'DHP_Orientation',     JTF, '0'),
+ ('Height(z)',         'DHP_Height',          JTF, '0'))},
+{'Output Parameters': (
+ ('Result file prefix','DHP_OutputPrefix',    JTF, 'RAMI00_'),
+ ('Result Directory',  'DHP_OutputDirectory', JTF, ''),
+ ('Image file',        'DHP_ImageFile',       JCB, (K_YES, K_NO)),
+ ('Ascii file',        'DHP_AsciiFile',       JCB, (K_YES, K_NO)))}
+)},
+)
+  # set parameter names
+  for tabGroups in model:
+    for tabName in tabGroups:
+      for group in tabGroups[tabName]:
+        for groupName in group:
+          for groupTuple in group[groupName]:
+            if len(groupTuple) == 4:
+              (lbl, nm, typ, vals) = groupTuple
+              exec('P_' + nm + ' = nm')
+              exec('L_' + nm + ' = lbl')
+              plst.append(nm)
+
+  def __init__(self):
+    self.cmap = {}
+    self.vmap = {}
+
   def me():
+    """Returns name of currently executing method"""
     nm = ''
     try:
       raise ZeroDivisionError
@@ -60,6 +184,7 @@ class VLAB:
     return nm+'()'
   me = staticmethod(me)
   def listdir(path):
+    """list files in the directory given by path"""
     if sys.platform.startswith('java'):
       from java.io import File
       return File(path).list()
@@ -67,15 +192,24 @@ class VLAB:
       import os
       return os.listdir(path)
   listdir = staticmethod(listdir)
+  def getenv(key, default=None):
+    if sys.platform.startswith('java'):
+      from java.lang.System import getenv
+      return getenv(key)
+    else:
+      import os
+      return os.getenv(key)
+  getenv = staticmethod(getenv)
   def checkFile(fname):
+    """open a file if it exists, otherwise die"""
     try:
       fp = open(fname, 'rw')
       return fp
     except IOError, e:
-      print(e)
-      sys.exit(1)
+      raise RuntimeError(e)
   checkFile = staticmethod(checkFile)
   def fileExists(fname):
+    """check if fname exists as a file"""
     if sys.platform.startswith('java'):
       from java.io import File
       return File(fname).exists()
@@ -84,6 +218,7 @@ class VLAB:
       return os.path.exists(fname)
   fileExists = staticmethod(fileExists)
   def getFullPath(fname):
+    """return canonical/absolute path of given fname"""
     if sys.platform.startswith('java'):
       from java.io import File
       return File(fname).getCanonicalPath()
@@ -91,7 +226,87 @@ class VLAB:
       import os
       return os.path.abspath(fname)
   getFullPath = staticmethod(getFullPath)
+  class path:
+    def exists(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).exists()
+      else:
+        import os
+        return os.path.exists(path)
+    exists = staticmethod(exists)
+    def isabs(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).isAbsolute()
+      else:
+        import os
+        return os.path.isabs(path)
+    isabs = staticmethod(isabs)
+    def isdir(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).isDirectory()
+      else:
+        import os
+        return os.path.isdir(path)
+    isdir = staticmethod(isdir)
+    def join(path, *args):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        f = File(path)
+        for a in args:
+          g = File(a)
+          if g.isAbsolute() or len(f.getPath()) == 0:
+            f = g
+          else:
+            f = File(f, a)
+        return f.getPath()
+      else:
+        import os
+        return os.path.join(path, *args)
+    join = staticmethod(join)
+    def isfile(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).isfile()
+      else:
+        import os
+        return os.path.isfile(path)
+    isfile = staticmethod(isfile)
+    def normcase(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).getPath()
+      else:
+        import os
+        return os.path.normcase(path)
+    normcase = staticmethod(normcase)
+    def normpath(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        return File(path).getCanonicalPath()
+      else:
+        import os
+        return os.path.normpath(path)
+    normpath = staticmethod(normpath)
+    def split(path):
+      if sys.platform.startswith('java'):
+        from java.io import File
+        f=File(path)
+        d=f.getParent()
+        if not d:
+          if f.isAbsolute():
+            d = path
+          else:
+            d = ""
+        return (d, f.getName())
+      else:
+        import os
+        return os.path.split(path)
+    split = staticmethod(split)
   def frange(end, start=0, inc=0):
+    """a jython-compatible range function with float increments"""
     import math
     if not start:
       start = end + 0.0
@@ -107,6 +322,7 @@ class VLAB:
     return L
   frange = staticmethod(frange)
   def openFileIfNotExists(filename):
+    """open file exclusively"""
     if sys.platform.startswith('java'):
       from java.io import File
       if File(filename).createNewFile():
@@ -124,6 +340,7 @@ class VLAB:
       return fobj
   openFileIfNotExists = staticmethod(openFileIfNotExists)
   def rndInit(seed = None):
+    """initialize the randon number generator"""
     if sys.platform.startswith('java'):
       from java.util import Random
       if seed == None:
@@ -136,6 +353,7 @@ class VLAB:
       return None
   rndInit = staticmethod(rndInit)
   def rndNextFloat(randState):
+    """return the next pseudo-random floating point number in the sequence"""
     if sys.platform.startswith('java'):
       from java.util import Random
       return randState.nextFloat()
@@ -144,6 +362,7 @@ class VLAB:
       return random.random()
   rndNextFloat = staticmethod(rndNextFloat)
   def r2d(v):
+    """jython-compatible conversion of radians to degrees"""
     if sys.platform.startswith('java'):
       from java.lang import Math
       return Math.toDegrees(v)
@@ -151,6 +370,7 @@ class VLAB:
       return math.degrees(v)
   r2d = staticmethod(r2d)
   def d2r(v):
+    """jython-compatible conversion of degrees to radians"""
     if sys.platform.startswith('java'):
       from java.lang import Math
       return Math.toRadians(float(v))
@@ -158,19 +378,21 @@ class VLAB:
       return math.radians(v)
   d2r = staticmethod(d2r)
   def mkDirPath(path):
-   if sys.platform.startswith('java'):
-     from java.io import File
-     if not File(path).isDirectory():
-       if not File(path).mkdirs():
-         print "failed to create dir: ", path
-   else:
-     import os
-     try:
-       os.stat(path)
-     except:
-       os.makedirs(path)
+    """create directory (including non-existing parents) for the given path"""
+    if sys.platform.startswith('java'):
+      from java.io import File
+      if not File(path).isDirectory():
+        if not File(path).mkdirs():
+          raise RuntimeError('failed to mkdir %s' % path)
+    else:
+      import os
+      try:
+        os.stat(path)
+      except:
+        os.makedirs(path)
   mkDirPath = staticmethod(mkDirPath)
   def fPath(d,n):
+    """get file path of the file defined by directory d and file name n"""
     if sys.platform.startswith('java'):
       from java.io import File
       return File(d, n).getPath()
@@ -179,6 +401,7 @@ class VLAB:
       return os.path.join(d, n)
   fPath = staticmethod(fPath)
   def savetxt(a, b, fmt=False):
+    """save text b in a text file named a"""
     fh = open(a, 'w')
     if not fmt:
       fmt = '%s'
@@ -189,6 +412,7 @@ class VLAB:
     fh.close()
   savetxt = staticmethod(savetxt)
   def osName():
+    """return which OS we are currently running on"""
     if sys.platform.startswith('java'):
       from java.lang import System
       oname = System.getProperty('os.name')
@@ -199,6 +423,7 @@ class VLAB:
     return oname
   osName = staticmethod(osName)
   def expandEnv(instr):
+    """potentially expand environment variables in the given string"""
     outstr = instr
     m = {'$HOME':'HOME','%HOMEDRIVE%':'HOMEDRIVE','%HOMEPATH%':'HOMEPATH'}
     for e in m:
@@ -213,26 +438,38 @@ class VLAB:
           outstr = outstr.replace(e, repl)
     return outstr
   expandEnv = staticmethod(expandEnv)
+
   if sys.platform.startswith('java'):
     from java.lang import Runnable
     class Helper(Runnable):
-      def __init__(self, nm, strm):
-        self.nm=nm; self.strm=strm
+      def __init__(self, nm, strm, fName):
+        self.nm=nm; self.strm=strm; self.fp=None
+        if fName != None:
+          self.fp = open(fName, 'w')
       def run(self):
+        """helper class for slurping up child streams"""
         from java.io import BufferedReader
         from java.io import InputStreamReader
+        from java.lang import System
         line = None; br = BufferedReader(InputStreamReader(self.strm))
         line = br.readLine()
         while (line != None):
-          print self.nm, line.rstrip()
+          if self.fp != None:
+            self.fp.write(line + System.lineSeparator())
+            self.fp.flush()
+          VLAB.logger.info('%s %s' %(self.nm, line.rstrip()))
           line = br.readLine()
         br.close()
+        if self.fp != None:
+          self.fp.close()
   else:
     def helper(nm, strm):
-      for line in strm: print nm, line.rstrip()
+      """helper method for slurping up child streams"""
+      for line in strm: VLAB.logger.info('%s %s' %(nm, line.rstrip()))
       if not strm.closed: strm.close()
     helper = staticmethod(helper)
   def doExec(cmdrec):
+    """run the specified external program under windows or unix"""
     cmdLine = []
     osName = VLAB.osName()
     if osName.startswith('Windows'):
@@ -240,11 +477,14 @@ class VLAB:
       cmdLine = ['cmd', '/c']
     else:
       cmd=cmdrec['linux']
-    cmdLine.append(VLAB.expandEnv(cmd['exe']))
+    exe = VLAB.expandEnv(cmd['exe'])
+    if not VLAB.fileExists(exe):
+      raise RuntimeError('Cannot find exe "%s"' % exe)
+    cmdLine.append(exe)
     for i in cmd['cmdline']:
       cmdLine.append(VLAB.expandEnv(i))
 
-    print 'cmdLine is [', cmdLine, ']'
+    VLAB.logger.info('cmdLine is [%s]' % cmdLine)
     if sys.platform.startswith('java'):
       from java.lang import ProcessBuilder
       from java.lang import Thread
@@ -260,16 +500,31 @@ class VLAB:
         for e in cmdenv:
           env[e] = VLAB.expandEnv(cmdenv[e])
       proc = pb.start()
-      t1 = Thread(VLAB.Helper("out", proc.getInputStream()))
-      t2 = Thread(VLAB.Helper("err", proc.getErrorStream()))
-      t1.start(); t2.start()
+      stdoutfName = None
+      if 'stdout' in cmd and cmd['stdout'] != None:
+        stdoutfName = VLAB.expandEnv(cmd['stdout'])
+      stderrfName = None
+      if 'stderr' in cmd and cmd['stderr'] != None:
+        stderrfName = VLAB.expandEnv(cmd['stderr'])
+      outs = Thread(VLAB.Helper('out', proc.getInputStream(), stdoutfName))
+      errs = Thread(VLAB.Helper('err', proc.getErrorStream(), stderrfName))
+      outs.start(); errs.start()
       bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
       if 'stdin' in cmd and cmd['stdin'] != None:
-        for line in open(VLAB.expandEnv(cmd['stdin']),'r'):
+        inFile = VLAB.expandEnv(cmd['stdin'])
+        if 'cwd' in cmd and cmd['cwd'] != None:
+          if not VLAB.fileExists(inFile):
+            # try pre-pending the cwd
+            inFile = VLAB.fPath(VLAB.expandEnv(cmd['cwd']), inFile)
+            if not VLAB.fileExists(inFile):
+              raise RuntimeError('Cannot find stdin "%s"' % cmd['cwd'])
+        fp = open(inFile, 'r')
+        for line in fp:
           bw.write(line)
         bw.close()
+        fp.close()
       exitCode = proc.waitFor()
-      t1.join(); t2.join()
+      outs.join(); errs.join()
     else:
       import threading, subprocess, os
       if 'cwd' in cmd and cmd['cwd'] != None:
@@ -287,8 +542,9 @@ class VLAB:
       t1.start(); t2.start()
       exitCode = proc.wait()
       t1.join(); t2.join()
-    print 'exitCode=%d' % exitCode
+    VLAB.logger.info('exitCode=%d' % exitCode)
   doExec = staticmethod(doExec)
+
   def valuesfromfile(path, transpose=False):
     """Returns a 2D array with the values of the csv file at 'path'.
 
@@ -296,8 +552,10 @@ class VLAB:
     transpose -- transpose the matrix with the values
 
     """
-    values = [line.strip().split() for line in open(path)
+    fp = open(path)
+    values = [line.strip().split() for line in fp
               if not line.startswith('#')]
+    fp.close()
     values = [[float(value) for value in row] for row in values]
     if transpose:
       values = zip(*values)
@@ -404,6 +662,7 @@ class VLAB:
     return tree
   aclone = staticmethod(aclone)
   def make_chart(title, x_label, y_label, dataset):
+    """Helper for creating Charts"""
     if sys.platform.startswith('java'):
       from org.jfree.chart import ChartFactory, ChartFrame, ChartUtilities
       from org.jfree.chart.axis import NumberTickUnit
@@ -425,6 +684,7 @@ class VLAB:
       return None
   make_chart = staticmethod(make_chart)
   def make_dataset():
+    """Dataset helper for supporting chart creation"""
     if sys.platform.startswith('java'):
       from org.jfree.data.xy import XYSeriesCollection
       return XYSeriesCollection()
@@ -434,6 +694,7 @@ class VLAB:
       return None
   make_dataset = staticmethod(make_dataset)
   def plot(dataset, x, y, label):
+    """plot dataset with x and y values and the given label"""
     if sys.platform.startswith('java'):
       from org.jfree.data.xy import XYSeries
       series = XYSeries(label)
@@ -446,6 +707,7 @@ class VLAB:
       return None
   plot = staticmethod(plot)
   def save_chart(chart, filename):
+    """save the generated chart in the given filename"""
     if sys.platform.startswith('java'):
       from java.io import File
       from org.jfree.chart import ChartUtilities
@@ -459,6 +721,7 @@ class VLAB:
     return map(lambda a, b : a & b, array, mask)
   maskand = staticmethod(maskand)
   def unique(array):
+    """return unique values in the given input array"""
     sortedarray = list(array)
     sortedarray.sort()
     result = []
@@ -657,7 +920,7 @@ used."""
         VLAB.Minimize_take_a_step(smplx, Kreflect, Kextend, Kcontract)
       # Pick out the current best vertex.
       i_best = smplx.lowest()
-      x_best = copy(smplx.get_vertex(i_best))
+      x_best = list(smplx.get_vertex(i_best))
       f_best = smplx.f_list[i_best]
       # Check the scatter of vertex values to see if we are
       # close enough to call it quits.
@@ -674,10 +937,155 @@ used."""
     return x_best, f_best, converged, smplx.nfe, smplx.nrestarts
   Minimize_minimize = staticmethod(Minimize_minimize)
   
-#-----------------------------------------------------------------------
-# Use a class to keep the data tidy and conveniently accessible...
-# See Jacobs et al. reference above
-# 
+  
+  #
+  # from here to "VLAB end" is used only for testing
+  #
+
+  def fakebye(self, event):
+    """fake beam callback for existing the program"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: exiting' % me)
+    sys.exit()
+
+  def fakeDoProcessing(self, params):
+    """fake beam helper for driving processing in test mode"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
+    VLAB.logger.info('params: %s' % params)
+    #if params[VLAB.P_RTProcessor] == VLAB.K_DART:
+    #  rtProcessor = DART()
+    #elif params[VLAB.P_RTProcessor] == VLAB.K_LIBRAT:
+    #  rtProcessor = LIBRAT()
+    #elif params[VLAB.P_RTProcessor] == VLAB.K_DUMMY:
+    #  rtProcessor = DUMMY()
+    #else:
+    #  raise RuntimeError('unknown processor: <%s>' % params[VLAB.P_RTProcessor])
+    rtProcessor = LIBRAT()
+    rtProcessor.doProcessingTests(None, params)
+    VLAB.logger.info('%s : %s' % (me, 'finished'))
+
+  def fakerun(self, event):
+    """fake beam callback for running a processor"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+    params = {}
+    for i in self.plst:
+      if type(self.vmap[i]) == str:
+         params[i] = self.cmap[i].text
+      elif type(self.vmap[i]) == tuple:
+         lst = self.vmap[i]
+         params[i] = lst[self.cmap[i].selectedIndex]
+    self.fakeDoProcessing(params)
+
+  def fakebeam(self):
+    """fake beam Swing GUI"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
+    from javax import swing
+    from java  import awt
+
+    v = 5; h = 10; self.window = swing.JFrame(VLAB.PROCESSOR_NAME)
+    self.window.windowClosing = self.fakebye
+    self.window.contentPane.layout = awt.BorderLayout()
+    tabbedPane = swing.JTabbedPane()
+
+    self.window.contentPane.add("Center", tabbedPane)
+    for tabGroups in VLAB.model:
+      for tabName in tabGroups:
+        tab = swing.JPanel()
+        tab.layout = swing.BoxLayout(tab, swing.BoxLayout.PAGE_AXIS)
+        tabbedPane.addTab(tabName, tab)
+        for group in tabGroups[tabName]:
+          tab.add(swing.JLabel(''))
+          p = swing.JPanel()
+          p.layout = awt.GridLayout(0, 4);
+          p.layout.vgap = v;p.layout.hgap = h
+          for groupName in group:
+            p.border = swing.BorderFactory.createTitledBorder(groupName)
+            for groupTuple in group[groupName]:
+              if len(groupTuple) == 4:
+                (lbl, nm, typ, vals) = groupTuple
+
+                p.add(swing.JLabel(lbl+':', swing.SwingConstants.RIGHT))
+                self.vmap[nm] = vals
+                if type(vals) == tuple:
+                  self.cmap[nm] = swing.JComboBox(self.vmap[nm])
+                else:
+                  exec('self.cmap[nm] = swing.'+typ+'(self.vmap[nm])')
+                self.plst.append(nm)
+                p.add(self.cmap[nm])
+              else:
+                p.add(swing.JLabel(""))
+                p.add(swing.JLabel(""))
+          tab.add(p)
+        # hack
+        for i in range(50):
+          tab.add(swing.Box.createVerticalGlue())
+        tab.add(swing.JLabel(''))
+        p = swing.JPanel()
+        p.layout = awt.GridLayout(0, 8)
+        p.layout.hgap = 4
+        for i in range(1,5):
+          p.add(swing.JLabel(""))
+        p.add(swing.JButton("Run",   actionPerformed=self.fakerun))
+        p.add(swing.JButton("Close", actionPerformed=self.fakebye))
+        p.add(swing.JButton("Help"))
+        tab.add(p)
+    self.window.pack(); self.window.show()
+
+  # TESTS
+  def selftests(self):
+    """run a pre-defined set of tests"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+    VLAB.logger.info('%s: starting' % me)
+
+    # scenario 1
+    params = {
+      VLAB.P_3dScene             : 'Default RAMI', 
+      VLAB.P_AtmosphereCO2       : '1.6', 
+      VLAB.P_ViewingAzimuth      : '0.0', 
+      VLAB.P_AtmosphereWater     : '0.0', 
+      VLAB.P_OutputPrefix        : 'RAMI_', 
+      VLAB.P_ViewingZenith       : '20.0', 
+      VLAB.P_AtmosphereAerosol   : 'Rural', 
+      VLAB.P_DHP_Zenith          : '20.0', 
+      VLAB.P_SceneYW             : '100', 
+      VLAB.P_DHP_3dScene         : 'Default RAMI', 
+      VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10', 
+      VLAB.P_OutputDirectory     : '', 
+      VLAB.P_AtmosphereOzone     : '300', 
+      VLAB.P_AtmosphereDay       : '214', 
+      VLAB.P_SceneLocFile        : '', 
+      VLAB.P_SceneYC             : '100', 
+      VLAB.P_DHP_OutputDirectory : '', 
+      VLAB.P_DHP_OutputPrefix    : 'RAMI00_', 
+      VLAB.P_AtmosphereLat       : '47.4781', 
+      VLAB.P_AtmosphereLong      : '8.3650', 
+      VLAB.P_RTProcessor         : VLAB.K_LIBRAT,
+      VLAB.P_SceneXW             : '50', 
+      VLAB.P_IlluminationAzimuth : '0.0', 
+      VLAB.P_Sensor              : 'MSI (Sentinel 2)', 
+      VLAB.P_AsciiFile           : 'Yes', 
+      VLAB.P_ImageFile           : 'Yes', 
+      VLAB.P_SceneXC             : '-50', 
+      VLAB.P_DHP_Y               : '0', 
+      VLAB.P_DHP_X               : '0', 
+      VLAB.P_DHP_ImageFile       : 'Yes', 
+      VLAB.P_DHP_AsciiFile       : 'Yes', 
+      VLAB.P_DHP_Resolution      : '100x100', 
+      VLAB.P_DHP_Azimuth         : '0.0', 
+      VLAB.P_IlluminationZenith  : '20.0', 
+      VLAB.P_DHP_RTProcessor     : VLAB.K_DUMMY,
+      VLAB.P_DHP_Height          : '0', 
+      VLAB.P_DHP_Orientation     : '0', 
+      VLAB.P_ScenePixel          : '8'
+    }
+    self.fakeDoProcessing(params)
+
+#### VLAB end ################################################################
 
 class Minimize_NMSimplex:
   """
@@ -697,12 +1105,12 @@ class Minimize_NMSimplex:
     self.N = len(x)
     self.vertex_list = []
     self.f_list = []
-    self.dx = copy(dx)
+    self.dx = list(dx)
     self.f = lambda x : f(x, *args)
     self.nfe = 0
     self.nrestarts = 0
     for i in range(self.N + 1):
-      p = copy(x)
+      p = list(x)
       if i >= 1: p[i-1] += dx[i-1]
       self.vertex_list.append(p)
       self.f_list.append(f(p, *args))
@@ -719,7 +1127,7 @@ class Minimize_NMSimplex:
     self.vertex_list = []
     self.f_list = []
     for i in range(self.N + 1):
-      p = copy(x)
+      p = list(x)
       if i >= 1: p[i-1] += self.dx[i-1]
       self.vertex_list.append(p)
       self.f_list.append(self.f(p))
@@ -728,10 +1136,10 @@ class Minimize_NMSimplex:
     return
   
   def get_vertex(self, i):
-    return copy(self.vertex_list[i])
+    return list(self.vertex_list[i])
 
   def replace_vertex(self, i, x, fvalue):
-    self.vertex_list[i] = copy(x)
+    self.vertex_list[i] = list(x)
     self.f_list[i] = fvalue
     return
 
@@ -832,7 +1240,16 @@ class Minimize_NMSimplex:
         is_minimum = 0
         break
     return is_minimum
-  
+
+#
+# end Minimize_NMSimplex
+#
+
+#### LIBRAT start ############################################################
+#
+# Librat_ integration routines contributed by Mat Disney and Philip Lewis 
+# adapted for BEAM-embedded jython by Cyrill Schenkel and Jason Brazile
+#
 ################
 class Librat_dobrdf:
   def _writeCamFile(self, camFile, args):
@@ -944,7 +1361,7 @@ class Librat_dobrdf:
     # 'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
     gdata = """cmd = {
   'linux' : {
-    'cwd'     : None,
+    'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
     'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
     'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
@@ -955,19 +1372,19 @@ class Librat_dobrdf:
   'LD_LIBRARY_PATH' :  '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib',
     }},
   'windows'   : {
-    'cwd'     : None,
-    'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
-    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s' ],
+    'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes',
+    'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_win32/src/start/ratstart.exe',
+    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes/%s', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
     'stdout'  : '%s',
     'stderr'  : '%s',
     'env'     : {
-      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32'
+      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_win32'
    }}
 }
 """
     # hack to allow replacing only %s
-    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%\\","\x81\\")
+    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%/","\x81/")
     replaced = escaped % \
    (args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
     args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
@@ -981,9 +1398,9 @@ class Librat_dobrdf:
 
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    print '======> ', me
+    VLAB.logger.info('======> %s' % me)
     for a in args:
-      print a, " -> ", args[a]
+      VLAB.logger.info("%s -> %s" % (a, args[a]))
 
     # set up defaults
     q = {
@@ -1000,7 +1417,7 @@ class Librat_dobrdf:
       'rpp'             : 1,
       'fov'             : False,
       'sorder'          : 100,
-      'nice'            : '',
+      'nice'            : None,
       'boom'            : 100000,
       'ideal'           : False,
       'samplingPattern' : False,
@@ -1038,18 +1455,18 @@ class Librat_dobrdf:
       else:
         q[a] = args[a]
 
-    VLAB.mkDirPath(q['opdir'])
+    VLAB.mkDirPath('%s/%s' %(LIBRAT.SDIR, q['opdir']))
 
-    angfp = VLAB.checkFile(q['anglefile'])
-    wbfp  = VLAB.checkFile(q['wbfile'])
-    objfp = VLAB.checkFile(q['objfile'])
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wbfp  = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
+    objfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['objfile']))
 
     # vz va sz sa
-    ang = VLAB.valuesfromfile(q['anglefile'])
+    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
 
     if 'lookFile' in q:
-      lookfp = VLAB.checkFile(q['lookFile'])
-      q['look_xyz'] = VLAB.valuesfromfile(q['lookFile'])
+      lookfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['lookFile']))
+      q['look_xyz'] = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['lookFile']))
 
     if len(q['look_xyz']) == 3:
       q['look_xyz'] = ((q['look_xyz']),)
@@ -1068,7 +1485,7 @@ class Librat_dobrdf:
       q['sa'] = a[3]
 
       for ll, look in enumerate(q['look_xyz']):
-        lightfile = VLAB.fPath(q['opdir'], q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
+        lightfile = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
         ligfp = VLAB.openFileIfNotExists(lightfile)
         if ligfp != None:
           nq = {
@@ -1078,17 +1495,17 @@ class Librat_dobrdf:
           self._writeLightFile(lightfile, nq)
 
         rooty = q['objfile'] + '_vz_' + str(q['vz']) + '_va_' + str(q['va']) + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_xyz_' + str(look[0]) + '_' + str(look[1]) + '_' + str(look[2]) + '_wb_' + q['wbfile']
-        grabme = VLAB.fPath(q['opdir'], q['grabme_root'] + '.' + rooty)
+        grabme = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['grabme_root'] + '.' + rooty)
         if 'dhp' in q:
-          location = look.copy()
+          location = list(look)
           look[2] = q['INFINITY']
           sampling = 'circular'
 
         if not VLAB.fileExists(grabme):
           grabfp = VLAB.openFileIfNotExists(grabme)
           q['grabme_log'] = grabme + '.log'
-          q['camfile'] = VLAB.fPath(q['opdir'], q['camera_root'] + '.' + rooty)
-          q['oproot'] = VLAB.fPath(q['opdir'], q['result_root'] + '.' + rooty)
+          q['camfile'] = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['camera_root'] + '.' + rooty)
+          q['oproot'] = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['result_root'] + '.' + rooty)
           nq = {
             'name'             : 'simple camera',
             'vz'               : q['vz'],
@@ -1124,9 +1541,9 @@ class Librat_dobrdf:
           }
           self._writeGrabFile(grabme, nq)
           execfile(grabme)
-    print 'done'
+    VLAB.logger.info('done')
 
-################
+#############################################################################
 class Librat_dolibradtran:
   def defaultLRT(self, fp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet):
     fp.write('solar_file ' + solar_file + '\n')
@@ -1141,9 +1558,9 @@ class Librat_dolibradtran:
     fp.write(quiet)
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    print '======> ', me
+    VLAB.logger.info('======> %s' % me)
     for a in args:
-      print a, " -> ", args[a]
+      VLAB.logger.info("%s -> %s" % (a, args[a]))
 
     q = {
       'LIBRADTRAN_PATH' : '/data/geospatial_07/mdisney/ESA/3Dveglab/libRadtran-1.7/',
@@ -1185,21 +1602,21 @@ class Librat_dolibradtran:
     LIBRADTRAN = q['LIBRADTRAN_PATH'] + 'bin/uvspec'
     solar_file = q['LIBRADTRAN_PATH'] + q['solar']
 
-    VLAB.mkDirPath(q['opdir'])
+    VLAB.mkDirPath('%s/%s' % (LIBRAT.SDIR, q['opdir']))
 
     # TODO prove that LIBRADTRAN_PATH dir exists
 
-    angfp = VLAB.checkFile(q['anglefile'])
-    wbfp = VLAB.checkFile(q['wbfile'])
-    rpvfp = VLAB.checkFile(q['rpvfile'])
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wbfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
+    rpvfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
 
-    rpv = VLAB.valuesfromfile(q['rpvfile'])
+    rpv = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
     if len(rpv[0]) != 4: # length of index 1 because index 0 is heading
       sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], q['rpvfile']))
       sys.exit([True])
 
-    angt = VLAB.valuesfromfile(q['anglefile'])
-    wb = [i[1] for i in VLAB.valuesfromfile(q['wbfile'])]
+    angt = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wb = [i[1] for i in VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))]
 
     nbands = len(wb)
     wbstep = 1
@@ -1212,8 +1629,8 @@ class Librat_dolibradtran:
         sys.stderr.write("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['anglefile']))
 
     # check for op file if required
-    if not VLAB.fileExists(q['plotfile']):
-      plotfilefp = VLAB.openFileIfNotExists(q['plotfile'])
+    if not VLAB.fileExists('%s/%s' % (LIBRAT.SDIR, q['plotfile'])):
+      plotfilefp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
     else:
       sys.stderr.write('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
       sys.exit(1)
@@ -1237,8 +1654,8 @@ class Librat_dolibradtran:
       umu = math.cos(vzz)
       angstr = str(vzz) + '_' + str(vaa) + '_' + str(szz) + '_' + str(saa)
       
-      libradtran_ip = VLAB.fPath(q['opdir'], 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
-      libradtran_op = VLAB.fPath(q['opdir'], 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_ip = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_op = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
 
       if not VLAB.fileExists(libradtran_ip):
         libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
@@ -1291,20 +1708,21 @@ class Librat_dolibradtran:
       plotfilefp.write('# vz va sz sa %e %e %e\n' % (min(wb), max(wb), wbstep))
       # plotfilefp.flush()
 	
-      for f in [f for f in VLAB.listdir(q['opdir']) if f.startswith('op.')]:
+      for f in [f for f in VLAB.listdir('%s/%s' % (LIBRAT.SDIR, q['opdir'])) if f.startswith('op.')]:
         vzz = f.split('_')[-4]
         vaa = f.split('_')[-3]
         szz = f.split('_')[-2]
         saa = f.split('_')[-1]
-        d = VLAB.valuesfromfile(f,transpose=True)
+        d = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, f),transpose=True)
         plotfilefp.write('%s %s %s %s ' % (vzz,vaa,szz,saa))
         plotfilefp.write(' '.join(map(str, d[1])) + '\n')
 
       plotfilefp.flush()
       plotfilefp.close()
 
-################
+#############################################################################
 class Librat_drivers:
+  """ setup the scene"""
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
 
@@ -1464,12 +1882,14 @@ class Librat_drivers:
       look = zip(*looktrans)
       VLAB.savetxt(q['lookFile'],look,fmt='%.1f')
 
+#############################################################################
 class Librat_plot:
+  """plot results"""
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    print '======> ', me
+    VLAB.logger.info('======> %s' % me )
     for a in args:
-      print a, " -> ", args[a]
+      VLAB.logger.info("%s -> %s" % (a, args[a]))
 
     q = {
          'spec' : 'SPECTRAL_TEST/result.laegeren.obj_vz_0.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.full_spectrum.dat.direct',
@@ -1494,7 +1914,7 @@ class Librat_plot:
       self.brdf_plot(q['root'], q['angfile'], q['wbfile'])
 
   def spec_plot(self,spec,wbspec):
-    wbspec_contents = VLAB.valuesfromfile(wbspec, transpose=True)
+    wbspec_contents = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, wbspec), transpose=True)
 
     wb = wbspec_contents[1];
     op1 = spec + '.plot.png'
@@ -1506,8 +1926,8 @@ class Librat_plot:
   def brdf_plot(self,root,angfile,wbfile):
     opdat = root + '.brdf.dat'
     opplot = root + '.brdf.png'
-    ang = VLAB.valuesfromfile(angfile, transpose=True)
-    wb = VLAB.valuesfromfile(wbfile, transpose=True)[1]
+    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, angfile), transpose=True)
+    wb = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, wbfile), transpose=True)[1]
 
     result = [[0. for i in range(len(wb))] for i in range(len(ang[0]))]
 
@@ -1520,7 +1940,7 @@ class Librat_plot:
       sz = f.split('_')[fsplit.index('sz') + 1]
       sa = f.split('_')[fsplit.index('sa') + 1]
 
-      data = VLAB.valuesfromfile(f, transpose=True)
+      data = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, f), transpose=True)
       refl = [reduce(lambda x, y : x + y, i) for i in data[1:]]
       result[zip(*VLAB.awhere(
         VLAB.treemap(lambda x : x == float(vz), ang)))[1][0]] = refl
@@ -1554,11 +1974,12 @@ class Librat_plot:
     VLAB.save_chart(chart, opplot)
 
 class Librat_rpv_invert:
+  """rpv inversion for integration with libmodtran"""
   def main(self, args):
     me=self.__class__.__name__ +'::'+VLAB.me()
-    print '======> ', me
+    VLAB.logger.info('======> %s' % me)
     for a in args:
-      print a, " -> ", args[a]
+      VLAB.logger.info("%s -> %s" % (a, args[a]))
 
     # defaults
     q = {
@@ -1576,8 +1997,8 @@ class Librat_rpv_invert:
       else:
         q[a] = args[a]
 
-    wb = VLAB.valuesfromfile(q['wbfile'], transpose=True)[1]
-    data = VLAB.valuesfromfile(q['dataf'], transpose=True)
+    wb = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
+    data = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['dataf']), transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
@@ -1599,10 +2020,12 @@ class Librat_rpv_invert:
     if q['verbose']: sys.stderr.write('%s: saving params to %s\n'%(sys.argv[0], opdat))
 
     # create the file if it doesn't exist
-    VLAB.openFileIfNotExists(opdat)
+    dfp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, opdat))
+    if dfp != None:
+      dfp.close()
 
     # open the previously created file
-    opfp = open(opdat, 'w')
+    opfp = open('%s/%s' % (LIBRAT.SDIR,  opdat), 'w')
 
     if q['three']:
       opfp.write('# wb rho0 k bigtet\n')
@@ -1700,39 +2123,78 @@ class Librat_rpv_invert:
     f3 = map(lambda x : 1.0 + (1 - rhoc) / (1. + x), bigg)
     return map(lambda x : rho0 * x, VLAB.mula(VLAB.mula(f1, f2), f3))
 
-################
+#############################################################################
 
 class LIBRAT:
-  """Integration glue for calling external DART programs"""
+  if VLAB.osName().startswith('Windows'):
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes')
+  else:
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes')
+
+  """Integration glue for calling external LIBRAT programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
 
-  def doProcessing(self, pm, args):
-    """do processing for DART processor"""
+  def doProcessingTests(self, pm, args):
+ 
+    """do processing tests for LIBRAT processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
 
     if (pm != None):
-      pm.beginTask("Computing BRF...", 10)
+      pm.beginTask("Computing...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
 
+    cmd = {
+    'linux' : {
+      'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'LD_LIBRARY_PATH' : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib/',
+        'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
+      }},
+    'windows'   : {
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start/ratstart.exe',
+      'cmdline' : [
+        '-sensor_wavebands', 'wavebands.dat', '-m', '100',
+        '-sun_position', '0', '0', '10', 'test.obj'],
+      'stdin'   : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start/starttest.ip',
+      'stdout'  : None,
+      'stderr'  : None,
+      'env'     : {
+        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows'
+     }}
+    }
+    VLAB.doExec(cmd)
+
+    # 
+    # see https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/libradtran.README
+    #
     drivers      = Librat_drivers()
     dobrdf       = Librat_dobrdf()
     plot         = Librat_plot()
     rpv_invert   = Librat_rpv_invert()
     dolibradtran = Librat_dolibradtran()
-    
+
     args = {
        'random' : True,
        'n'      : 1000,
        'angles' : 'angles.rpv.2.dat',
     }
-    drivers.main(args)
-    
+    # drivers.main(args)
+
+    # RAMI test case
     args = {
             'v' : True,
-         'nice' : '19',
+         'nice' : 19,
           'obj' : 'HET01_DIS_UNI_NIR_20.obj',
          'hips' : True,
            'wb' : 'wb.MSI.dat',
@@ -1745,16 +2207,110 @@ class LIBRAT:
         'opdir' : 'rpv.rami'
     }
     # dobrdf.main(args)
-    
+
+    # LAEGEREN test case
+    args = {
+            'v' : True,
+         'nice' : 19,
+          'obj' : 'laegeren.obj.lai.1',
+         'hips' : True,
+           'wb' : 'wb.MSI.dat',
+        'ideal' : (300., 300.),
+         'look' : (150., 150., 710.),
+          'rpp' : 4,
+      'npixels' : 10000,
+         'boom' : 786000 ,
+       'angles' : 'angles.rpv.2.dat',
+        'opdir' : 'rpv.laegeren'
+    }
+    # dobrdf.main(args)
+
+    # FULL SPECTRUM RAMI test case
+    args = {
+            'v' : True,
+         'nice' : 19,
+          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
+           'wb' : 'wb.full_spectrum.1nm.dat',
+        'ideal' : (80., 80.),
+         'look' : (0., 0., 0.),
+          'rpp' : 4, 
+      'npixels' : 10000,
+         'boom' : 786000, 
+       'angles' : 'angle.rpv.cosDOM.dat',
+        'opdir' : 'dart.rpv.rami'
+    }
+    # dobrdf.main(args)
+
+    # FULL SPECTRUM LAEGEREN test case
+    args = {
+            'v' : True,
+         'nice' : 19,
+          'obj' : 'laegeren.obj.lai.1',
+           'wb' : 'wb.full_spectrum.1nm.dat',
+        'ideal' : (300., 300),
+         'look' : (150., 150., 710),
+          'rpp' : 4,
+      'npixels' : 10000,
+         'boom' : 786000,
+       'angles' : 'angle.rpv.cosDOM.dat',
+        'opdir' : 'dart.rpv.laegeren'
+    }
+    # dobrdf.main(args)
+
     args = {
          'brdf' : True,
        'angles' : 'angles.rpv.2.dat',
        'wbfile' : 'wb.MSI.dat',
-        'bands' : (4., 7.),
+        'bands' : (4, 7),
          'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj'
     }
-    plot.main(args)
-    
+    # plot.main(args)
+
+    # RAMI
+    args = {
+         'brdf' : True,
+       'angles' : 'angles.rpv.2.dat', 
+       'wbfile' : 'wb.MSI.dat',
+         'root' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj',
+        'bands' : (4, 7),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # LAEGEREN
+    args = {
+         'brdf' : True, 
+       'angles' : 'angles.rpv.2.dat',
+       'wbfile' : 'wb.MSI.dat',
+         'root' : 'rpv.laegeren/result.laegeren.obj.lai.1',
+        'bands' : (4, 7),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # RAMI
+    args = {
+         'brdf' : True,
+       'wbfile' : 'wb.full_spectrum.1nm.dat',
+       'angles' : 'angle.rpv.cosDOM.dat',
+         'root' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
+        'bands' : (250, 450),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # RAMI
+    args = {
+        'three' : True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
+    'paramfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+     'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+    }
+    # rpv_invert.main(args)
+
+    # LAEGEREN
     args = {
         'three' : True,
             'v' : True,
@@ -1763,23 +2319,202 @@ class LIBRAT:
     'paramfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
      'plotfile' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
     }
-    rpv_invert.main(args)
-    
+    # rpv_invert.main(args)
+
     args = {
-      'opdir' : 'rami.TOA',
+        'three' : True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
+    'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+     'plotfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+    }
+    # rpv_invert.main(args)
+
+    args = {
+         'three': True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+    'paramfile' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+     'plotfile' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
+    }
+    # rpv_invert.main(args)
+
+    args = {
+         'v' : True,
+     'opdir' : 'rami.TOA',
+    'angles' : 'angles.MSI.dat',
+    'wbfile' : 'wb.MSI.dat',
+       'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
+      'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+         'v' : True,
+     'opdir' : 'laegeren.TOA',
+    'angles' : 'angles.MSI.dat',
+    'wbfile' : 'wb.MSI.dat',
+       'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+      'plot' : 'laegeren.TOA/rpv.laegeren.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+         'v' : True,
+    'angles' : 'angle.rpv.cosDOM.dat',
+    'wbfile' : 'wb.full_spectrum.1nm.dat', 
+     'opdir' : 'dart.rami.TOA',
+       'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+      'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+          'v': True,
+    'angles' : 'angle.rpv.cosDOM.dat',
+    'wbfile' : 'wb.full_spectrum.1nm.dat',
+     'opdir' : 'dart.laegeren.TOA',
+       'rpv' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', 
+      'plot' : 'dart.laegeren.TOA/rpv.laegeren.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
           'v' : True,
+      'opdir' : 'rami.TOA',
         'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
        'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
         'lat' : 50,
         'lon' : 0,
-       'time' : "2013 0601 12 00 00"
+       'time' : '2013 0601 12 00 00'
     }
-    dolibradtran.main(args)
-    VLAB.logger.info('%s: Done' % me)
+    # dolibradtran.main(args)
 
-librat = LIBRAT()
+    args = {
+          'v': True, 
+     'opdir' : 'laegeren.TOA.date',
+       'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+      'plot' : 'laegeren.TOA.date/rpv.laegeren.libradtran.dat.all',
+       'lat' : 50, 
+       'lon' : 0,
+      'time' : '2013 06 01 12 00 00'
+    }
+    # dolibradtran.main(args)
 
-params = {
-}
-librat.doProcessing(None, params)
 
+    # DHP Simulation
+    args = {
+         'v' : True,
+      'nice' : 19,
+       'obj' : 'laegeren.obj.lai.1',
+      'hips' : True,
+        'wb' : 'wb.image.dat',
+       'dhp' : True,
+'samplingPattern' : 'circular',
+  'lookFile' : 'dhp.locations.ondem.dat',
+    'angles' : 'angles.dhp.dat',
+       'fov' : 150,
+       'rpp' : 8,
+   'npixels' : 4000000,
+     'opdir' : 'DHP_TEST'
+    }
+    # dobrdf.main(args)
+    VLAB.logger.info('%s: Done...' % me)
+
+  def doProcessing(self, pm, args):
+    """do processing for LIBRAT processor"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+
+    # defaults
+    q = {
+       'angles' : 'angle.rpv.cosDOM.dat',
+        'bands' : (250, 450),
+         'boom' : 786000, 
+         'brdf' : True,
+        'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+          'dhp' : True,
+          'fov' : 150,
+         'hips' : True,
+        'ideal' : (300., 300.),
+          'lat' : 50, 
+          'lon' : 0,
+         'look' : (150., 150., 710.),
+     'lookFile' : 'dhp.locations.ondem.dat',
+            'n' : 1000,
+         'nice' : 19,
+      'npixels' : 10000,
+          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
+        'opdir' : 'dart.rami.TOA',
+    'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+         'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all',
+     'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+         'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
+       'random' : True,
+         'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
+          'rpp' : 4, 
+          'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+          'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
+'samplingPattern' : 'circular',
+        'three' : True,
+         'time' : '2013 06 01 12 00 00',
+            'v' : True,
+       'wbfile' : 'wb.full_spectrum.1nm.dat',
+           'wb' : 'wb.full_spectrum.1nm.dat'
+    }
+
+    # overwrite defaults
+    for a in args:
+      if a == 'wb':
+        if args[a] == VLAB.K_SENTINAL2:
+          q['wb'] = 'wb.MSI.dat'
+        elif args[a] == VLAB.K_SENTINAL3:
+          q['wb'] = 'wb.OLCI.dat'
+        else:
+          q['wb'] = 'wb.full_spectrum.1nm.dat'
+      elif a == 'anotherexample':
+        if args[a] == 'somethingtobetranslated':
+          q['thingy'] = 'translatedthingy'
+        else:
+          q['thingy'] = 'defaultthingy'
+
+    drivers      = Librat_drivers()
+    dobrdf       = Librat_dobrdf()
+    plot         = Librat_plot()
+    rpv_invert   = Librat_rpv_invert()
+    dolibradtran = Librat_dolibradtran()
+
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
+    # ensure at least 1 second to ensure progress popup feedback
+    time.sleep(1)
+
+    # not needed because we are using the dart angles
+    # drivers.main()
+
+    dobrdf.main(q)
+    plot.main(q)
+    rpv_invert.main(q)
+    dolibradtran.main(q)
+
+    VLAB.logger.info('%s: Done...' % me)
+
+#### LIBRAT end ##############################################################
+  
+#### MAIN DISPATCH ####################################################
+
+if not sys.platform.startswith('java'):
+  VLAB.logger.info('%s: Mode: not jython and not BEAM' % VLAB.me)
+  vlab = VLAB()
+  vlab.selftests()
+else:
+  from java.lang import System
+  if System.getProperty('vlab.fakebeam') != None:
+    VLAB.logger.info('%s: Mode: jython and fake BEAM' % VLAB.me)
+    vlab = VLAB()
+    vlab.fakebeam()
+  else:
+    VLAB.logger.info('%s: Mode: jython and not BEAM' % VLAB.me)
+    vlab = VLAB()
+    vlab.selftests()
