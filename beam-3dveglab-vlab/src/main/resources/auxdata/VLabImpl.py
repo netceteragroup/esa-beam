@@ -210,7 +210,7 @@ class VLAB:
       fp = open(fname, 'rw')
       return fp
     except IOError, e:
-      raise RuntimeException(e)
+      raise RuntimeError(e)
   checkFile = staticmethod(checkFile)
   def fileExists(fname):
     """check if fname exists as a file"""
@@ -387,7 +387,7 @@ class VLAB:
       from java.io import File
       if not File(path).isDirectory():
         if not File(path).mkdirs():
-          raise RuntimeExecption('failed to mkdir %s' % path)
+          raise RuntimeError('failed to mkdir %s' % path)
     else:
       import os
       try:
@@ -483,7 +483,7 @@ class VLAB:
       cmd=cmdrec['linux']
     exe = VLAB.expandEnv(cmd['exe'])
     if not VLAB.fileExists(exe):
-      raise RuntimeException('Cannot find exe "%s"' % exe)
+      raise RuntimeError('Cannot find exe "%s"' % exe)
     cmdLine.append(exe)
     for i in cmd['cmdline']:
       cmdLine.append(VLAB.expandEnv(i))
@@ -521,7 +521,7 @@ class VLAB:
             # try pre-pending the cwd
             inFile = VLAB.fPath(VLAB.expandEnv(cmd['cwd']), inFile)
             if not VLAB.fileExists(inFile):
-              raise RuntimeException('Cannot find stdin "%s"' % cmd['cwd'])
+              raise RuntimeError('Cannot find stdin "%s"' % cmd['cwd'])
         fp = open(inFile, 'r')
         for line in fp:
           bw.write(line)
@@ -556,8 +556,10 @@ class VLAB:
     transpose -- transpose the matrix with the values
 
     """
-    values = [line.strip().split() for line in open(path)
+    fp = open(path)
+    values = [line.strip().split() for line in fp
               if not line.startswith('#')]
+    fp.close()
     values = [[float(value) for value in row] for row in values]
     if transpose:
       values = zip(*values)
@@ -963,7 +965,7 @@ used."""
     elif params[VLAB.P_RTProcessor] == VLAB.K_DUMMY:
       rtProcessor = DUMMY()
     else:
-      raise RuntimeException('unknown processor: <%s>' % params[VLAB.P_RTProcessor])
+      raise RuntimeError('unknown processor: <%s>' % params[VLAB.P_RTProcessor])
     rtProcessor.doProcessing(None, params)
     VLAB.logger.info('%s : %s' % (me, 'finished'))
 
@@ -1276,8 +1278,8 @@ class DUMMY:
       'env'     : None
     },
     'windows' : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_win32',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\dummy_win32\\dummy.exe',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dummy_win32',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dummy_win32//dummy.exe',
       'cmdline' : [ '-e', '1', '-r', '5' ],
       'stdin'   : None,
       'stdout'  : None,
@@ -1325,7 +1327,6 @@ Dart_SpectralBandMode = Dart_enum(VISIBLE=0, VISIBLE_AND_THERMAL=1, THERMAL=2)
 
 class Dart_DARTEnv : 
   dartLocal = VLAB.getenv('DART_LOCAL')
-  #dartLocal = 'F:\\dart_local\\'
   
   simulationsDirectory = 'simulations'
   
@@ -2120,7 +2121,7 @@ class Librat_dobrdf:
     # 'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
     gdata = """cmd = {
   'linux' : {
-    'cwd'     : None,
+    'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
     'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
     'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
@@ -2131,19 +2132,19 @@ class Librat_dobrdf:
   'LD_LIBRARY_PATH' :  '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/lib',
     }},
   'windows'   : {
-    'cwd'     : None,
-    'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32\\src\\start\\ratstart.exe',
-    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s', '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_scenes\\%s' ],
+    'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes',
+    'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_win32/src/start/ratstart.exe',
+    'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes/%s', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
     'stdout'  : '%s',
     'stderr'  : '%s',
     'env'     : {
-      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_win32'
+      'BPMS'  : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_win32'
    }}
 }
 """
     # hack to allow replacing only %s
-    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%\\","\x81\\")
+    escaped = gdata.replace("%%","\x81\x81").replace("%H","\x81H").replace("%/","\x81/")
     replaced = escaped % \
    (args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
     args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
@@ -2176,7 +2177,7 @@ class Librat_dobrdf:
       'rpp'             : 1,
       'fov'             : False,
       'sorder'          : 100,
-      'nice'            : '',
+      'nice'            : None,
       'boom'            : 100000,
       'ideal'           : False,
       'samplingPattern' : False,
@@ -2214,18 +2215,18 @@ class Librat_dobrdf:
       else:
         q[a] = args[a]
 
-    VLAB.mkDirPath(q['opdir'])
+    VLAB.mkDirPath('%s/%s' %(LIBRAT.SDIR, q['opdir']))
 
-    angfp = VLAB.checkFile(q['anglefile'])
-    wbfp  = VLAB.checkFile(q['wbfile'])
-    objfp = VLAB.checkFile(q['objfile'])
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wbfp  = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
+    objfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['objfile']))
 
     # vz va sz sa
-    ang = VLAB.valuesfromfile(q['anglefile'])
+    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
 
     if 'lookFile' in q:
-      lookfp = VLAB.checkFile(q['lookFile'])
-      q['look_xyz'] = VLAB.valuesfromfile(q['lookFile'])
+      lookfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['lookFile']))
+      q['look_xyz'] = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['lookFile']))
 
     if len(q['look_xyz']) == 3:
       q['look_xyz'] = ((q['look_xyz']),)
@@ -2244,7 +2245,7 @@ class Librat_dobrdf:
       q['sa'] = a[3]
 
       for ll, look in enumerate(q['look_xyz']):
-        lightfile = VLAB.fPath(q['opdir'], q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
+        lightfile = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['light_root'] + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_dat')
         ligfp = VLAB.openFileIfNotExists(lightfile)
         if ligfp != None:
           nq = {
@@ -2254,17 +2255,17 @@ class Librat_dobrdf:
           self._writeLightFile(lightfile, nq)
 
         rooty = q['objfile'] + '_vz_' + str(q['vz']) + '_va_' + str(q['va']) + '_sz_' + str(q['sz']) + '_sa_' + str(q['sa']) + '_xyz_' + str(look[0]) + '_' + str(look[1]) + '_' + str(look[2]) + '_wb_' + q['wbfile']
-        grabme = VLAB.fPath(q['opdir'], q['grabme_root'] + '.' + rooty)
+        grabme = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['grabme_root'] + '.' + rooty)
         if 'dhp' in q:
-          location = look.copy()
+          location = list(look)
           look[2] = q['INFINITY']
           sampling = 'circular'
 
         if not VLAB.fileExists(grabme):
           grabfp = VLAB.openFileIfNotExists(grabme)
           q['grabme_log'] = grabme + '.log'
-          q['camfile'] = VLAB.fPath(q['opdir'], q['camera_root'] + '.' + rooty)
-          q['oproot'] = VLAB.fPath(q['opdir'], q['result_root'] + '.' + rooty)
+          q['camfile'] = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['camera_root'] + '.' + rooty)
+          q['oproot'] = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), q['result_root'] + '.' + rooty)
           nq = {
             'name'             : 'simple camera',
             'vz'               : q['vz'],
@@ -2361,21 +2362,21 @@ class Librat_dolibradtran:
     LIBRADTRAN = q['LIBRADTRAN_PATH'] + 'bin/uvspec'
     solar_file = q['LIBRADTRAN_PATH'] + q['solar']
 
-    VLAB.mkDirPath(q['opdir'])
+    VLAB.mkDirPath('%s/%s' % (LIBRAT.SDIR, q['opdir']))
 
     # TODO prove that LIBRADTRAN_PATH dir exists
 
-    angfp = VLAB.checkFile(q['anglefile'])
-    wbfp = VLAB.checkFile(q['wbfile'])
-    rpvfp = VLAB.checkFile(q['rpvfile'])
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wbfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
+    rpvfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
 
-    rpv = VLAB.valuesfromfile(q['rpvfile'])
+    rpv = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
     if len(rpv[0]) != 4: # length of index 1 because index 0 is heading
       sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], q['rpvfile']))
       sys.exit([True])
 
-    angt = VLAB.valuesfromfile(q['anglefile'])
-    wb = [i[1] for i in VLAB.valuesfromfile(q['wbfile'])]
+    angt = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    wb = [i[1] for i in VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))]
 
     nbands = len(wb)
     wbstep = 1
@@ -2388,8 +2389,8 @@ class Librat_dolibradtran:
         sys.stderr.write("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['anglefile']))
 
     # check for op file if required
-    if not VLAB.fileExists(q['plotfile']):
-      plotfilefp = VLAB.openFileIfNotExists(q['plotfile'])
+    if not VLAB.fileExists('%s/%s' % (LIBRAT.SDIR, q['plotfile'])):
+      plotfilefp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
     else:
       sys.stderr.write('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
       sys.exit(1)
@@ -2413,8 +2414,8 @@ class Librat_dolibradtran:
       umu = math.cos(vzz)
       angstr = str(vzz) + '_' + str(vaa) + '_' + str(szz) + '_' + str(saa)
       
-      libradtran_ip = VLAB.fPath(q['opdir'], 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
-      libradtran_op = VLAB.fPath(q['opdir'], 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_ip = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_op = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
 
       if not VLAB.fileExists(libradtran_ip):
         libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
@@ -2467,12 +2468,12 @@ class Librat_dolibradtran:
       plotfilefp.write('# vz va sz sa %e %e %e\n' % (min(wb), max(wb), wbstep))
       # plotfilefp.flush()
 	
-      for f in [f for f in VLAB.listdir(q['opdir']) if f.startswith('op.')]:
+      for f in [f for f in VLAB.listdir('%s/%s' % (LIBRAT.SDIR, q['opdir'])) if f.startswith('op.')]:
         vzz = f.split('_')[-4]
         vaa = f.split('_')[-3]
         szz = f.split('_')[-2]
         saa = f.split('_')[-1]
-        d = VLAB.valuesfromfile(f,transpose=True)
+        d = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, f),transpose=True)
         plotfilefp.write('%s %s %s %s ' % (vzz,vaa,szz,saa))
         plotfilefp.write(' '.join(map(str, d[1])) + '\n')
 
@@ -2673,7 +2674,7 @@ class Librat_plot:
       self.brdf_plot(q['root'], q['angfile'], q['wbfile'])
 
   def spec_plot(self,spec,wbspec):
-    wbspec_contents = VLAB.valuesfromfile(wbspec, transpose=True)
+    wbspec_contents = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, wbspec), transpose=True)
 
     wb = wbspec_contents[1];
     op1 = spec + '.plot.png'
@@ -2685,8 +2686,8 @@ class Librat_plot:
   def brdf_plot(self,root,angfile,wbfile):
     opdat = root + '.brdf.dat'
     opplot = root + '.brdf.png'
-    ang = VLAB.valuesfromfile(angfile, transpose=True)
-    wb = VLAB.valuesfromfile(wbfile, transpose=True)[1]
+    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, angfile), transpose=True)
+    wb = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, wbfile), transpose=True)[1]
 
     result = [[0. for i in range(len(wb))] for i in range(len(ang[0]))]
 
@@ -2699,7 +2700,7 @@ class Librat_plot:
       sz = f.split('_')[fsplit.index('sz') + 1]
       sa = f.split('_')[fsplit.index('sa') + 1]
 
-      data = VLAB.valuesfromfile(f, transpose=True)
+      data = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, f), transpose=True)
       refl = [reduce(lambda x, y : x + y, i) for i in data[1:]]
       result[zip(*VLAB.awhere(
         VLAB.treemap(lambda x : x == float(vz), ang)))[1][0]] = refl
@@ -2756,8 +2757,8 @@ class Librat_rpv_invert:
       else:
         q[a] = args[a]
 
-    wb = VLAB.valuesfromfile(q['wbfile'], transpose=True)[1]
-    data = VLAB.valuesfromfile(q['dataf'], transpose=True)
+    wb = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
+    data = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['dataf']), transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
@@ -2779,10 +2780,12 @@ class Librat_rpv_invert:
     if q['verbose']: sys.stderr.write('%s: saving params to %s\n'%(sys.argv[0], opdat))
 
     # create the file if it doesn't exist
-    VLAB.openFileIfNotExists(opdat)
+    dfp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, opdat))
+    if dfp != None:
+      dfp.close()
 
     # open the previously created file
-    opfp = open(opdat, 'w')
+    opfp = open('%s/%s' % (LIBRAT.SDIR,  opdat), 'w')
 
     if q['three']:
       opfp.write('# wb rho0 k bigtet\n')
@@ -2883,20 +2886,26 @@ class Librat_rpv_invert:
 #############################################################################
 
 class LIBRAT:
+  if VLAB.osName().startswith('Windows'):
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes')
+  else:
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes')
+
   """Integration glue for calling external LIBRAT programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
-  def doProcessing(self, pm, args):
-    """do processing for LIBRAT processor"""
+
+  def doProcessingTests(self, pm, args):
+ 
+    """do processing tests for LIBRAT processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
 
     if (pm != None):
-      pm.beginTask("Computing BRF...", 10)
+      pm.beginTask("Computing...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
 
-    # FIXME: for now just do the simple test call
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
@@ -2912,16 +2921,16 @@ class LIBRAT:
         'BPMS'  : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/'
       }},
     'windows'   : {
-      'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start',
-      'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\ratstart.exe',
+      'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start',
+      'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start/ratstart.exe',
       'cmdline' : [
         '-sensor_wavebands', 'wavebands.dat', '-m', '100',
         '-sun_position', '0', '0', '10', 'test.obj'],
-      'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows\\src\\start\\starttest.ip',
+      'stdin'   : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows/src/start/starttest.ip',
       'stdout'  : None,
       'stderr'  : None,
       'env'     : {
-        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\librat_windows'
+        'BPMS'  : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows'
      }}
     }
     VLAB.doExec(cmd)
@@ -2945,7 +2954,7 @@ class LIBRAT:
     # RAMI test case
     args = {
             'v' : True,
-         'nice' : '19',
+         'nice' : 19,
           'obj' : 'HET01_DIS_UNI_NIR_20.obj',
          'hips' : True,
            'wb' : 'wb.MSI.dat',
@@ -2962,7 +2971,7 @@ class LIBRAT:
     # LAEGEREN test case
     args = {
             'v' : True,
-         'nice' : '19',
+         'nice' : 19,
           'obj' : 'laegeren.obj.lai.1',
          'hips' : True,
            'wb' : 'wb.MSI.dat',
@@ -2979,7 +2988,7 @@ class LIBRAT:
     # FULL SPECTRUM RAMI test case
     args = {
             'v' : True,
-         'nice' : '19',
+         'nice' : 19,
           'obj' : 'HET01_DIS_UNI_NIR_20.obj',
            'wb' : 'wb.full_spectrum.1nm.dat',
         'ideal' : (80., 80.),
@@ -3012,11 +3021,56 @@ class LIBRAT:
          'brdf' : True,
        'angles' : 'angles.rpv.2.dat',
        'wbfile' : 'wb.MSI.dat',
-        'bands' : (4., 7.),
+        'bands' : (4, 7),
          'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj'
     }
     # plot.main(args)
 
+    # RAMI
+    args = {
+         'brdf' : True,
+       'angles' : 'angles.rpv.2.dat', 
+       'wbfile' : 'wb.MSI.dat',
+         'root' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj',
+        'bands' : (4, 7),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # LAEGEREN
+    args = {
+         'brdf' : True, 
+       'angles' : 'angles.rpv.2.dat',
+       'wbfile' : 'wb.MSI.dat',
+         'root' : 'rpv.laegeren/result.laegeren.obj.lai.1',
+        'bands' : (4, 7),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # RAMI
+    args = {
+         'brdf' : True,
+       'wbfile' : 'wb.full_spectrum.1nm.dat',
+       'angles' : 'angle.rpv.cosDOM.dat',
+         'root' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
+        'bands' : (250, 450),
+            'v' : True
+    }
+    # plot.main(args)
+
+    # RAMI
+    args = {
+        'three' : True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
+    'paramfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+     'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+    }
+    # rpv_invert.main(args)
+
+    # LAEGEREN
     args = {
         'three' : True,
             'v' : True,
@@ -3028,15 +3082,181 @@ class LIBRAT:
     # rpv_invert.main(args)
 
     args = {
-      'opdir' : 'rami.TOA',
+        'three' : True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
+    'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+     'plotfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+    }
+    # rpv_invert.main(args)
+
+    args = {
+         'three': True,
+            'v' : True,
+         'plot' : True,
+        'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+    'paramfile' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+     'plotfile' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.3params'
+    }
+    # rpv_invert.main(args)
+
+    args = {
+         'v' : True,
+     'opdir' : 'rami.TOA',
+    'angles' : 'angles.MSI.dat',
+    'wbfile' : 'wb.MSI.dat',
+       'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
+      'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+         'v' : True,
+     'opdir' : 'laegeren.TOA',
+    'angles' : 'angles.MSI.dat',
+    'wbfile' : 'wb.MSI.dat',
+       'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+      'plot' : 'laegeren.TOA/rpv.laegeren.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+         'v' : True,
+    'angles' : 'angle.rpv.cosDOM.dat',
+    'wbfile' : 'wb.full_spectrum.1nm.dat', 
+     'opdir' : 'dart.rami.TOA',
+       'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+      'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
+          'v': True,
+    'angles' : 'angle.rpv.cosDOM.dat',
+    'wbfile' : 'wb.full_spectrum.1nm.dat',
+     'opdir' : 'dart.laegeren.TOA',
+       'rpv' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', 
+      'plot' : 'dart.laegeren.TOA/rpv.laegeren.libradtran.dat.all'
+    }
+    # dolibradtran.main(args)
+
+    args = {
           'v' : True,
+      'opdir' : 'rami.TOA',
         'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
        'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
         'lat' : 50,
         'lon' : 0,
-       'time' : "2013 0601 12 00 00"
+       'time' : '2013 0601 12 00 00'
     }
     # dolibradtran.main(args)
+
+    args = {
+          'v': True, 
+     'opdir' : 'laegeren.TOA.date',
+       'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
+      'plot' : 'laegeren.TOA.date/rpv.laegeren.libradtran.dat.all',
+       'lat' : 50, 
+       'lon' : 0,
+      'time' : '2013 06 01 12 00 00'
+    }
+    # dolibradtran.main(args)
+
+
+    # DHP Simulation
+    args = {
+         'v' : True,
+      'nice' : 19,
+       'obj' : 'laegeren.obj.lai.1',
+      'hips' : True,
+        'wb' : 'wb.image.dat',
+       'dhp' : True,
+'samplingPattern' : 'circular',
+  'lookFile' : 'dhp.locations.ondem.dat',
+    'angles' : 'angles.dhp.dat',
+       'fov' : 150,
+       'rpp' : 8,
+   'npixels' : 4000000,
+     'opdir' : 'DHP_TEST'
+    }
+    # dobrdf.main(args)
+    VLAB.logger.info('%s: Done...' % me)
+
+  def doProcessing(self, pm, args):
+    """do processing for LIBRAT processor"""
+    me=self.__class__.__name__ +'::'+VLAB.me()
+
+    # defaults
+    q = {
+       'angles' : 'angle.rpv.cosDOM.dat',
+        'bands' : (250, 450),
+         'boom' : 786000, 
+         'brdf' : True,
+        'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
+          'dhp' : True,
+          'fov' : 150,
+         'hips' : True,
+        'ideal' : (300., 300.),
+          'lat' : 50, 
+          'lon' : 0,
+         'look' : (150., 150., 710.),
+     'lookFile' : 'dhp.locations.ondem.dat',
+            'n' : 1000,
+         'nice' : 19,
+      'npixels' : 10000,
+          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
+        'opdir' : 'dart.rami.TOA',
+    'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+         'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all',
+     'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
+         'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
+       'random' : True,
+         'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
+          'rpp' : 4, 
+          'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+          'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
+'samplingPattern' : 'circular',
+        'three' : True,
+         'time' : '2013 06 01 12 00 00',
+            'v' : True,
+       'wbfile' : 'wb.full_spectrum.1nm.dat',
+           'wb' : 'wb.full_spectrum.1nm.dat'
+    }
+
+    # overwrite defaults
+    for a in args:
+      if a == 'wb':
+        if args[a] == VLAB.K_SENTINAL2:
+          q['wb'] = 'wb.MSI.dat'
+        elif args[a] == VLAB.K_SENTINAL3:
+          q['wb'] = 'wb.OLCI.dat'
+        else:
+          q['wb'] = 'wb.full_spectrum.1nm.dat'
+      elif a == 'anotherexample':
+        if args[a] == 'somethingtobetranslated':
+          q['thingy'] = 'translatedthingy'
+        else:
+          q['thingy'] = 'defaultthingy'
+
+    drivers      = Librat_drivers()
+    dobrdf       = Librat_dobrdf()
+    plot         = Librat_plot()
+    rpv_invert   = Librat_rpv_invert()
+    dolibradtran = Librat_dolibradtran()
+
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
+    # ensure at least 1 second to ensure progress popup feedback
+    time.sleep(1)
+
+    # not needed because we are using the dart angles
+    # drivers.main()
+
+    dobrdf.main(q)
+    plot.main(q)
+    rpv_invert.main(q)
+    dolibradtran.main(q)
 
     VLAB.logger.info('%s: Done...' % me)
 
@@ -3085,7 +3305,6 @@ else:
     from java.lang         import IllegalArgumentException
     from java.lang         import Integer
     from java.lang         import ProcessBuilder
-    from java.lang         import RuntimeException
     from java.lang         import System
     from java.lang         import Thread
     from java.util         import ArrayList
@@ -3184,7 +3403,7 @@ else:
         elif processor == VLAB.K_DUMMY:
           rtProcessor = DUMMY()
         else:
-          raise RuntimeException('unknown processor: <' + processor + '>')
+          raise RuntimeError('unknown processor: <%s>' % processor)
   
         pm.beginTask("Computing top of canopy BRF...", 10)
         myargs = {
