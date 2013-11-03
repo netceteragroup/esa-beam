@@ -21,7 +21,7 @@ You only need the typical binary installation for this.
 
 1. Perform [binary only installation](https://github.com/netceteragroup/esa-beam#binary-installation)
 2. Enable logging (in ${HOME}/beam-4.11/config/beam.config, uncomment beam.logLevel = INFO)
-3. in [${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py]() search for "Sentinel 2" (aka K_SENTINEL2) and everywhere it appears, add your new one e.g. "Sentinel 99" aka K_SENTINEL99
+3. in [${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py](https://raw.github.com/netceteragroup/esa-beam/master/beam-3dveglab-vlab/src/main/resources/auxdata/VLabImpl.py) search for "Sentinel 2" (aka K_SENTINEL2) and everywhere it appears, add your new one e.g. "Sentinel 99" aka K_SENTINEL99
 4. You should see your change after selecting the 3D VegLab processor from within BEAM
 5. If not, you can add logging e.g. VLAB.logger.info('hello %s' % 'world')
 6. And check logfiles in ${HOME}/.beam/log/ and ${HOME}/beam-4.11/log/
@@ -32,6 +32,7 @@ Caveats
 Since we are using the jython variant that ships with BEAM, there are limitations
 * No 3rd-party modules like numpy, matplotlib, etc
 * Not even some typically native python libraries like os, copy, ...
+* There is no chdir() so you have to manually prepend directories in many places
 
 But, in the BEAM case, you have access to anything that BEAM (and Java) provides. We have made use of the BEAM-provided jfreechart java library to plot some auxilliary information for example.
 
@@ -50,7 +51,7 @@ def fileExists(fname):
 
 Testing
 ---------------------------
-Since nearly everything is implemented in that single python file, we were able to provide alternatives to testing.
+Since nearly everything is implemented in that single python file, we were able to provide multiple alternatives for testing.
 
 1. From within BEAM, using log statements (as described in the "Example change" above)
 2. Standalone "headless" (either jython or python)
@@ -59,6 +60,20 @@ Since nearly everything is implemented in that single python file, we were able 
 ```jython -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py```
 
 For case 2, search for the method selftests() to see (or change) which tests will be run in a GUI-less way (with log messages appearing on the console from where the command is run).
+
+VLabImpl.py Code Layout
+---------------------------
+The code is laid out in the following sections.
+
+1. VLAB class - for constants, configuration, and static utility methods
+2. Minimize_NMSimplex - a utility class for one of the minimization libraries
+3. DUMMY - a dummy to show how to integrate a trivial 3rd party binary
+4. Dart_* - classes for DART data cube creation
+5. DART - the driver for the dart integration code
+6. Librat_* - classes for supporting LIBRAT integration
+7, LIBRAT - the driver for the LIBRAT integration code
+8. MAIN - dispatching logic for the three ways to run this code
+9. BEAM-only code - classes needed only to integrate with BEAM
 
 For IT Developers
 ---------------------------

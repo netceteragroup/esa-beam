@@ -10,8 +10,8 @@ Binary Installation
 ---------------------------
 
 Binary installation of the 3D Vegetation Lab plugin is automated [in Java](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/Install.java) and involves
- * copying/replacing the plugin jar file in your beam/modules directory
- * clean first-time plugin run to create/unpack $HOME/.beam/beam-vlab/auxdata/
+ * copying/replacing the plugin jar in $HOME/beam-4.11/modules 
+ * first-time plugin run to create/unpack $HOME/.beam/beam-vlab/auxdata/
  * fetch/unpack latest versions of dependent 3rd party software into auxdata
  * create command line wrappers in the bin directory for batch operation
 
