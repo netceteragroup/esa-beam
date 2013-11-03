@@ -41,6 +41,7 @@ public class Install {
   private static final String TYPE_BIN         = "bin";
   private static final String TYPE_MODULES     = "modules";
   private static final String TYPE_AUX         = "aux";
+  private static final String TYPE_LIB         = "lib";
   private static final String DEFAULT_REPO     = "ftp://ftp.netcetera.ch/pub";
   private static final String DEFAULT_MANIFEST = DEFAULT_REPO + "/3DVegLab.manifest";
   
@@ -203,6 +204,7 @@ public class Install {
     }
     String bindir = cwd;
     String moddir = new File(cwd, ".." + File.separator + TYPE_MODULES).getAbsolutePath();
+    String libdir = new File(cwd, ".." + File.separator + TYPE_LIB).getAbsolutePath();
     String auxsuffix = ".beam:beam-vlab:auxdata".replaceAll(":", Matcher.quoteReplacement(File.separator));
     String auxdir = null;
     if (System.getProperty("os.name").startsWith("Windows")) {
@@ -228,6 +230,8 @@ public class Install {
         targetName = bindir + File.separator + tuple[2];
       } else if (TYPE_AUX.equals(tuple[1])) {
         targetName = auxdir + File.separator + tuple[2];
+      } else if (TYPE_LIB.equals(tuple[1])) {
+        targetName = libdir + File.separator + tuple[2];
       } else if (TYPE_MODULES.equals(tuple[1])) {
         for (File toDelete : new File(moddir).listFiles(new FilenameFilter() {
           public boolean accept(File directory, String fileName) {
