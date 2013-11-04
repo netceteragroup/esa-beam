@@ -71,7 +71,7 @@ The code is laid out in the following sections.
 4. Dart_* - classes for DART data cube creation
 5. DART - the driver for the dart integration code
 6. Librat_* - classes for supporting LIBRAT integration
-7, LIBRAT - the driver for the LIBRAT integration code
+7. LIBRAT - the driver for the LIBRAT integration code
 8. MAIN - dispatching logic for the three ways to run this code
 9. BEAM-only code - classes needed only to integrate with BEAM
 
@@ -80,7 +80,9 @@ For IT Developers
 
 Full development environment
 ------------------------------------------
-This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. The [first script](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/build_beam_binaries.sh) automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
+This describes the complete variant for installing the entire (Java-based) development environment needed for a complete build. You shouldn't need this unless you want to build a release, change the help files, etc.
+
+The [first script](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/build_beam_binaries.sh) automates the steps for building BEAM as described in http://www.brockmann-consult.de/beam-wiki/display/BEAM/Build+from+Source
 
 **See below for OPTIONAL step on creating a linux virtual image**
 
