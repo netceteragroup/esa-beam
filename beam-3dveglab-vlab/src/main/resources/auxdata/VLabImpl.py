@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (3 Nov 2013)'
+  VERSION_STRING     = '1.0 (5 Nov 2013)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -66,7 +66,7 @@ class VLAB:
   K_DUMMY            = 'dummy'
 
   K_LAEGEREN         = 'Laegeren'
-  K_RAMI             = 'Default RAMI'
+  K_RAMI             = 'RAMI'
 
   K_YES              = 'Yes'
   K_NO               = 'No'
@@ -90,7 +90,13 @@ class VLAB:
 
   if sys.platform.startswith('java'):
     from java.util.logging import Logger
+    from java.util.logging import FileHandler
+    from java.util.logging import Level
     logger = Logger.getLogger(LOGGER_NAME)
+    # comment these out
+    # logfh = FileHandler('%s.log' % LOGGER_NAME)
+    # logfh.setLevel(Level.FINEST)
+    # logger.addHandler(logfh)
   else:
     import logging
     logger = logging.getLogger(LOGGER_NAME)
@@ -98,9 +104,10 @@ class VLAB:
     logch = logging.StreamHandler()
     logch.setLevel(logging.DEBUG)
     logger.addHandler(logch)
-    #logfh = logging.FileHandler('%s.log' % LOGGER_NAME)
-    #logfh.setLevel(logging.DEBUG)
-    #logger.addHander(logfh)
+    # comment these out
+    # logfh = logging.FileHandler('%s.log' % LOGGER_NAME)
+    # logfh.setLevel(logging.DEBUG)
+    # logger.addHander(logfh)
 
   model = (
 {'Forward Modeling': (
@@ -1047,7 +1054,7 @@ used."""
 
     # scenario 1
     params = {
-      VLAB.P_3dScene             : 'Default RAMI', 
+      VLAB.P_3dScene             : 'RAMI', 
       VLAB.P_AtmosphereCO2       : '1.6', 
       VLAB.P_ViewingAzimuth      : '0.0', 
       VLAB.P_AtmosphereWater     : '0.0', 
@@ -1056,7 +1063,7 @@ used."""
       VLAB.P_AtmosphereAerosol   : 'Rural', 
       VLAB.P_DHP_Zenith          : '20.0', 
       VLAB.P_SceneYW             : '100', 
-      VLAB.P_DHP_3dScene         : 'Default RAMI', 
+      VLAB.P_DHP_3dScene         : 'RAMI', 
       VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10', 
       VLAB.P_OutputDirectory     : '', 
       VLAB.P_AtmosphereOzone     : '300', 
@@ -1326,8 +1333,6 @@ Dart_DataLevel = Dart_enum(BOA=0, SENSOR=1, TOA=2, ATMOSPHERE_ONLY=3)
 Dart_SpectralBandMode = Dart_enum(VISIBLE=0, VISIBLE_AND_THERMAL=1, THERMAL=2)
 
 class Dart_DARTEnv : 
-  dartLocal = VLAB.getenv('DART_LOCAL')
-  
   simulationsDirectory = 'simulations'
   
   inputDirectory = 'input'
@@ -1731,7 +1736,7 @@ class Dart_DARTRootSimulationDirectory :
     return VLAB.path.normcase(VLAB.path.normpath(path1)) == VLAB.path.normcase(VLAB.path.normpath(path2))
   
   def getAbsolutePath(self) :
-    return VLAB.path.join(Dart_DARTEnv.dartLocal, Dart_DARTEnv.simulationsDirectory)
+    return VLAB.path.join(DART.SDIR, Dart_DARTEnv.simulationsDirectory)
   
   def getSimulationsList(self) :
     rootSimulationPath = self.getAbsolutePath()
@@ -1984,10 +1989,48 @@ class Dart_HeaderInfo :
 #
 
 class DART:
+  if VLAB.osName().startswith('Windows'):
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local')
+  else:
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dart_local')
+
   """Integration glue for calling external DART programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
+
+  def _writeSeqFile(self, args):
+    sstr = """<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="1.0">
+    <DartSequencerDescriptor sequenceName="sequence/%s">
+        <DartSequencerDescriptorEntries>
+            <DartSequencerDescriptorGroup groupName="group_%s">%s
+            </DartSequencerDescriptorGroup>
+        </DartSequencerDescriptorEntries>
+        <DartSequencerPreferences dartLaunched="true"
+            demGeneratorLaunched="false" directionLaunched="true"
+            displayEnabled="true" hapkeLaunched="false"
+            maketLaunched="true" numberParallelThreads="4"
+            phaseLaunched="true" prospectLaunched="false"
+            triangleFileProcessorLaunched="false" vegetationLaunched="false"/>
+        <DartLutPreferences generateLUT="%s" phiMax="" phiMin=""
+            storeIndirect="false" thetaMax="" thetaMin=""/>
+    </DartSequencerDescriptor>
+</DartFile>
+"""
+    dstr = """
+                <DartSequencerDescriptorEntry args="%s"
+                    propertyName="%s" type="enumerate"/>"""
+    groupstr = ""
+    for ent in args['entries']:
+      (dargs, prop) = ent
+      groupstr += (dstr % (dargs, prop))
+    paramfilename = '%s/simulations/%s/%s.xml' % (DART.SDIR, args['simulation'], args['name'])
+    VLAB.logger.info('writing sequence paramfile "%s"' % paramfilename)
+    fp = open(paramfilename, 'w')
+    fp.write(sstr % (args['name'], args['name'],groupstr, args['lut']))
+    fp.close()
+
   def doProcessing(self, pm, args):
     """do processing for DART processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -1996,6 +2039,71 @@ class DART:
       pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
+
+    if args[VLAB.P_3dScene] == VLAB.K_RAMI:
+      simulation = 'Rami'
+    elif args[VLAB.P_3dScene] == VLAB.K_LAEGEREN:
+      simulation = 'Laegeren'
+    else:
+      simulation = 'Unknown'
+
+    cmd = {
+      'linux' : {
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
+        'exe'     : '/bin/sh',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDART_complet.sh', simulation],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', 'echo', 'hello'],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
+
+    seqparams = {
+       'name' : 'SunDirections',
+ 'simulation' : simulation,
+    'entries' : [
+  ['012;012', 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
+  ['023;023', 'Directions.SunViewingAngles.sunViewingZenithAngle']
+  ],
+        'lut' : 'true'
+    }
+    self._writeSeqFile(seqparams)
+
+    # NOTE: command-line argument must be relative to 'sequence' directory
+    cmd = {
+      'linux' : {
+        'cwd'     : None,
+        'exe'     : '/bin/sh',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/DART_Lancement_Sequence.sh', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : None,
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/sequenceur.bat', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
 
     #
     # collect into a consolidated data cube
