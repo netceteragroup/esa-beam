@@ -30,7 +30,7 @@
 #
 # 3. standalone with a 'fake' swing-based gui
 # 
-#    jython -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py
+#    java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py
 #
 # Those BEAM-supplied jars can also be obtained like this:
 #    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (5 Nov 2013)'
+  VERSION_STRING     = '1.0 (7 Nov 2013)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -214,7 +214,7 @@ class VLAB:
   def checkFile(fname):
     """open a file if it exists, otherwise die"""
     try:
-      fp = open(fname, 'rw')
+      fp = open(fname, 'r+')
       return fp
     except IOError, e:
       raise RuntimeError(e)
@@ -3295,6 +3295,7 @@ class LIBRAT:
     """do processing for LIBRAT processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
 
+    VLAB.logger.info('%s: doProcessing()' % (me))
     # defaults
     q = {
        'angles' : 'angle.rpv.cosDOM.dat',
@@ -3332,6 +3333,8 @@ class LIBRAT:
            'wb' : 'wb.full_spectrum.1nm.dat'
     }
 
+    VLAB.logger.info('%s: overwriting defaults' % (me))
+
     # overwrite defaults
     for a in args:
       if a == 'wb':
@@ -3347,6 +3350,7 @@ class LIBRAT:
         else:
           q['thingy'] = 'defaultthingy'
 
+    VLAB.logger.info('%s: instantiating objects' % (me))
     drivers      = Librat_drivers()
     dobrdf       = Librat_dobrdf()
     plot         = Librat_plot()
@@ -3361,9 +3365,13 @@ class LIBRAT:
     # not needed because we are using the dart angles
     # drivers.main()
 
+    VLAB.logger.info('%s: calling dobrdf.main()' % (me))
     dobrdf.main(q)
+    VLAB.logger.info('%s: calling plot.main()' % (me))
     plot.main(q)
+    VLAB.logger.info('%s: calling rpv.main()' % (me))
     rpv_invert.main(q)
+    VLAB.logger.info('%s: calling dolibradtran.main()' % (me))
     dolibradtran.main(q)
 
     VLAB.logger.info('%s: Done...' % me)
@@ -3514,9 +3522,14 @@ else:
           raise RuntimeError('unknown processor: <%s>' % processor)
   
         pm.beginTask("Computing top of canopy BRF...", 10)
-        myargs = {
-        }
-        rtProcessor.doProcessing(pm, myargs)
+        params = {}
+        for i in VLAB.plst:
+          val = self._getP(req, i)
+          VLAB.logger.info('%s: val for %s is %s' % (me, i, val))
+          params[i] = val
+
+        VLAB.logger.info('%s: calling doProcessing' % me)
+        rtProcessor.doProcessing(pm, params)
 
         VLAB.logger.info('%s : %s' % (me, ProcessorConstants.LOG_MSG_FINISHED_REQUEST))
         pm.done()
