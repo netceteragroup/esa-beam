@@ -5,43 +5,45 @@ OS=Fedora_64
 IDIR=/var/tmp/images
 CFG=${IDIR}/${INAME}.ks
 IMAGE=${IDIR}/${INAME}.vdi
-ORIGKS=fedora-19-x86_64.ks
+ORIGKS=fedora-cloud-base.ks
 CACHE=/var/cache/appcreator
-
 set -e
 
+mkdir -p ${IDIR}
 cd ${IDIR}
-wget https://git.fedorahosted.org/cgit/cloud-kickstarts.git/plain/generic/${ORIGKS}
+wget https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/${ORIGKS}
 
 cat > ks-patch.txt <<EOF
---- fedora-19-x86_64.ks	2013-09-17 16:45:54.000000000 +0200
-+++ ${INAME}.ks	2013-09-17 16:50:44.030231488 +0200
-@@ -1,3 +1,5 @@
-+# https://git.fedorahosted.org/cgit/cloud-kickstarts.git/tree/
+--- fedora-cloud-base.ks.ORIG	2013-11-20 14:24:07.041309713 +0100
++++ fedora-cloud-base.ks	2013-11-20 14:57:33.577851866 +0100
+@@ -1,3 +1,6 @@
 +#
- # This is a basic Fedora 19 spin designed to work in OpenStack and other
- # private cloud environments. This flavor isn't configured with cloud-init
- # or any other metadata service; you'll need your own say of getting
-@@ -26,12 +28,14 @@
++# https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/fedora-cloud-base.ks
++#
+ # This is a basic Fedora 20 spin designed to work in OpenStack and other
+ # private cloud environments. It's configured with cloud-init so it will
+ # take advantage of ec2-compatible metadata services for provisioning ssh
+@@ -29,9 +32,13 @@
  
+ zerombr
+ clearpart --all
+-part / --size 1000 --fstype ext4
++part / --size 15000 --fstype ext4
  
- 
--part / --size 10000 --fstype ext4
-+part / --size 15360 --fstype ext4
- 
- 
- # Repositories
- repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-19&arch=\$basearch
- repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f19&arch=\$basearch
+-%include fedora-repo.ks
++# %include fedora-repo.ks
++repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
++repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
 +repo --name=rpmfusion-free --baseurl=http://download1.rpmfusion.org/free/fedora/releases/19/Everything/\$basearch/os/
 +repo --name=rpmfusion-free-updates --baseurl=http://download1.rpmfusion.org/free/fedora/updates/19/\$basearch
  
  
- # Package list.
-@@ -40,6 +44,15 @@
- %packages --nobase
+ reboot
+@@ -40,6 +47,16 @@
+ %packages
  @core
- kernel
+ grubby
++kernel
 +@base-x
 +@fonts
 +@xfce-desktop
@@ -52,23 +54,31 @@ cat > ks-patch.txt <<EOF
 +vim
 +VirtualBox-guest
  
- # We need this image to be portable; also, rescue mode isn't useful here.
- dracut-nohostonly
-@@ -81,9 +94,9 @@
- sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
+ # cloud-init does magical things with EC2 metadata, including provisioning
+ # a user account with ssh keys.
+@@ -53,8 +70,8 @@
+ cloud-utils-growpart
  
+ # We need this image to be portable; also, rescue mode isn't useful here.
+-dracut-config-generic
+--dracut-config-rescue
++dracut-nohostonly
++dracut-norescue
+ 
+ syslinux-extlinux 
+ 
+@@ -112,7 +129,7 @@
  # setup systemd to boot to the right runlevel
--echo -n "Setting default runlevel to multiuser text mode"
-+echo -n "Setting default runlevel to multiuser graphical mode"
+ echo -n "Setting default runlevel to multiuser text mode"
  rm -f /etc/systemd/system/default.target
 -ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 +ln -s /lib/systemd/system/runlevel5.target /etc/systemd/system/default.target
  echo .
  
  # If you want to remove rsyslog and just use journald, remove this!
-@@ -171,6 +184,14 @@
- EOF
- fi
+@@ -176,6 +193,14 @@
+ echo "Disabling tmpfs for /tmp."
+ systemctl mask tmp.mount
  
 +echo -n "Installing rpmfusion-free repo"
 +rpm -ivh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-19.noarch.rpm
@@ -81,16 +91,28 @@ cat > ks-patch.txt <<EOF
  # make sure firstboot doesn't start
  echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
  
-@@ -178,11 +199,8 @@
- yum clean all
- truncate -c -s 0 /var/log/yum.log
+@@ -198,11 +223,20 @@
+ echo "Fixing SELinux contexts."
+ /usr/sbin/fixfiles -R -a restore
  
 -echo "Zeroing out empty space."
 -# This forces the filesystem to reclaim space from deleted files
 -dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
 -rm -f /var/tmp/zeros
 -echo "(Don't worry -- that out-of-space error was expected.)"
-+echo "Zeroing out empty space with fstrim."
++if [ ! -e /etc/sysconfig/kernel ]; then
++echo "Creating /etc/sysconfig/kernel."
++cat <<EOF > /etc/sysconfig/kernel
++# UPDATEDEFAULT specifies if new-kernel-pkg should make
++# new kernels the default
++UPDATEDEFAULT=yes
++
++# DEFAULTKERNEL specifies the default kernel package type
++DEFAULTKERNEL=kernel
++EOF
++fi
++
++echo "Zeroing out empty space with fstrim"
 +/usr/sbin/fstrim /
  
  %end
