@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (7 Nov 2013)'
+  VERSION_STRING     = '1.0 (26 Nov 2013)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -2330,10 +2330,34 @@ class DART:
       else:
         q[a] = args[a]
 
+    # FIXME: "smoke test" - try running complete with the pre-provided inputs
+    cmd = {
+      'linux' : {
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
+        'exe'     : '/bin/sh',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDART_complet.sh', q['simulation']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
+
     # 1. Create a DART simulation with # of directions=100 and ifCosWeighted=1
-    self._writeDirFile(q)
-    self._writePhaseFile(q)
-    self._writeMaketFile(q)
+    # self._writeDirFile(q)
+    # self._writePhaseFile(q)
+    # self._writeMaketFile(q)
 
     # 2. a. Run direction.exe
     cmd = {
