@@ -1695,6 +1695,7 @@ class Dart_DARTSimulation :
 
   def getImageInDirection(self, direction, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last', projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE):
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
+    VLAB.logger.info('brfPath is %s' % brfPath)
     data = []
     if (VLAB.path.exists(brfPath)):
       imageDirPath = VLAB.path.join(brfPath, Dart_DARTEnv.imageDirectoy)
@@ -1705,6 +1706,7 @@ class Dart_DARTSimulation :
       imageName = self.getImageNameInDirection(direction)
       # Recovery of the size of the image, in pixels
       mprPath = VLAB.path.join(imageDirPath, imageName + '.mpr')
+      VLAB.logger.info('mprPath is %s' % mprPath)
       if (VLAB.path.exists(mprPath)):
         sizeX = 0
         sizeY = 0
@@ -1819,6 +1821,143 @@ def Dart_Bandes(simulationProperties):
     bandes.append(bande)
   return bandes
 
+# FIXME: this needs to use the same code that librat uses
+class Dart_dolibradtran:
+  def __init__(self) :
+    pass
+
+  def _writeRadtranFile(self, args):
+    # FIXME: what defaults makes sense?
+    q = {
+      'solar_file'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat',
+      'dens_column'  :  'O3 300',
+      'correlated_k' : 'LOWTRAN',
+      'rte_solver'   : 'cdisort',
+      'rpv_file'     : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
+      'deltam'       : 'on',
+      'nstr'         : '6',
+      'zout'         : 'TOA',
+      'output_user'  : 'lambda uu',
+      'quiet'        : 'quiet',
+      'umu'          : '1.0',
+      'phi'          : '0.',
+      'latitude'     : '50',
+      'longitude'    : '0',
+      'time'         : '2013 06 01 12 00 00',
+      'wavelength'  : '1375.0',
+    }
+
+    for a in args:
+      if a == 'something_to_translate':
+        q['translated_thing'] = args[a]
+      else:
+        q[a] = args[a]
+
+    sdata = """
+solar_file         %s
+dens_column        %s
+correlated_k       %s
+rte_solver         %s
+rpv_file           %s
+deltam             %s
+nstr               %s
+zout               %s
+output_user        %s
+%s
+umu                %s
+phi                %s
+latitude           %s
+longitude          %s
+time               %s
+wavelength         %s
+""" % (q['solar_file'],
+      q['dens_column'],
+      q['correlated_k'] ,
+      q['rte_solver'],
+      q['rpv_file'],
+      q['deltam'],
+      q['nstr'],
+      q['zout'],
+      q['output_user'],
+      q['quiet'],
+      q['umu'],
+      q['phi'],
+      q['latitude'],
+      q['longitude'],
+      q['time'],
+      q['wavelength'])
+
+    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['ipfile']), 'w')
+    fp.write(sdata)
+    fp.close()
+
+  def main(self, args):
+    me=self.__class__.__name__+'::'+VLAB.me()
+    VLAB.logger.info('======> %s' % me)
+    for a in args:
+      VLAB.logger.info('%s -> %s' % (a, args[a]))
+
+    # FIXME: hardcoded for now...
+    q = {
+               'ipfile' : 'libradtran.ip',
+               'opfile' : 'libradtran.ip.op',
+                'opdir' : 'libradtran',
+               'wbfile' : 'wb.MSI.dat',
+            'anglefile' : 'angles.MSI.dat',
+              'rpvfile' : 'rpv.laegeren.libradtran.dat',
+                 'root' : 'libradtran',
+                  'lat' : False,
+                  'lon' : False,
+                 'time' : False,
+             'dartflag' : True,
+                'solar' : 'data/solar_flux/NewGuey2003.dat',
+          'dens_column' : 'O3 300.\n',
+         'correlated_k' : 'LOWTRAN\n',
+           'rte_solver' : 'cdisort\n',
+               'deltam' : 'on\n',
+                 'nstr' : '6\n',
+                 'zout' : 'TOA\n',
+          'output_user' : 'lambda uu\n',
+                'quiet' : 'quiet\n',
+           'plotfilefp' : False,
+                    'v' : False,
+             'plotfile' : False
+    }
+    # overwrite defaults with incoming parameters
+    for a in args:
+      if a == 'something_to_translate':
+        q['translated_thing'] = args[a]
+      else:
+        q[a] = args[a]
+
+    # write libradtran input file
+    self._writeRadtranFile(q)
+
+    # run libradtran
+    # FIXME: use the just-written radtran file above instead of dummy example
+    cmd = {
+     'linux' : {
+       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples',
+       'exe'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/bin/uvspec',
+       'cmdline' : [],
+       'stdin'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR.INP',
+       'stdout'  : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt',
+       'stderr'  : None,
+       'env'     : None
+     },
+     'windows' : {
+       'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
+       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\uvspec.exe',
+       'cmdline' : [],
+       'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR.INP',
+       'stdout'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR-BEAM-OUTPUT.txt',
+       'stderr'  : None,
+       'env'     : None
+    }
+    }
+    VLAB.logger.info('%s: spawning libradtran...' % me)
+    VLAB.doExec(cmd)
+
 #==============================================================================
 #title            :Dart_DartImages.py
 #description      :This script can be used to write a *.bsq binary file and a corresponding ENVI header *.hdr from DART output images
@@ -1850,60 +1989,71 @@ class Dart_DartImages :
       i += 1
     return ltype(l)
 
-  def getImagesBandsAsList( self, Dart_DartInfo, Dart_ImageInfo ) :
+  def getImagesBandsAsList( self, args ) :
 
-    simulation = Dart_DARTDao().getSimulation( Dart_DartInfo.simulationName )
+    simulation = Dart_DARTDao().getSimulation( args['di_simName'] )
 
     imagesList = []
     spectralBandsList = []
     
-    if Dart_DartInfo.isSequence:
-      sequencesList = simulation.listSequences( Dart_DartInfo.sequenceName )
+    if args['di_isSeq']:
+      sequencesList = simulation.listSequences( args['di_sequence'] )
       
       for sequence in sequencesList:
         # Recover the number of Spectral Band
         spectralBands = sequence.getSpectralBands()
     
         # Recover the Directions
-        if Dart_ImageInfo.isUserDirection:
+        if args['ii_isUsrDir']:
           directions = sequence.getUserDirections()
         else:
           directions = simulation.getDiscretizedDirection()
   
         # Recover the images in the defined direction for each spectral band
         for band in spectralBands:
-          imagesList.append(sequence.getImageInDirection( directions[ Dart_ImageInfo.directionNumber ], band.index, Dart_ImageInfo.dataType, Dart_ImageInfo.imageLevel, Dart_ImageInfo.iteration, Dart_ImageInfo.projectionPlane ))
+          VLAB.logger.info('spectralBand: %s' % (band))
+          imagesList.append(sequence.getImageInDirection( directions[ args['ii_dirNum'] ], band.index, args['ii_dType'], args['ii_iLevel'], args['ii_iter'],  args['ii_projPlane'] ))
           spectralBandsList.append( band )
     else:
       # Recover the number of Spectral Band
       spectralBands = simulation.getSpectralBands()
 
       # Recover the Directions
-      if Dart_ImageInfo.isUserDirection:
+      if args['ii_isUsrDir']:
         directions = sequence.getUserDirections()
       else:
         directions = simulation.getDiscretizedDirection()
 
       # Recover the images in the defined direction for each spectral band
       for band in spectralBands:
-        imagesList.append(simulation.getImageInDirection( directions[ Dart_ImageInfo.directionNumber ], band.index, Dart_ImageInfo.dataType, Dart_ImageInfo.imageLevel, Dart_ImageInfo.iteration, Dart_ImageInfo.projectionPlane ))
+        imagesList.append(simulation.getImageInDirection( directions[ args['ii_dirNum'] ], band.index, args['ii_dType'], args['ii_iLevel'], args['ii_iter'],  args['ii_projPlane'] ))
         spectralBandsList.append( band )
 
+    VLAB.logger.info('imagesList has %d entries' % len(imagesList))
+    VLAB.logger.info('spectralBandsList has %d entries' % len(spectralBandsList))
     return imagesList, spectralBandsList
   
-  def writeDataCube( self, Dart_DartInfo, Dart_ImageInfo, Dart_HeaderInfo ) :
+  def writeDataCube( self, args ) :
     
-    imagesList, spectralBandsList = self.getImagesBandsAsList( Dart_DartInfo, Dart_ImageInfo )
+    imagesList, spectralBandsList = self.getImagesBandsAsList( args )
     
     # write BSQ binary file
-    fout = open( Dart_DartInfo.outputFilename + '.bsq', 'wb')
+    if (len(args['OutputDirectory']) == 0):
+      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+    fname = '%s/%s%s.bsq' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
+    VLAB.logger.info('writing output bsq %s' % (fname))
+    fout = open( fname, 'wb')
     flatarray = array('f', self.flatten( imagesList ))
     flatarray.tofile(fout)
     fout.close()
 
     # ENVI header information, more infos on: http://geol.hu/data/online_help/ENVI_Header_Format.html
-    samples = len( imagesList[0][0] )
-    lines = len( imagesList[0] )
+    samples = 0
+    lines = 0
+    if (len(imagesList) > 0):
+      lines = len( imagesList[0] )
+      if (len(imagesList[0]) > 0):
+        samples = len( imagesList[0][0] )
     bands = len( imagesList )
     headerOffset = 0
     fileType = 'ENVI Standard'
@@ -1921,9 +2071,13 @@ class Dart_DartImages :
       fwhm += str( band.getBandWidth()*1000 ) + ', '
 
     # write ENVI header file
-    fout = open( Dart_DartInfo.outputFilename + '.hdr', 'w')
+    if (len(args['OutputDirectory']) == 0):
+      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+    fname = '%s/%s%s.hdr' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
+    VLAB.logger.info('writing output hdr %s' % (fname))
+    fout = open( fname, 'w')
     fout.writelines( 'ENVI ' + '\n' )
-    fout.writelines( 'description = { ' + Dart_HeaderInfo.description + ' }' + '\n' )
+    fout.writelines( 'description = { ' + args['hi_desc'] + ' }' + '\n' )
     fout.writelines( 'samples = ' + str( samples ) + '\n' )
     fout.writelines( 'lines = ' + str( lines ) + '\n' )
     fout.writelines( 'bands = ' + str( bands ) + '\n' )
@@ -1931,11 +2085,11 @@ class Dart_DartImages :
     fout.writelines( 'file type = ' + fileType + '\n' )
     fout.writelines( 'data type = ' + str( dataType ) + '\n' )
     fout.writelines( 'interleave = ' + interleave + '\n' )
-    fout.writelines( 'sensor type = ' + Dart_HeaderInfo.sensorType + '\n' )
+    fout.writelines( 'sensor type = ' + args['hi_sensor'] + '\n' )
     fout.writelines( 'byte order = ' + str( byteOrder ) + '\n' )
     fout.writelines( 'x start = ' + str( xStart ) + '\n' )
     fout.writelines( 'y start = ' + str( yStart ) + '\n' )
-    fout.writelines( 'map info = {' + Dart_HeaderInfo.projectionName + ', ' + str( Dart_HeaderInfo.xReferencePixel ) + ', ' + str( Dart_HeaderInfo.yReferencePixel ) + ', ' + str( Dart_HeaderInfo.xReferenceCoordinate ) + ', ' + str( Dart_HeaderInfo.yReferenceCoordinate ) + ', ' + str( Dart_HeaderInfo.xPixelSize ) + ', ' + str( Dart_HeaderInfo.yPixelSize ) + ', ' + Dart_HeaderInfo.pixelUnits + ' }' + '\n' )
+    fout.writelines( 'map info = {' + args['hi_projName'] + ', ' + str( args['hi_xRefPixl'] ) + ', ' + str( args['hi_yRefPixl'] ) + ', ' + str( args['hi_xRefCoord'] ) + ', ' + str( args['hi_yRefCoord'] ) + ', ' + str( args['hi_xPixSize'] ) + ', ' + str( args['hi_yPixSize'] ) + ', ' + args['hi_pixUnits'] + ' }' + '\n' )
     fout.writelines( 'default bands = ' + defaultBands + '\n' )
     fout.writelines( 'wavelength units = ' + wavelengthUnits + '\n' )
     fout.writelines( 'wavelength = { ' + wavelength[:-2] + ' }' + '\n' )
@@ -1951,38 +2105,6 @@ class Dart_DartImages :
 #version          :1.0
 #usage            :python writeDataCube.py
 #==============================================================================
-
-
-class Dart_DartInfo :
-  
-  simulationName = 'DartSimulation30m_Laegeren' # name of the DART simulation
-  isSequence = False            # options: True = images shall be restored from a sequence // False = images shall be restored from the simulation output only
-  sequenceName = 'sequence_apex'      # name of the sequence within the simulation (if there is one)
-  outputFilename = 'DartOutput'     # name of the output file that is written
-
-class Dart_ImageInfo :
-
-  imageLevel = Dart_DataLevel.SENSOR         # options: BOA = bottom of atmosphere // SENSOR = at sensor // TOA = top of atmosphere // ATMOSPHERE_ONLY
-  isUserDirection = False             # options: True = images of a user defined direction // False = images of a discretisized direction
-  directionNumber = 0               # number of the direction starting at 0, e.g. 0 = first direction
-  dataType = Dart_DataUnit.RADIANCE          # options: BRF_TAPP = bidirectional reflectance factor [0 1] // RADIANCE = radiance [W/m2]
-  iteration = 'last'                # last iteration product
-  projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE  # options: SENSOR_PLANE = image in the sensor plane // ORTHOPROJECTION = orthorectified image // BOA_PLANE = non-projected image on the BOA plane
-
-# see more information on http://geol.hu/data/online_help/ENVI_Header_Format.html
-class Dart_HeaderInfo :
-
-  description = 'some text'       # description of the file
-  sensorType = 'APEX'           # specific sensor type like IKONOS, QuickBird, RADARSAT  
-  projectionName = 'Arbitrary'      # name of projection, e.g. UTM
-  xReferencePixel = 1           # x pixel corresponding to the reference x-coordinate
-  yReferencePixel = 1           # y pixel corresponding to the reference y-coordinate
-  xReferenceCoordinate = 2669660.0000   # reference pixel x location in file coordinates
-  yReferenceCoordinate = 1259210.0000   # reference pixel y location in file coordinates
-  xPixelSize = 1							# pixel size in x direction
-  yPixelSize = 1							# pixel size in y direction
-  pixelUnits = 'units=Meters'
-
 
 #
 # End of Dart_* integration routines
@@ -2031,6 +2153,153 @@ class DART:
     fp.write(sstr % (args['name'], args['name'],groupstr, args['lut']))
     fp.close()
 
+  def _writeDirFile(self, args):
+    sstr = """<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Directions exactDate="2" ifCosWeighted="1" numberOfPropagationDirections="100">
+        <ExpertModeZone numberOfAngularSector="10" numberOfLayers="0"/>
+        <SunViewingAngles sunViewingAzimuthAngle="%s" sunViewingZenithAngle="%s"/>
+        <HotSpotProperties hotSpotParallelPlane="0"
+            hotSpotPerpendicularPlane="0" oversampleDownwardRegion="0" oversampleUpwardRegion="0"/>
+        <AddedDirections directionType="0" ifSquareShape="1" imageDirection="1">
+            <ZenithAzimuth directionAzimuthalAngle="207.2" directionZenithalAngle="5.75"/>
+            <Square widthDefinition="0">
+                <DefineOmega omega="0.0010"/>
+            </Square>
+        </AddedDirections>
+    </Directions>
+</DartFile>
+"""
+    paramfilename = '%s/simulations/%s/input/directions.xml' % (DART.SDIR, args['simulation'])
+    VLAB.logger.info('writing direction paramfile "%s"' % paramfilename)
+    q = {
+      'va' : '32.6',
+      'vz' : '27.1'
+    }
+    # overwrite defaults
+    for a in args:
+      if a == 'something_to_translate':
+        q['translated_something'] = args[a]
+      else:
+        q[a] = args[a]
+    fp = open(paramfilename, 'w')
+    fp.write(sstr % (q['va'], q['vz']))
+    fp.close()
+
+  def _writePhaseFile(self, args):
+    pstr = """<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Phase expertMode="0">
+        <DartInputParameters calculatorMethod="0">
+            <nodefluxtracking gaussSiedelAcceleratingTechnique="1" numberOfIteration="4"/>
+            <SpectralDomainTir temperatureMode="0">
+                <Atmosphere_1 SKYLForTemperatureAssignation="0.0"/>
+            </SpectralDomainTir>
+            <SpectralIntervals>
+                <SpectralIntervalsProperties bandNumber="0"
+                    deltaLambda="%s" meanLambda="%s"
+                    radiativeBudgetProducts="0" spectralDartMode="0"/>
+            </SpectralIntervals>
+            <ExpertModeZone albedoThreshold="1.0E-5"
+                illuminationRepartitionMode="2"
+                lightPropagationThreshold="1.0E-4"
+                nbRandomPointsPerInteceptionAtmosphere="10"
+                nbSubSubcenterTurbidEmission="40"
+                nbSubcenterIllumination="10" nbSubcenterVolume="2"/>
+            <nodeIlluminationMode illuminationMode="0" irradianceMode="1">
+                <irradianceDatabaseNode irradianceDatabase="TOASolarIrradiance.txt"/>
+            </nodeIlluminationMode>
+        </DartInputParameters>
+        <DartProduct>
+            <dartModuleProducts allIterationsProducts="0"
+                brfProducts="1" lidarProducts="0"
+                order1Products="0" radiativeBudgetProducts="0">
+                <BrfProductsProperties brfProduct="1" extrapolation="1"
+                    horizontalOversampling="1" image="1"
+                    luminanceProducts="1" maximalThetaImages="0.1"
+                    nb_scene="1" outputHapkeFile="0" projection="1"
+                    sensorOversampling="1" sensorPlaneprojection="0">
+                    <ExpertModeZone_Etalement etalement="2"/>
+                    <ExpertModeZone_maskProjection mask_projection="0"/>
+                </BrfProductsProperties>
+            </dartModuleProducts>
+            <maketModuleProducts MNEProducts="0" areaMaketProducts="0"
+                coverRateProducts="0" laiProducts="0"/>
+        </DartProduct>
+    </Phase>
+</DartFile>
+"""
+    paramfilename = '%s/simulations/%s/input/phase.xml' % (DART.SDIR, args['simulation'])
+    VLAB.logger.info('writing phase paramfile "%s"' % paramfilename)
+    # defaults?
+    q = {
+      'deltaLambda' : '0.005493',
+      'meanLambda'  : '0.56925'
+    }
+    # overwrite defaults
+    for a in args:
+      if a == 'something_to_translate':
+        q['translated_something'] = args[a]
+      else:
+        q[a] = args[a]
+    fp = open(paramfilename, 'w')
+    fp.write(pstr % (q['deltaLambda'], q['meanLambda']))
+    fp.close()
+
+  def _writeMaketFile(self, args):
+    mstr = """<?xml version="1.0" encoding="UTF-8"?>
+<DartFile version="5.4.3">
+    <Maket dartZone="0" exactlyPeriodicScene="2">
+        <Scene>
+            <CellDimensions x="%s" z="%s"/>
+            <SceneDimensions x="%s" y="%s"/>
+        </Scene>
+        <Soil>
+            <OpticalPropertyLink ident="Unvegetated" indexFctPhase="1" type="0"/>
+            <ThermalPropertyLink
+                idTemperature="thermal_function_290_310" indexTemperature="0"/>
+            <Topography presenceOfTopography="1">
+                <TopographyProperties fileName="DEM.mp#"/>
+            </Topography>
+            <DEM_properties createTopography="1">
+                <DEMGenerator caseDEM="5" outputFileName="DEM.mp#">
+                    <DEM_5 dataEncoding="0" dataFormat="8" fileName="dtm.bin"/>
+                </DEMGenerator>
+            </DEM_properties>
+        </Soil>
+        <LatLon altitude="%s" latitude="%s" longitude="%s"/>
+    </Maket>
+</DartFile>
+"""
+    paramfilename = '%s/simulations/%s/input/phase.xml' % (DART.SDIR, args['simulation'])
+    VLAB.logger.info('writing phase paramfile "%s"' % paramfilename)
+    # defaults?
+    q = {
+      'cellX'     : '1.0',
+      'cellZ'     : '1.0',
+      'SceneDimX' : '30.0',
+      'SceneDimY' : '30.0',
+      'alt'       : '0.7008782',
+      'lat'       : '47.478707259',
+      'lon'       : '8.363187271'
+    }
+    # overwrite defaults
+    for a in args:
+      if a == 'something_to_translate':
+        q['translated_something'] = args[a]
+      else:
+        q[a] = args[a]
+    fp = open(paramfilename, 'w')
+    fp.write(mstr % (
+      q['cellX'],
+      q['cellZ'],
+      q['SceneDimX'],
+      q['SceneDimY'],
+      q['alt'],
+      q['lat'],
+      q['lon']))
+    fp.close()
+
   def doProcessing(self, pm, args):
     """do processing for DART processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -2040,18 +2309,38 @@ class DART:
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
 
-    if args[VLAB.P_3dScene] == VLAB.K_RAMI:
-      simulation = 'Rami'
-    elif args[VLAB.P_3dScene] == VLAB.K_LAEGEREN:
-      simulation = 'Laegeren'
-    else:
-      simulation = 'Unknown'
+    q = {
+      'rpvfile'    : 'angles.rpv.2.dat',
+      'simulation' : 'Unknown'
+    }
 
+    # overwrite defaults
+    for a in args:
+      if a == VLAB.P_3dScene:
+        if args[a] == VLAB.K_RAMI:
+          q['simulation'] = 'Rami'
+        elif args[a] == VLAB.K_LAEGEREN:
+          q['simulation'] = 'Laegeren'
+      elif a == VLAB.P_ViewingAzimuth:
+        # FIXME: do we have to convert?
+        q['va'] = args[a]
+      elif a == VLAB.P_ViewingZenith:
+        # FIXME: do we have to convert?
+        q['vz'] = args[a]
+      else:
+        q[a] = args[a]
+
+    # 1. Create a DART simulation with # of directions=100 and ifCosWeighted=1
+    self._writeDirFile(q)
+    self._writePhaseFile(q)
+    self._writeMaketFile(q)
+
+    # 2. a. Run direction.exe
     cmd = {
       'linux' : {
         'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
         'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDART_complet.sh', simulation],
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDirections.sh', q['simulation']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2060,7 +2349,7 @@ class DART:
       'windows'   : {
         'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
         'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', 'echo', 'hello'],
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2070,17 +2359,27 @@ class DART:
     VLAB.logger.info('command: %s' % cmd)
     VLAB.doExec(cmd)
 
+    # 2. b. Get the first two cols (sz, sa) where sz < 70 deg - use as sequence
+    zlist = []; alist = []
+    for row in VLAB.valuesfromfile('%s/simulations/%s/output/directions.txt' % (DART.SDIR, q['simulation'])):
+      (sz, sa, _, _)  = row
+      if (sz < 70.0):
+        zlist.append(sz); alist.append(sa)
+    zparam = '\'%s\'' % ";".join('%.2f' % x for x in zlist)
+    aparam = '\'%s\'' % ";".join('%.2f' % x for x in alist)
+ 
     seqparams = {
        'name' : 'SunDirections',
- 'simulation' : simulation,
+ 'simulation' : q['simulation'],
     'entries' : [
-  ['012;012', 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
-  ['023;023', 'Directions.SunViewingAngles.sunViewingZenithAngle']
+  [aparam, 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
+  [zparam, 'Directions.SunViewingAngles.sunViewingZenithAngle']
   ],
         'lut' : 'true'
     }
     self._writeSeqFile(seqparams)
 
+    # 3. Run the sun directions sequence with number of directions=200
     # NOTE: command-line argument must be relative to 'sequence' directory
     cmd = {
       'linux' : {
@@ -2103,12 +2402,57 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
+    #VLAB.doExec(cmd)
+
+    # 4.a. Select the values of cz < 70 to get angles.rpv.2.dat for libradtran
+    rpvlist = []
+    for seqSubDir in VLAB.listdir('%s/simulations/%s/sequence/' % (DART.SDIR, q['simulation'])):
+      for row in VLAB.valuesfromfile('%s/simulations/%s/sequence/%s/output/directions.txt' % (DART.SDIR, q['simulation'], seqSubDir)):
+        (sz, sa, _, _)  = row
+        if (sz < 70.0):
+          # FIXME: this is probably not exacly right
+          rpvlist.append('%.2f\t%.2f\t%2f\t%2f' % (sz, sa, 0.0, 0.0))
+    # write the libradtran input file
+    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['rpvfile']), 'w')
+    fp.write("\n".join(rpvlist))
+    fp.close()
+
+    # 4.b. Run libradtran
+    # FIXME: this needs to eventually use the same routine that librat uses
+    dolibradtran = Dart_dolibradtran()
+    dolibradtran.main(q)
 
     #
-    # collect into a consolidated data cube
+    # collect result into a consolidated data cube
     #
-    # Dart_DartImages().writeDataCube( Dart_DartInfo, Dart_ImageInfo, Dart_HeaderInfo )
+    dargs = {
+      'di_simName'   : q['simulation'],
+      'di_isSeq'     : False,
+      'di_sequence'  : 'sequence_apex',
+      'di_outfname'  : 'DartOutput',
+      'ii_iLevel'    : Dart_DataLevel.SENSOR,
+      'ii_isUsrDir'  : False,
+      'ii_dirNum'    : 0,
+      'ii_dType'     : Dart_DataUnit.RADIANCE,
+      'ii_iter'      : 'last',
+      'ii_projPlane' : Dart_ProjectionPlane.SENSOR_PLANE,
+      'hi_desc'      : 'some text',
+      'hi_sensor'    : 'APEX',
+      'hi_projName'  : 'Arbitrary',
+      'hi_xRefPixl'  : 1,
+      'hi_yRefPixl'  : 1,
+      'hi_xRefCoord' : '2669660.0000',
+      'hi_yRefCoord' : '1259210.0000',
+      'hi_xPixSize'  : 1,
+      'hi_yPixSize'  : 1,
+      'hi_pixUnits'  : 'units=Meters'
+    }
+    # merge in data cube arguments
+    for d in dargs:
+      args[d] = dargs[d]
+
+    VLAB.logger.info('args is %s' % args)
+    Dart_DartImages().writeDataCube( args )
     VLAB.logger.info('%s: done...' % me)
 
 #### DART end ################################################################
@@ -2430,8 +2774,14 @@ class Librat_dolibradtran:
     for a in args:
       VLAB.logger.info("%s -> %s" % (a, args[a]))
 
+    osName = VLAB.osName()
+    if osName.startswith('Windows'):
+      radpath = '$HOME/.beam/beam-vlab/auxdata/libRadtran_win32/'
+    else:
+      radpath = '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/'
+
     q = {
-      'LIBRADTRAN_PATH' : '/data/geospatial_07/mdisney/ESA/3Dveglab/libRadtran-1.7/',
+      'LIBRADTRAN_PATH' : radpath,
                'ipfile' : 'libradtran.ip',
                'opfile' : 'libradtran.ip.op',
                 'opdir' : 'libradtran',
