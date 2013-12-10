@@ -14,8 +14,8 @@ cd ${IDIR}
 wget https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/${ORIGKS}
 
 cat > ks-patch.txt <<EOF
---- fedora-cloud-base.ks.ORIG	2013-11-20 14:24:07.041309713 +0100
-+++ fedora-cloud-base.ks	2013-11-20 14:57:33.577851866 +0100
+--- fedora-cloud-base.ks.orig	2013-12-10 12:00:59.000000000 +0100
++++ fedora-cloud-base.ks	2013-12-10 12:01:37.601557183 +0100
 @@ -1,3 +1,6 @@
 +#
 +# https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/fedora-cloud-base.ks
@@ -32,14 +32,14 @@ cat > ks-patch.txt <<EOF
  
 -%include fedora-repo.ks
 +# %include fedora-repo.ks
-+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
-+repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
++repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-\$releasever&arch=\$basearch
++repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f\$releasever&arch=\$basearch
 +repo --name=rpmfusion-free --baseurl=http://download1.rpmfusion.org/free/fedora/releases/19/Everything/\$basearch/os/
 +repo --name=rpmfusion-free-updates --baseurl=http://download1.rpmfusion.org/free/fedora/updates/19/\$basearch
  
  
  reboot
-@@ -40,6 +47,16 @@
+@@ -40,10 +47,20 @@
  %packages
  @core
  grubby
@@ -56,6 +56,11 @@ cat > ks-patch.txt <<EOF
  
  # cloud-init does magical things with EC2 metadata, including provisioning
  # a user account with ssh keys.
+-cloud-init
++# cloud-init
+ 
+ # this is used by openstack's cloud orchestration framework (and it's small)
+ heat-cfntools
 @@ -53,8 +70,8 @@
  cloud-utils-growpart
  
@@ -67,9 +72,12 @@ cat > ks-patch.txt <<EOF
  
  syslinux-extlinux 
  
-@@ -112,7 +129,7 @@
+@@ -110,9 +127,9 @@
+ sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
+ 
  # setup systemd to boot to the right runlevel
- echo -n "Setting default runlevel to multiuser text mode"
+-echo -n "Setting default runlevel to multiuser text mode"
++echo -n "Setting default runlevel to multiuser window system mode"
  rm -f /etc/systemd/system/default.target
 -ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 +ln -s /lib/systemd/system/runlevel5.target /etc/systemd/system/default.target
@@ -91,9 +99,9 @@ cat > ks-patch.txt <<EOF
  # make sure firstboot doesn't start
  echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
  
-@@ -198,11 +223,20 @@
- echo "Fixing SELinux contexts."
+@@ -216,11 +241,23 @@
  /usr/sbin/fixfiles -R -a restore
+ chattr +i /boot/extlinux/ldlinux.sys
  
 -echo "Zeroing out empty space."
 -# This forces the filesystem to reclaim space from deleted files
@@ -111,6 +119,9 @@ cat > ks-patch.txt <<EOF
 +DEFAULTKERNEL=kernel
 +EOF
 +fi
++
++echo "Adding fedora user to sudoers"
++echo "fedora   ALL=(ALL)       ALL" >> /etc/sudoers
 +
 +echo "Zeroing out empty space with fstrim"
 +/usr/sbin/fstrim /
