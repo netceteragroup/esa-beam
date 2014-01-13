@@ -114,7 +114,7 @@ class cam:
 		if np.size(self.ideal) == 2: msg += ' geometry.idealArea = {0:}, {1:};\n'.format(self.ideal[0], self.ideal[1])
 		if np.size(self.location) == 3: msg += ' geometry.location = {0:}, {1:}, {2:};\n'.format(self.location[0], self.location[1], self.location[2])
 		if self.perspective: msg += ' geometry.perspective 0:};\n'.format(self.perspective)
-		if self.perspective: msg += ' result.image = "{0:}";\n'.format(self.result_image)
+		if self.result_image: msg += ' result.image = "{0:}";\n'.format(self.result_image)
 		if self.twist: msg += ' geometry.twist = {0:};\n'.format(self.twist)  
 		if self.fov: msg += ' geometry.fieldOfView = {0:};\n'.format(self.fov)
 		if self.samplingPattern: msg += ' samplingPattern.form = "{0:}";\n'.format(self.samplingPattern)
