@@ -42,6 +42,7 @@ Binary Installation (linux version)
 firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_linux64_installer.sh'
 # 2. run installer
 sh beam_4.11_linux64_installer.sh
+# NOTE: an early version of BEAM's 4.11 installer still named the installed directory beam-4.10.3. If so, please rename it to beam-4.11
 # 3. go to the beam bin directory (the directory where you just installed it)
 cd ${HOME}/beam-4.11/bin
 # 4. download 3DVegLabInstaller.jar into the bin directory from step 3.
