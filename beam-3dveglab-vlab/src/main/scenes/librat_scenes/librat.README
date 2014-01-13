@@ -1,0 +1,273 @@
+README v1 
+Mathias Disney
+12/12/13
+
+For more complete description of the librat model and usage see: https://librat.wikispaces.com/
+
+Summary
+Instructions to generate top-of-canopy (TOC) bidirectional reflectance factor (BRF) values from librat component of the 3D VegLab simulator. Instructions include description of inputs and outputs
+required for all basic simulation cases. In each case, the default usage is described and then options describing more advanced operation are provided. These options
+typically require modification of the configuration files outside the BEAM environment.
+
+To go from TOC to top-of-atmosphere (TOA) BRF values, the atmospheric model libradtran is used (see libradtran.README). In this case, the additional requirement is a
+set of surface bidirectional reflectance distribution function (BRDF) model parameters, using the parametric Rahman-Pinty-Verstraete (RPV)
+model. A description of the model (with code) is given here: http://rami-benchmark.jrc.ec.europa.eu/HTML/DEFINITIONS/DEFINITIONS.php#RPV. To
+generate these parameters TOC BRF is simulated for a given set of view and illumination angles which cover the view and illumination
+hemisphere (sampling the surface BRDF). The RPV model is then fitted to these 'observations', and the resulting parameters are used by
+libradtran to translate TOC BRF to TOA BRF (for a given set of libradtran atmospheric parameters). This process must be repeated if the
+surface properties are changed i.e. a different scene model is used.
+
+Basic operation
+To carry out a librat model simulation, the following files are minimally required.  
+
+- A camera file
+	This describes the position, orientation and characteristics of the camera or sensor, including: camera type (central perspective, orthographic, albedo), zenith,
+	azimuth angles, distance from target, field of view OR ground area to view, total number of samples over the resulting image frame, number of rays per pixel,
+	and other properties such as PSF etc. Also specified is the location of the resulting simulation output.
+	FORMAT: ascii text file;
+	EXAMPLE: OLCI_brdf.scene/camera.laegeren.obj_vz_-10.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.OLCI.dat
+
+	
+	camera { 
+	camera.name = "simple camera";
+	geometry.zenith = -10.0;
+ 	geometry.azimuth = 0.0;
+ 	result.image = "OLCI_brdf.scene/result.laegeren.obj_vz_-10.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.OLCI.dat.hdf";
+ 	result.integral = "OLCI_brdf.scene/result.laegeren.obj_vz_-10.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.OLCI.dat";
+ 	result.integral.mode = "scattering order";
+ 	samplingCharacteristics.nPixels = 400000;
+ 	samplingCharacteristics.rpp = 16;
+ 	geometry.lookat = 150.0, 150.0, 700.0;
+ 	geometry.boomlength = 841000;
+ 	geometry.idealArea = 300.0, 300.0;
+	}
+	
+	EXPLANATION:
+	Geometry terms are self-explanatory; the result.image and result.integral files specify the name of the image and the integral data file
+	respectively. The fomer integrates the per-pixel values over the whole scene. Note that the total integral is the actual BRF, whereas for a given image extent, this is the
+	average of the direct and diffuse scene components. For a single pixel "image" these values are equivalent. So for a particular resolution
+	sensor (eg 30m), then an image of say 300 x 300 m extent would be simulated by simulating 10 x 10 individual 30m pixels, each with a
+	slightly different view/illumination geometry and 'look at' point. The result.integral.mode determines the format in which the BRF integral
+	is output. This can be EITHER: scattering order contributions (cols) per waveband (rows), in which case the total BRF integral per waveband
+	is the sum of all columns in a given row; OR: scattering order contributions (rows) per waveband (cols), in which case the total BRF integral per
+	waveband is the sum of all rows in a given column. geometry.lookat specifies the scene x, y, z coordinate at which the sensor is looking;
+	the geometry.boomlength is the distance (as in a nominal fixed boom) from the sensor imaging plane to the reference plane at which BRF is
+	calculated; geometry.idealArea is the scene area to be viewed. NOTE: for an orthographic camera the aspect ratio of the resulting image
+	will change, to ensure that the same area is viewed from any view zenith angle. This guarantees a correct value for the resulting BRF, as
+	the sensor is looking at the same area across all angles BUT the images will not be the same aspect ratio. Other information that can be
+	specified here includes a particular angular field of view (instead of the lookat position), a specific PSF (either Gaussian, or actually
+	mapped via in image).
+	
+- An illumination file
+	This describes the position, orientation and characteristics of the illumination source.
+	FORMAT: ascii text file:  
+	EXAMPLE: OLCI_brdf.scene/light_sz_34.0_sa_141.0_dat
+	
+	camera { 
+ 	camera.name = "simple illumination";
+ 	geometry.zenith = 34.0;
+ 	geometry.azimuth = 141.0;
+	}
+
+	EXPLANATION:
+	Specifies the geometry of the illumination source. Can describe a finite extent, specific PSF etc.
+	
+	
+	Geometry for both camer and illumination are specified through the selection of an angle file via the GUI, and the file contains a list of view and illumination angles over which to simulate. The format of the file should be 1 line per simulation, with view and sun angles in degrees as follows:
+	
+	view_zenith1 view_azimuth1 solar_zenith1 solar_azimuth1
+	view_zenith2 view_azimuth2 solar_zenith2 solar_azimuth2
+	.....
+	
+- A waveband file
+	A list of the nominal wavebands at which to carry out simulations. This is a list of labels that allow a look-up between the wavebands and the reflectance
+	properties of the materials specified in the object (scene) file.
+	FORMAT: ascii text file list of two columns of waveband number (arbitrary) and waveband (can be modified by providing sensor bandpass
+	information) 
+	EXAMPLE: wb.OLCI.dat
+
+	1 400
+	2 413
+ 	3 490
+ 	4 510
+ 	5 560
+ 	6 620
+ 	7 665
+ 	8 681
+ 	9 709
+ 	10 754
+ 	11 761
+ 	12 779
+ 	13 865
+ 	14 885
+ 	15 900
+ 	16 1020
+	
+- An object file
+	This is the world (or scene) file, that describes the geometry of the scene to be simulated. The file contains the type, 3D location and orientation of all objects
+	within the scene. librat .obj files can contain the following objects (and the required properties to define in each case): plane (normal); facet (described by vertices, normals); disk (origin, normal, radius); cylinder (origin, normal, height, radius);
+	sphere (centre, radius); spheroid (origin, tip, radius); ellipsoid (origin, normal, 3 radii); special objects are: DEM (specified as an image defining height, specified at
+	a given origin and with a given image extent); bounding box (an object that encloses other objects, defined simply by hierarchy of "!{"
+	and "!}" lines). Complex irregular objects can of course be generated by tesselating any surface with arbitrary sized facets.
+	By default there is always an outer bounding box, even if not specified. The Biounding boxes divide 3D space, enclosing
+	volumes and objects, to allow for rapid intersection testing of obects. Objects can be efficiently 'cloned' i.e. duplicated, and shifted,
+	roated. This requires little extra computation or memory, and so is very efficient. The use of clones in librat is explained in detail
+	here: http://www2.geog.ucl.ac.uk/~plewis/ararat/cloning.html. 
+	FORMAT: ascii text file. The file specfication is a modified version of the widely-used and open 3D wavefront (.obj) format (see
+	http://en.wikipedia.org/wiki/Wavefront_.obj_file). The slight modifications for librat are the addition of solid objects (rather than
+	just facets), the use of clones, and the ability to specify a DEM. In addition, librat will read "#include" lines as a specification of a
+	file name containing a sub-component of a larger scene. As used for the 3D VegLab examples, this allows for an ynumber of (potentially
+	large) self-contained individual objects (eg trees) to be included into a world file, rather than having to list the contents of all
+	objects in a single file.
+	EXAMPLE: 
+
+	Simplest possible scene, comprising an infinite plane with normal {0 0 1} going through point {0 0 0}
+
+	
+	!{ 
+	# global bounding box	
+  	mtllib plants.matlib
+	# the following two lines define 
+  	v 0.000000 0.000000 0.000000 
+  	v 0.000000 0.000000 1.000000
+  	usemtl soil 
+	# ground plane oriented with normal {0 0 1} going through point {0 0 0} 
+  	plane -1 -2
+	!}
+	
+	Brief file explanation:
+	mtllib plants.matlib - this is required for all object files and is a file mapping a list of material names (preceded by srm, for surface reflectance material), to files where the material spectral (reflectance, transmittance) properties per band are located. Only one material type is specified in the scene i.e. "soil". plants.matlib contains a list of materials and the corresponding files containing their properties eg:
+	
+	srm soil groundmap_and_spectra/spectra/2D_unvegetated.txt.filt
+	srm coniferous_bark treereconstruction_and_spectra/spectra/2D_bark_coniferous.txt.filt
+	......
+	
+	where for the soil material, the file groundmap_and_spectra/spectra/2D_unvegetated.txt.filt in turn contains a list of wavelengths (nm) and reflectance values (and transmittance in a third column for a transmitting material):
+	
+	382 0.039142
+	383 0.039424
+	384 0.039717
+	385 0.040031
+	386 0.04036
+	387 0.040684
+	388 0.040998
+	389 0.04132
+	......
+
+	
+	usemtl soil - specifies a given material definition &  until another usemtl line is encountered, all subsequent objects are of material type soil
+	v x y z - vertex lines, giving x, y, z triplets
+	plane -1 -2 - the object type followed by two indices which indicate on what lines the object definitions (normal, location in this case) can be found, relative to the current line i.e. back one line (-1) is the plane normal (0, 0, 1); back two lines (-2) is the location (0, 0, 0).
+
+	
+Use cases in 3D VegLab	
+3D VegLab provides the user with an interface to all the required input information to carry out a range of different simulations using the
+librat RT model. The menu choices offer the user the option of selecting specific parameter values for the most commonly used parameter options (particularly view and zenith angles), but also configuration files which will provide the information required above. This is parsed by the 3D VegLab interface into a form required for librat, which then executes the resulting commands.
+
+The user can edit and modify these GUI-selectable configuration files (outside 3D VegLab) to include user-defined information, providing a high degree of
+flexibility. The following use cases describe librat RT simulation setups for particular sensor or experimental conditions. In each
+case the driver information passed to librat is detailed.
+
+In order to make the RT simulation repeatable and executable on multiple cores, the librat operation is organised as described below. The
+principle is to generate what is in effect a database containing a set of unique librat command files, known as 'grabme' files, one for each simulation required. Once created, these grabme command files are then executed,and the results are directed to another unique set of output files (with run-time information redirected to associated log files). In this way, each output result corresponds to a grabme command script, which can be run independently of 3D VegLab in order to re-create a particular result (for example). In summary, operation proceeds as follows:
+
+1. Selections from the 3D VegLab GUI interface are passed to dobrdf.py, a driver script that parses the GUI selections, generating a set of simulations to be run via librat.
+
+2. dobrdf.py loops over the list of required simulation configurations specified via the GUI (at minimum a single case), and for each configuration (e.g. for a particular scene, view and illumination angle, look point, waveband set etc.) generates a unique 'grabme' file name based on the drivers. If and only if this grabme file DOES NOT currently exist, the grabme file is created (as an executable csh shell script), and the full librat command line is written to the file.
+
+3. The grabme file (shell script) is executed from within dobrdf.py i.e. is spawned as a child process of the dobrdf.py parent PID.
+
+4. The resulting simulations are written to the output files specified via the GUI and detailed in the grabme file.
+
+5. If required, the user is notified of the completion of the grabme file execution
+
+6. dobrdf.py continues on through the list of simulations, checking to find the next simulation that has not already been carried out.
+
+In this way, multiple versions of dobrdf.py can potentially be run in parallel, either on a single multi-core machine or on multiple machines, each of which uses the presence/absence of a grabme file to determine which simulation to run next. This is also robust to errors in that if any simulation fails to complete for any reason, the grabme file (which will have no corresponding simulation result) can simply be executed again.
+
+
+Example 3D VegLab use cases
+
+1 Simulating a single view of the RAMI (Radiative Transfer Model Intercomparison) scene, using the Sentinel-2 MSI wavebands and 
+
+This case uses a world scene taken from the RAMI modelling exercise, see: http://rami-benchmark.jrc.ec.europa.eu/HTML/RAMI2/EXPERIMENTS2/HETEROGENEOUS/FLOATING_SPHERES/DISCRETE/DISCRETE.php
+i.e. A 100 x 100 m region containing 15 floating spheres, each one of radius 10 scene units (m), each sphere contaning 50000 disks of radius 0.1 m resulting in a per-sphere LAI of 5, and a scene LAI of 2.35. Scene origin is -50, -50 and extent is 100, 100
+
+Default options:
+
+3D scene: RAMI
+RT Processor: librat
+Spectral characteristics: MSI (Sentinel 2)
+view/illum angles (view zenith, view azimuth, solar zenith, solar azimuth): 20 0 20 0
+area to be viewed: 100 x 100 m
+look at: 0, 0, 0
+opdir: ${HOME}/beam-4.11/TEST
+
+These can be over-ridden through specification of eg alternative waveband and angle files. Other librat parameters which are set to defaults here (but again can be overridden) are:
+
+boom length: 100 km
+rays per pixel: 1
+scene pixels: 200000
+scattering order: 5
+
+Scattering order determines the number of orders of scattering to be followed at each interaction. Energy loss per interaction falls off exponentially in practice, but can still be significant at eg NIR wavelengths even after 10s of scattering interactions (depending on the scene material properties). Typically however, 95-98% of scattering is in the first 5 or 10 scattering orders.
+
+This results in the dobrdf.py command line as follows:
+(./dobrdf.py -v -obj RAMI.obj -hips -wb wb.MSI.dat -ideal 100 100 -look 0 0 0 -rpp 1 -npixels 200000 -sorder 5 -angles angles.default.dat -boom 100000 -opdir ${HOME}/beam-4.11/TEST &)
+
+which makes the o/p directory ${HOME}/beam-4.11/TEST  if it doesn't exist; generates the camera files:
+
+${HOME}/beam-4.11/TEST/camera.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat
+
+the illumination file:
+
+${HOME}/beam-4.11/TEST/light_sz_20.0_sa_0.0_dat
+
+and the grabme file:
+
+${HOME}/beam-4.11/TEST/grabme.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat
+
+which, when executed from within the toolbox, results in the following o/p files:
+
+A log file (progress of the simulation, redirected from stderr).
+${HOME}/beam-4.11/TEST/grabme.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat.log
+
+Zero-length file (ignored)
+${HOME}/beam-4.11/TEST/result.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat
+
+Flat binary image output (nbands of rows x cols pixels, float, 4 bytes per pixel)
+${HOME}/beam-4.11/TEST/result.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat.bim
+
+ENVI header file for reading the binary file
+${HOME}/beam-4.11/TEST/result.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat.bim.hdr
+
+Total and diffuse components of the resulting simulation: diffuse is only approximate, direct is the actual BRF)
+${HOME}/beam-4.11/TEST/result.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat.diffuse
+${HOME}/beam-4.11/TEST/result.RAMI.obj_vz_20.0_va_0.0_sz_20.0_sa_0.0_xyz_0.0_0.0_0.0_wb_wb.MSI.dat.direct
+
+Note that the integral is the correct, integrated BRF for that whole scene. For an individual pixel, this is an approximation. So for a specific resolution pixel, the image should be 1 pixel in size OR the integral value should be used, or for larger extents eg a 10m pixel resolution image over a 100 x 100 m region, then 10 x 10 simulations will be carried out, each looking at a different part of the scene. This is done by using a 'look file' containing a list of locations within the scene to look at. The .direct file looks like:
+
+# integral results, ordered by: scattering order (rows 5 ) waveband (cols 12 ) distance  (frames 1)
+# Distance (start of bin): -1.000000e+00
+# Wavelength:
+# 4.430000e+02 4.900000e+02 5.600000e+02 6.650000e+02 7.050000e+02 7.400000e+02 7.830000e+02 8.420000e+02 9.450000e+02 1.375000e+03 1.610000e+03 2.190000e+03 
+1 4.379270e-02 5.030168e-02 7.821680e-02 8.469250e-02 1.103277e-01 1.696418e-01 1.876822e-01 1.997874e-01 2.147021e-01 2.301123e-01 2.366590e-01 1.856227e-01 
+2 6.428569e-05 7.550310e-05 2.346402e-04 1.224791e-04 3.765397e-04 1.867846e-03 2.292540e-03 2.442717e-03 2.600493e-03 2.259750e-03 1.957575e-03 1.015206e-03 
+3 1.271661e-05 1.755355e-05 8.090864e-05 5.398522e-05 1.906169e-04 1.324590e-03 1.798595e-03 2.043002e-03 2.347091e-03 2.253851e-03 2.076291e-03 8.732220e-04 
+4 2.342939e-07 3.334700e-07 3.013995e-06 1.022114e-06 8.213023e-06 1.706631e-04 2.569777e-04 2.948249e-04 3.392263e-04 2.722682e-04 2.148707e-04 6.049736e-05 
+5 1.312382e-08 2.084658e-08 3.129018e-07 9.686854e-08 1.135860e-06 4.632900e-05 7.726882e-05 9.198457e-05 1.101205e-04 8.589059e-05 6.576544e-05 1.391464e-05 
+
+i.e. non-comment lines are indexed, and then per band (across cols) contributions per scattering order (down rows). So the total scattering for band 1 (443 nm) in this case is 0.0438699, 99.8% of which comes from the 1st order scattering.
+
+2. Full spectrum simulation
+As above, but using a waveband file specifying wavelengths at any arbitrary range of intervals eg. 400-2500 nm in 1nm steps. Clearly, a simulation of this type will produce 2100 bands of results, and so if an image is produced it will tend to be very large. The increased number of wavebands increases the simulation time and memory use. In terms of time, going from 10 or so wavebands to full-spectrum (2100) increases simulation time by approximately an order of magnitude. It also approximately doubles the memory use (eg this simulation goes from 1 to 2GB resident in RAM running on OS X 10.6.8).
+
+3. BRDF simulation
+To extend the above example to a BRDF i.e. to simulate multiple view and or illumination angles, simply select an angle file with the required angle sets. Nominal angle sets are provided for Sentinel OLCI and MODIS sensors to simulate the possible range of view zenith angles across an image swath. These simulations effectively what the sensor would see if it were able to image the same point on the ground from all parts of a swath. More practically, this simulates the effect of compositing observations from multiple overpasses eg as for the MODIS land products.
+
+4.DHP simulation
+In this case the DHP option is selected via the GUI. The inputs to librat are mostly as above, but in this case,the camera location (x, y, z) is specified in a user-supplied file, and the view angles correspond to an upward looking camera. The field of view of the camera can be specified eg 180 for a full hemisphere, or 150 more realistically for a typical near-hemi lens. The circular sampling is specified so that the FOV is circular, but this can be rectangular (some lenses are rectangular fisheye). If the resulting images are to be processed for eg estimates of LAI or gap fraction, then the resolution of the simulations becomes important. The rays per pixel should be set to eg 8 or 16, and the number of pixels set to that desired (eg 5MP). This results in a dobrdf.py command line as follows:
+
+(nice +19 ./dobrdf.py -v -obj RAMI.obj -image -wb wb.image.dat -dhp -samplingPattern circular -lookFile dhp.locations.RAMI.dat -angles angles.dhp.dat -fov 150 -rpp 16 -npixels 5000000 -opdir /Users/mdisney/beam-4.11/DHP_TEST &) >& log.dhp.1
+
+where the resulting output is a series of images at each of the 5 locations specified indhp.locations.RAMI.dat. Increasing the rays per pixel, and total image pixels, increases the processing time linearly.
