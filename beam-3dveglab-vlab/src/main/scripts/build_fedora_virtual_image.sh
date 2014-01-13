@@ -1,6 +1,6 @@
 #!/bin/sh
 
-INAME=f19-xfce-dev
+INAME=f20-xfce-dev
 OS=Fedora_64
 IDIR=/var/tmp/images
 CFG=${IDIR}/${INAME}.ks
@@ -8,6 +8,9 @@ IMAGE=${IDIR}/${INAME}.vdi
 ORIGKS=fedora-cloud-base.ks
 CACHE=/var/cache/appcreator
 set -e
+
+# ensure this dependency is already installed
+sudo yum install -y appliance-tools
 
 mkdir -p ${IDIR}
 cd ${IDIR}
@@ -32,10 +35,10 @@ cat > ks-patch.txt <<EOF
  
 -%include fedora-repo.ks
 +# %include fedora-repo.ks
-+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-\$releasever&arch=\$basearch
-+repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f\$releasever&arch=\$basearch
-+repo --name=rpmfusion-free --baseurl=http://download1.rpmfusion.org/free/fedora/releases/19/Everything/\$basearch/os/
-+repo --name=rpmfusion-free-updates --baseurl=http://download1.rpmfusion.org/free/fedora/updates/19/\$basearch
++repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=x86_64
++repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f20&arch=x86_64
++repo --name=rpmfusion-free --baseurl=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/x86_64/os/
++repo --name=rpmfusion-free-updates --baseurl=http://download1.rpmfusion.org/free/fedora/updates/20/x86_64
  
  
  reboot
@@ -89,7 +92,7 @@ cat > ks-patch.txt <<EOF
  systemctl mask tmp.mount
  
 +echo -n "Installing rpmfusion-free repo"
-+rpm -ivh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-19.noarch.rpm
++rpm -ivh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-20.noarch.rpm
 +echo .
 +
 +echo -n "Adding fedora user"
@@ -140,6 +143,7 @@ sudo appliance-creator -d -v -t ${IDIR} --config ${CFG} --cache=${CACHE} -o ${ID
 
 sudo chown -R `sudo who am i | cut -d' ' -f1` ${IDIR}
 
+xz -d -c ${IDIR}/${INAME}/${INAME}-sda.raw.xz > ${IDIR}/${INAME}/${INAME}-sda.raw
 VBoxManage convertdd ${IDIR}/${INAME}/${INAME}-sda.raw ${IMAGE} --format VDI
 VBoxManage createvm --name ${INAME} --ostype ${OS} --register --basefolder /var/tmp/images
 VBoxManage modifyvm        ${INAME} --memory 1800 --vram 32 --rtcuseutc on --largepages on
