@@ -25,8 +25,12 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.MalformedURLException;
+import java.net.JarURLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.security.DigestInputStream;
@@ -36,6 +40,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.jar.Attributes;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class Install {
   private static final String TYPE_BIN         = "bin";
@@ -195,13 +202,68 @@ public class Install {
     }
     return (path.delete());
   }
+
+  /**
+   * This method should be call to correctly install DART in the 3DVegLab plugin
+   *
+   * @param DARTfor3DVegLab: Path to the DARTfor3DVegLab.jar file that should be 
+   *                         run to install correctly DART in the 3DVegLab plugin.
+   * @param args: A list of String arguments that should be passed to DARTfor3DVegLab.jar.
+   *              This JAR needs two arguments:
+   *               - DART_FOLDER: The DART folder where was extracted the archive (hopefully
+   *                 this is the same where the DARTfor3DVegLab.jar file is located).
+   *               - DART_LOCAL: The location where the DART_LOCAL variable should point out.
+   *                 In DART this variable should point out the folder that contains the
+   *                 simulation folder.
+   */
+  private static void runDARTinstaller(String DARTfor3DVegLab, String[] args)
+    throws MalformedURLException, IOException {
+    // Load URL from String argument
+    URL url = new URL("file://" + DARTfor3DVegLab);
+    // Init the URLClassLoader
+    URLClassLoader URLcl = new URLClassLoader(new URL[] {url});
+
+    // Get MainClass name
+    URL JARurl = new URL("jar", "", url + "!/");
+    JarURLConnection JARuc = (JarURLConnection)JARurl.openConnection();
+    Attributes attribut = JARuc.getMainAttributes();
+    String mainClassName = attribut != null ? attribut.getValue(Attributes.Name.MAIN_CLASS) : null;
+
+    // Invokes class
+    try {
+      // Instanciate the class and get the method
+      Class<?> klass = URLcl.loadClass(mainClassName);
+      Method mainMethod = klass.getMethod("main", new Class[] {args.getClass()});
+      mainMethod.setAccessible(true);
+      int modifiers = mainMethod.getModifiers();
+
+      // Check the 'main'
+      if (mainMethod.getReturnType() != void.class || ! Modifier.isStatic(modifiers) ||
+            ! Modifier.isPublic(modifiers)) {
+        throw new NoSuchMethodException("main");
+      }
+      try {
+        // Launch the main method from DARTfor3DVegLab
+        mainMethod.invoke(null, new Object[] { args });
+      } catch (IllegalAccessException e) {
+    }
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(-1);
+    }
+  }
   
   private static void install(String repoURL, String manifestUrl) throws Exception {
+    // Get current working directory
     String cwd = new File(".").getCanonicalPath();
+
+    // Test if we are inside beam-*/bin directory
     String endPath = "beam-4.11:bin".replaceAll(":", Matcher.quoteReplacement(File.separator));
     if (!cwd.endsWith(endPath)) {
       die("Run me from inside a directory ending with: " + endPath + " (not: " + cwd + ")");
     }
+
+    // Set directories path
     String bindir = cwd;
     String moddir = new File(cwd, ".." + File.separator + TYPE_MODULES).getAbsolutePath();
     String libdir = new File(cwd, ".." + File.separator + TYPE_LIB).getAbsolutePath();
@@ -213,13 +275,19 @@ public class Install {
       auxdir = new File(System.getenv("HOME"), auxsuffix).getCanonicalPath();
     }
     File vlabaux = new File(auxdir, "..").getCanonicalFile();
+
     System.out.println("Clearing existing 3DVegLab auxdata: " + vlabaux);
     System.out.println("Succeeded? -> " + recursiveDelete(vlabaux));
     System.out.println("Fetching " + manifestUrl);
+    
+    // Get 3DVegLab.manifest file from manifestURL
     Scanner sc = new Scanner(new URL(manifestUrl).openStream());
     String text = sc.useDelimiter("\\Z").next(); sc.close();
+
+    // Process manifest
     System.out.println("Processing " + manifestUrl);
     for (String line : text.split("\n")) {
+      // Set up tuple, targetName and newBaseName
       String[] tuple = line.split(":");
       String targetName = null;
       String newBaseName = "";
@@ -244,30 +312,52 @@ public class Install {
       } else {
         die("unknown file locator: " + tuple[1]);
       }
+
+      // Fetch targetName from repoURL
       fetch(repoURL + "/" + tuple[2], targetName);
+
+      // Get md5sum and compare it to one from manifest
       String cksum = md5sum(targetName);
       if (!cksum.equals(tuple[0])) {
         die("md5sum mismatch: expected=" + tuple[0] + " actual=" + cksum);
       }
+
+      // Get oldPath and newPath to rename if necessary
+      String oldPath = null;
+      String newPath = null;
+      for ( String ext : new String[] {".zip", ".tar.gz"} ) {
+        if (targetName.endsWith(ext)) {
+          oldPath = targetName.substring(0, targetName.length()-ext.length());
+          newPath = deriveName(oldPath, newBaseName);
+        }
+      }
+
+      // Test type (modules, zip and tar.gz)
       if (TYPE_MODULES.equals(tuple[1])) {
+        // modules
         File script = createRunScript(bindir);
         File dummy  = createDummyInput();
         run3DVegLabProcessor(dummy, script);
         if (! new File(auxdir).isDirectory()) {
           die("no auxdir - running 3DVegLab must have failed");
         }
-      } else if (targetName.endsWith("zip")) {
+      } else if (targetName.endsWith(".zip")) {
+        // ZIP archive
+        // Unzip and delete fetched targetName file
         unzip(new File(targetName, "..").getCanonicalPath(), targetName);
         System.out.println("Deleting " + targetName);
         new File(targetName).delete();
+
+        // If manifest point out a new base, move targetName to newBaseName
         if (!newBaseName.equals("")) {
-          String oldPath = targetName.substring(0, targetName.length()-4);
-          String newPath = deriveName(oldPath, newBaseName);
           System.out.println("Renaming " + oldPath + " to " + newPath);
           new File(oldPath).renameTo(new File(newPath));
         }
       } else if (targetName.endsWith(".tar.gz")) {
+        // tar.gz archive
+        // Check the running OS is not Windows
         if (! System.getProperty("os.name").startsWith("Windows")) {
+          // Create and run command line to extract .tar.gz archive
           String [] cmd = new String[] {"sh", "-c", "tar -C " + new File(targetName, "..").getCanonicalPath() + " -xzvf " + targetName};
           System.out.println("Running " + join(cmd, " "));
           ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -275,16 +365,38 @@ public class Install {
           // hack - collect but ignore output
           new Scanner( proc.getInputStream() ).useDelimiter("\\Z").next();
           proc.waitFor();
+
+          // Delete targetName
           System.out.println("Deleting " + targetName);
           new File(targetName).delete();
+
+          // If manifest point out a new base, move targetName to newBaseName
           if (!newBaseName.equals("")) {
-            String oldPath = targetName.substring(0, targetName.length()-7);
-            String newPath = deriveName(oldPath, newBaseName);
             System.out.println("Renaming " + oldPath + " to " + newPath);
             new File(oldPath).renameTo(new File(newPath));
           }
         }
       }
+
+      // Test if targetName is a DART archive
+      if (new File(targetName).getName().startsWith("DART")) {
+        // Get DART directory
+        String DARTfodler = newPath;
+
+        // Get DARTfor3DVegLab.jar path
+        String DARTfor3DVegLab = newPath + File.separator + "DARTfor3DVegLab.jar";
+
+        // Create arguments array that will be passed to DARTfor3DVegLab.jar
+        String[] args = new String[2];
+        args[0] = DARTfodler;
+        // /!\ WARNING /!\ Keep this variable up to date and consistent with the dart_scene*.zip
+        args[1] = new File(DARTfodler).getParent() + File.separator + "dart_local";
+
+        // run DART installer
+        System.out.println("Running DART installer");
+        runDARTinstaller(DARTfor3DVegLab, args);
+      }
+
     }
     System.out.println("Successfully completed.");
   }
