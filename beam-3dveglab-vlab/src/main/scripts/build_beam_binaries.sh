@@ -224,9 +224,9 @@ cp ${P}/beam/src/main/config/beam.config ${P}/beam/config/
 
 cd ${P}/beam/config
 cat > beam-config.patch << EOF
---- beam.config.orig	2012-05-10 12:15:22.153659167 +0200
-+++ beam.config	2012-05-10 12:16:00.961055534 +0200
-@@ -14,7 +14,7 @@
+--- beam.config.orig	2014-02-13 12:46:13.332050826 +0000
++++ beam.config    	2014-02-13 15:34:18.678324229 +0000
+@@ -17,7 +17,7 @@
  # (2) the system property 'beam.home' has not been specified before.
  # With other words, this setting will not overwrite an existing 'beam.home' property.
  # Has no default value, must be given as system property if not specified here.
@@ -235,7 +235,7 @@ cat > beam-config.patch << EOF
  
  # The library path to be searched for common JARs. Can comprise multiple paths.
  # Multiple paths must be separated using ';' (Windows) or ':' (Unix)
-@@ -36,11 +36,11 @@
+@@ -39,11 +39,11 @@
  # The log level, must be one of
  # OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL.
  # Default is 'OFF'.
@@ -249,7 +249,7 @@ cat > beam-config.patch << EOF
  
  # New in BEAM 4.10
  # The application display name.
-@@ -68,7 +68,7 @@
+@@ -71,7 +71,7 @@
  # The path to the image for the splash screen's.
  # If none is given the application will start without displaying
  # a splash screen.
@@ -258,13 +258,6 @@ cat > beam-config.patch << EOF
  
  # The splash screen's progress bar area given as <x>,<y>,<width>,<height>
  # Default value is '0,<splash.height>-9,<splash.width>,5'.
-@@ -157,4 +157,4 @@
- # "spectrally" close to the pixels that have been selected using the tool.
- # The tool will appear as a magic wand icon in the 'tools' tool bar.
- # Default to "false".
--# beam.magicWandTool.enabled = true
-\ No newline at end of file
-+# beam.magicWandTool.enabled = true
 EOF
 
 patch -b < beam-config.patch
