@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)
+# Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)
 # 
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -44,12 +44,12 @@ from array import array
 class VLAB:
   """VLAB contains conf. constants, static utility methods, and test methods"""
 
-  COPYRIGHT_INFO     = 'Copyright (C) 2010-2013 Netcetera Switzerland (info@netcetera.com)'
+  COPYRIGHT_INFO     = 'Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)'
   PROCESSOR_NAME     = 'BEAM VLab Processor'
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (26 Nov 2013)'
+  VERSION_STRING     = '1.0 (13 Feb 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -131,10 +131,6 @@ class VLAB:
  ('(Alt B) YC',        'SceneYC',             JTF, '100'),
  ('(Alt B) YW',        'SceneYW',             JTF, '100'))},
 {'Atmospheric Parameters': (
- ('Day of Year',       'AtmosphereDay',       JTF, '214'),
- (),
- ('Lat',               'AtmosphereLat',       JTF, '47.4781'),
- ('Long',              'AtmosphereLong',      JTF, '8.3650'),
  ('CO2 Mixing Ratio',  'AtmosphereCO2',       JTF, '1.6'),
  ('Aerosol Profile',   'AtmosphereAerosol',   JCB, (K_RURAL, K_MARITIME, K_URBAN, K_TROPOSPHERIC)),
  ('Water Vapor',       'AtmosphereWater',     JTF, '0.0'),

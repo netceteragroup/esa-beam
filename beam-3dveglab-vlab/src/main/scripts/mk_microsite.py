@@ -88,8 +88,6 @@ template = '''
     &nbsp;&nbsp;<a href=
     "https://earth.esa.int/web/guest/missions/3rd-party-missions/current-missions/terraaqua-modis">MODIS</a><br />
     &nbsp;&nbsp;<a href=
-    "http://rami-benchmark.jrc.ec.europa.eu/HTML/RAMI-IV/RAMI-IV.php">RAMI</a><br />
-    &nbsp;&nbsp;<a href=
     "https://earth.esa.int/web/guest/missions/esa-future-missions/sentinel-2">Sentinel
     2</a><br />
     &nbsp;&nbsp;<a href=
@@ -172,6 +170,7 @@ pageconsortium = '''
        <td><img alt="Netcetera" align="left" height="40" src=
        "http://netcetera.com/de/dms/images/logos/nca-logo-home.GIF" /></td>
       </tr>
+      <tr> <td>&nbsp;</td> </tr>
       <tr>
        <td colspan="2"><b>Sponsor</b></td>
       </tr>
