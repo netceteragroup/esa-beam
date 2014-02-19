@@ -233,6 +233,52 @@ class VLAB:
       import os
       return os.path.abspath(fname)
   getFullPath = staticmethod(getFullPath)
+  def copyDir(dname, target):
+    """Recursively copy 'dname' directory to 'target'.
+       /!\If 'target' already exists it will be removed or overwrited.
+    """
+    if sys.platform.startswith('java'):
+      # import java module
+      from java.io import File
+      from java.io import FileInputStream
+      from java.io import FileOutputStream
+      from java.util import Scanner
+      from java.lang import String
+      dnameFile = File(dname)
+      targetFile = File(target)
+      # recursive copy
+      if dnameFile.isDirectory():
+        # Create folder if not exists
+        if not targetFile.exists():
+          targetFile.mkdir()
+        # Copy all content recursively
+        for fname in dnameFile.list().tolist():
+          VLAB.copyDir(dname + File.separator + fname, target + File.separator + fname)
+      else:
+        # Read dname file
+        istream = FileInputStream(dname)
+        scan = Scanner(istream).useDelimiter("\\Z")
+        # Test if file is empty
+        if scan.hasNextLine():
+          content = String(scan.next())
+        else:
+          content = String("")
+        scan.close()
+        # Create and write target
+        if not targetFile.exists():
+          targetFile.createNewFile()
+        ostream = FileOutputStream(target)
+        ostream.write(content.getBytes())
+        ostream.flush()
+        ostream.close()
+    else:
+      import shutil, os
+      # remove exisiting target
+      if os.path.isdir(target) or os.path.isfile(target):
+        shutil.rmtree(target)
+      # recursive copy of dnma to target
+      shutil.copytree(dname, target)
+  copyDir = staticmethod(copyDir)
   class path:
     def exists(path):
       if sys.platform.startswith('java'):
