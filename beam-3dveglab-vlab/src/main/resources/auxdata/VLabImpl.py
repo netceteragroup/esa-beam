@@ -279,6 +279,66 @@ class VLAB:
       # recursive copy of dnma to target
       shutil.copytree(dname, target)
   copyDir = staticmethod(copyDir)
+  def XMLEditNode(fname, nodeName, attributName, value):
+    """ Edit a given node (nodeName) in a given XML file (fname)
+    attributName and value could be either a list of string or a string
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(nodeName)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node.item(0)
+      # Modify the node attribut
+      if isinstance(attributName, list) and isinstance(value, list):
+        for att, val in zip(attributName, value):
+          node.setAttribute(att, val)
+      elif isinstance(attribut, str) and isinstance(value, str):
+        node.setAttribute(attributName, value)
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      node = tree.findall(".//*%s" % nodeName)
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node[0]
+      # Modify the node attribut
+      if isinstance(attributName, list) and isinstance(value, list):
+        for att, val in zip(attributName, value):
+          node.set(att, val)
+      elif isinstance(attribut, str) and isinstance(value, str):
+        node.set(attributName, value)
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLEditNode = staticmethod(XMLEditNode)
   class path:
     def exists(path):
       if sys.platform.startswith('java'):
