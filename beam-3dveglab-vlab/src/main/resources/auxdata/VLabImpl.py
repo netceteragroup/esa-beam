@@ -428,6 +428,14 @@ class VLAB:
       # Write new XML tree in fname
       tree.write(fname)
   XMLReplaceNodeContent = staticmethod(XMLReplaceNodeContent)
+  def getBandsFromGUI(bands):
+    """ Return a DART spectral bands list: [deltaLambda, meanLambda]
+    In case of several bands the result should be a list of list:
+    [[deltaLambda0, meanLambda0], [deltaLambda1, meanLambda1], [deltaLambda2, meanLambda2], ...]
+    """
+    # TODO: You should write the spectral band convertiseeur here!
+    return [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
+  getBandsFromGUI = staticmethod(getBandsFromGUI)
   class path:
     def exists(path):
       if sys.platform.startswith('java'):
