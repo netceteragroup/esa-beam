@@ -339,6 +339,95 @@ class VLAB:
       # Write new XML tree in fname
       tree.write(fname)
   XMLEditNode = staticmethod(XMLEditNode)
+  def XMLReplaceNodeContent(fname, parent, subnode, attributName, value):
+    """ Edit an XML file (fname) and replace the content of a node with subnode(s) (subnode) within attribute(s) and value(s).
+    attributName and value could be either a list of string or a string
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(parent)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node.item(0)
+      # Remove content node
+      while node.hasChildNodes():
+        node.removeChild(node.getFirstChild())
+      # Modify the node attribut
+      elem = tree.createElement(subnode)
+      elem.setAttribute("bandNumber", "0")
+      elem.setAttribute("spectralDartMode", "0")
+      if isinstance(attributName, list) and isinstance(value, list):
+        if isinstance(value[0], list):
+          for bandNumber, val in enumerate(value):
+            elem.setAttribute("bandNumber", str(bandNumber))
+            for atr, v in zip(attributName, val):
+              elem.setAttribute(atr, v)
+            node.appendChild(elem.cloneNode(True))
+        else:
+          elem = tree.createElement(subnode)
+          for atr, v in zip(attributName, value):
+            attrib[atr] = v
+          node.appendChild(elem)
+      elif isinstance(attributName, str) and isinstance(value, str):
+        elem = tree.createElement(subnode)
+        elem.setAttribute(attributName, value)
+        node.appendChild(elem)
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      node = tree.findall(".//*%s" % parent)
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple node for '%s' in file '%s'" % (parent, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node[0]
+      # Remove content of node
+      node.clear()
+      # Modify the node attribut
+      attrib = {"bandNumber":"0", "spectralDartMode":"0"}
+      if isinstance(attributName, list) and isinstance(value, list):
+        if isinstance(value[0], list):
+          for bandNumber, val in enumerate(value):
+            attrib["bandNumber"] = str(bandNumber)
+            for atr, v in zip(attributName, val):
+              attrib[atr] = v
+            node.append(ET.Element(subnode, attrib=attrib))
+        else:
+          for atr, v in zip(attributName, value):
+            attrib[atr] = v
+          node.append(ET.Element(subnode, attrib=attrib))
+      elif isinstance(attributName, str) and isinstance(value, str):
+        attribut[attributName] = value
+        node.append(ET.Element(subnode, attrib=attrib))
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLReplaceNodeContent = staticmethod(XMLReplaceNodeContent)
   class path:
     def exists(path):
       if sys.platform.startswith('java'):
