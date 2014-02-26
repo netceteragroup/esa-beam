@@ -2037,6 +2037,23 @@ class Dart_DARTSimulation :
           mpSharpFile.close()
     return data
 
+  def getIterMaxPath(self, spectralBand, iterX=True):
+    """ Return the iterYY fodler where YY is X is exist and iterX is True or the iterMax folder
+    """
+    # Get spectralBand folder
+    iterFolder = VLAB.path.join(self.rootSimulationsDirectory, self.name, "output", spectralBand, "BRF")
+    # Get list of iter folders
+    iters = [ int(folder.lstrip('ITER')) for folder in VLAB.listdir(iterFolder)
+              if folder.startswith('ITER')]
+    # Get iterX is exists otherwise select iterMax
+    if iterX and 'X' in iters:
+      return VLAB.path.join(iterFolder, "ITERX")
+    else:
+      if 'X' in iters:
+        iters.remove('X')
+      return VLAB.path.join(iterFolder, "ITER" + str(max(iters)))
+        
+
 class Dart_DARTRootSimulationDirectory :
   def __init__(self) :
     pass
