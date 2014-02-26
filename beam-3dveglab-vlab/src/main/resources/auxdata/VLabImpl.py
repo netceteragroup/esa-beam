@@ -194,7 +194,11 @@ class VLAB:
     """list files in the directory given by path"""
     if sys.platform.startswith('java'):
       from java.io import File
-      return File(path).list()
+      array = File(path).list()
+      listFile = []
+      for i in xrange(len(array)):
+        listFile.append(array[i])
+      return listFile
     else:
       import os
       return os.listdir(path)
