@@ -497,6 +497,48 @@ class VLAB:
       # Write new XML tree in fname
       tree.write(fname)
   XMLAddNode = staticmethod(XMLAddNode)
+  def XMLGetNodeAttributeValue(fname, nodeName, attributName):
+    """ Return the value of the given attributName for the given nodeName
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from org.w3c.dom import Element
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(nodeName)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node.item(0)
+      # Check if that node has attributName
+      if node.hasAttribute(attributName):
+        return node.getAttributes().getNamedItem(attributName).getNodeValue()
+      else:
+        raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s[@%s]" % (nodeName, attributName))
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node[0]
+      # Check if that node has an attributName
+      if attributName in node.keys():
+        return node.get(attributName)
+      else:
+        raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
+  XMLGetNodeAttributeValue = staticmethod(XMLGetNodeAttributeValue)
   def getBandsFromGUI(bands):
     """ Return a DART spectral bands list: [deltaLambda, meanLambda]
     In case of several bands the result should be a list of list:
