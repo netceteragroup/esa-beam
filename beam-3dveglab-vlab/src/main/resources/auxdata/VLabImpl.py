@@ -432,6 +432,71 @@ class VLAB:
       # Write new XML tree in fname
       tree.write(fname)
   XMLReplaceNodeContent = staticmethod(XMLReplaceNodeContent)
+  def XMLAddNode(fname, parent, treeNodes, nodesSetup):
+    """ Add a node (subnode) to a given parent in the provided fname file.
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(parent)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node.item(0)
+      # Create all the new nodes
+      nodes = {parent:node}
+      for name in treeNodes:
+        nodes[name] = (tree.createElement(name))
+        for atr, val in zip(*[ nodesSetup[name][key] for key in nodesSetup[name].iterkeys() if key in ["attribute", "value"] ]):
+          nodes[name].setAttribute(atr, val)
+      # Add all created node to its parent (previous node in the list)
+      for name, elem in nodes.iteritems():
+        if name != parent:
+          nodes[nodesSetup[name]["parent"]].appendChild(elem)
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s" % parent)
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node[0]
+      # Create all the new nodes
+      nodes = {parent:node}
+      for name in treeNodes:
+        attrib = {}
+        for atr, val in zip(*[ nodesSetup[name][key] for key in nodesSetup[name].iterkeys() if key in ["attribute", "value"] ]):
+          attrib[atr] = val
+        nodes[name] = ET.Element(name, attrib)
+      # Add all created node to its parent (previous node in the list)
+      for name, elem in nodes.iteritems():
+        if name != parent:
+          nodes[nodesSetup[name]["parent"]].append(elem)
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLAddNode = staticmethod(XMLAddNode)
   def getBandsFromGUI(bands):
     """ Return a DART spectral bands list: [deltaLambda, meanLambda]
     In case of several bands the result should be a list of list:
