@@ -283,7 +283,7 @@ class VLAB:
       # recursive copy of dnma to target
       shutil.copytree(dname, target)
   copyDir = staticmethod(copyDir)
-  def XMLEditNode(fname, nodeName, attributName, value):
+  def XMLEditNode(fname, nodeName, attributName, value, multiple=False):
     """ Edit a given node (nodeName) in a given XML file (fname)
     attributName and value could be either a list of string or a string
     """
@@ -299,23 +299,27 @@ class VLAB:
       # Get nodeName
       node = tree.getElementsByTagName(nodeName)
       # Check if we get only one node (as expected)
-      if node.getLength() > 1:
-        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
-      elif node.getLength() == 0:
+      if node.getLength() == 0:
         raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 1:
+        nodes = [node.item(0)]
       else:
-        node = node.item(0)
-      # Modify the node attribut
-      if isinstance(attributName, list) and isinstance(value, list):
-        for att, val in zip(attributName, value):
-          node.setAttribute(att, val)
-      elif isinstance(attribut, str) and isinstance(value, str):
-        node.setAttribute(attributName, value)
-      else:
-        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+        if not multiple:
+          raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+        else:
+          nodes = [ node.item(i) for i in xrange(node.getLength()) ]
+      for node in nodes:
+        # Modify the node attribute
+        if isinstance(attributName, list) and isinstance(value, list):
+          for att, val in zip(attributName, value):
+            node.setAttribute(att, val)
+        elif isinstance(attributName, str) and isinstance(value, str):
+          node.setAttribute(attributName, value)
+        else:
+          raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
       # Write new XML tree in fname
-      transformer = TransformerFactory.newInstance().newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
       source = DOMSource(tree)
       result = StreamResult(File(fname))
       transformer.transform(source, result)
@@ -324,26 +328,26 @@ class VLAB:
       # Get whole tree from xml
       tree = ET.parse(fname)
       # Get nodeName
-      node = tree.findall(".//*%s" % nodeName)
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      nodes = tree.findall(".//*../%s" % nodeName)
       # Check if we get only one node (as expected)
-      if len(node) > 1:
-        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
-      elif len(node) == 0:
+      if len(nodes) == 0:
         raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
-      else:
-        node = node[0]
-      # Modify the node attribut
-      if isinstance(attributName, list) and isinstance(value, list):
-        for att, val in zip(attributName, value):
-          node.set(att, val)
-      elif isinstance(attribut, str) and isinstance(value, str):
-        node.set(attributName, value)
-      else:
-        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      elif len(nodes) > 1 and not multiple:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      for node in nodes:
+        # Modify the node attribute
+        if isinstance(attributName, list) and isinstance(value, list):
+          for att, val in zip(attributName, value):
+            node.set(att, val)
+        elif isinstance(attributName, str) and isinstance(value, str):
+          node.set(attributName, value)
+        else:
+          raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
       # Write new XML tree in fname
       tree.write(fname)
   XMLEditNode = staticmethod(XMLEditNode)
-  def XMLReplaceNodeContent(fname, parent, subnode, attributName, value):
+  def XMLReplaceNodeContent(fname, parent, subnode, attributName, value, spectralBands=False):
     """ Edit an XML file (fname) and replace the content of a node with subnode(s) (subnode) within attribute(s) and value(s).
     attributName and value could be either a list of string or a string
     """
@@ -360,29 +364,31 @@ class VLAB:
       node = tree.getElementsByTagName(parent)
       # Check if we get only one node (as expected)
       if node.getLength() > 1:
-        raise IOError("Get multiple node for '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
       else:
         node = node.item(0)
       # Remove content node
       while node.hasChildNodes():
         node.removeChild(node.getFirstChild())
-      # Modify the node attribut
+      # Modify the node attribute
       elem = tree.createElement(subnode)
-      elem.setAttribute("bandNumber", "0")
-      elem.setAttribute("spectralDartMode", "0")
+      if spectralBands:
+        elem.setAttribute("bandNumber", "0")
+        elem.setAttribute("spectralDartMode", "0")
       if isinstance(attributName, list) and isinstance(value, list):
         if isinstance(value[0], list):
           for bandNumber, val in enumerate(value):
-            elem.setAttribute("bandNumber", str(bandNumber))
+            if spectralBands:
+              elem.setAttribute("bandNumber", str(bandNumber))
             for atr, v in zip(attributName, val):
               elem.setAttribute(atr, v)
             node.appendChild(elem.cloneNode(True))
         else:
           elem = tree.createElement(subnode)
           for atr, v in zip(attributName, value):
-            attrib[atr] = v
+            elem.setAttribute(atr, v)
           node.appendChild(elem)
       elif isinstance(attributName, str) and isinstance(value, str):
         elem = tree.createElement(subnode)
@@ -401,22 +407,27 @@ class VLAB:
       # Get whole tree from xml
       tree = ET.parse(fname)
       # Get nodeName
-      node = tree.findall(".//*%s" % parent)
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s" % parent)
       # Check if we get only one node (as expected)
       if len(node) > 1:
-        raise IOError("Get multiple node for '%s' in file '%s'" % (parent, fname))
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif len(node) == 0:
         raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
       else:
         node = node[0]
       # Remove content of node
       node.clear()
-      # Modify the node attribut
-      attrib = {"bandNumber":"0", "spectralDartMode":"0"}
+      # Modify the node attribute
+      if spectralBands:
+        attrib = {"bandNumber":"0", "spectralDartMode":"0"}
+      else:
+        attrib = {}
       if isinstance(attributName, list) and isinstance(value, list):
         if isinstance(value[0], list):
           for bandNumber, val in enumerate(value):
-            attrib["bandNumber"] = str(bandNumber)
+            if spectralBands:
+              attrib["bandNumber"] = str(bandNumber)
             for atr, v in zip(attributName, val):
               attrib[atr] = v
             node.append(ET.Element(subnode, attrib=attrib))
