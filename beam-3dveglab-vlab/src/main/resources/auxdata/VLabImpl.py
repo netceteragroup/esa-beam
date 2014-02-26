@@ -2456,6 +2456,19 @@ class DART:
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
 
+  def dartSZA2libradtranSZA(self, sz, sa):
+    """ DART uses theta value from 0 to 180 for zenith angle (half a circle) 
+        and 0 to 360 for azimuth angle (full circle).
+        In the upper sphere the zenith range is from 0 to 90.
+        It is necessary to convert to libradtran zenith and azimuth range
+        (-90 to 90 for zenith and 0-180 for azimuth).
+    """
+    if sa > 180.0:
+      sz = -sz
+      sa = sa - 180.0
+
+    return sz, sa
+
   def _writeSeqFile(self, args):
     sstr = """<?xml version="1.0" encoding="UTF-8"?>
 <DartFile version="1.0">
