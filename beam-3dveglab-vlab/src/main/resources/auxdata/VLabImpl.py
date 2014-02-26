@@ -2470,9 +2470,11 @@ class DART:
     return sz, sa
 
   def _writeSeqFile(self, args):
+    """ Write DART sequence file
+    """
     sstr = """<?xml version="1.0" encoding="UTF-8"?>
 <DartFile version="1.0">
-    <DartSequencerDescriptor sequenceName="sequence/%s">
+    <DartSequencerDescriptor sequenceName="sequence;;%s">
         <DartSequencerDescriptorEntries>
             <DartSequencerDescriptorGroup groupName="group_%s">%s
             </DartSequencerDescriptorGroup>
@@ -2480,10 +2482,10 @@ class DART:
         <DartSequencerPreferences dartLaunched="true"
             demGeneratorLaunched="false" directionLaunched="true"
             displayEnabled="true" hapkeLaunched="false"
-            maketLaunched="true" numberParallelThreads="4"
+            maketLaunched="true" numberParallelThreads="1"
             phaseLaunched="true" prospectLaunched="false"
             triangleFileProcessorLaunched="false" vegetationLaunched="false"/>
-        <DartLutPreferences generateLUT="%s" phiMax="" phiMin=""
+        <DartLutPreferences generateLUT="false" phiMax="" phiMin=""
             storeIndirect="false" thetaMax="" thetaMin=""/>
     </DartSequencerDescriptor>
 </DartFile>
@@ -2495,10 +2497,10 @@ class DART:
     for ent in args['entries']:
       (dargs, prop) = ent
       groupstr += (dstr % (dargs, prop))
-    paramfilename = '%s/simulations/%s/%s.xml' % (DART.SDIR, args['simulation'], args['name'])
+    paramfilename = '%s/%s/%s' % (DART.SDIR, args['simulation'], args['fileName'])
     VLAB.logger.info('writing sequence paramfile "%s"' % paramfilename)
     fp = open(paramfilename, 'w')
-    fp.write(sstr % (args['name'], args['name'],groupstr, args['lut']))
+    fp.write(sstr % (args['fileName'].rstrip(".xml"), args['fileName'].rstrip('.xml'), groupstr))
     fp.close()
 
   def doProcessing(self, pm, args):
