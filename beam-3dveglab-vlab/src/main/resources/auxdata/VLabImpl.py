@@ -62,10 +62,11 @@ class VLAB:
   JTF                = 'JTextField'
 
   K_LIBRAT           = 'librat'
-  K_DART             = 'dart'
+  K_DART             = 'DART'
   K_DUMMY            = 'dummy'
 
   K_LAEGEREN         = 'Laegeren'
+  K_THARANDT         = 'Tharandt'
   K_RAMI             = 'RAMI'
 
   K_YES              = 'Yes'
@@ -112,7 +113,7 @@ class VLAB:
   model = (
 {'Forward Modeling': (
 {'Model Selection': (
- ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN)),
+ ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN, K_THARANDT)),
  ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
  ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
@@ -143,7 +144,7 @@ class VLAB:
 )},
 {'DHP Simulation': (
 {'Model Selection': (
- ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGEREN)),
+ ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGEREN, K_THARANDT)),
  (),
  ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
@@ -2524,59 +2525,83 @@ class DART:
           q['simulation'] = 'Rami'
         elif args[a] == VLAB.K_LAEGEREN:
           q['simulation'] = 'Laegeren'
+        elif args[a] == VLAB.K_THARANDT:
+          q['simulation'] = "Tharandt"
       elif a == VLAB.P_ViewingAzimuth:
-        # FIXME: do we have to convert?
         q['va'] = args[a]
       elif a == VLAB.P_ViewingZenith:
-        # FIXME: do we have to convert?
         q['vz'] = args[a]
+      elif a == VLAB.P_IlluminationAzimuth:
+        q['sa'] = args[a]
+      elif a == VLAB.P_IlluminationZenith:
+        q['sz'] = args[a]
+      elif a == VLAB.P_Bands:
+        q['bands'] = args[a]
+      elif a == VLAB.P_ScenePixel:
+        q['pixelSize'] = args[a]
       else:
         q[a] = args[a]
 
-    # FIXME: "smoke test" - try running complete with the pre-provided inputs
+    # 1. Create the DART scene
+    # 1. a. Copy DART original input file to a new folder
+    q['simulationName'] = q['simulation'] + "_run"
+    VLAB.copyDir(VLAB.path.join(DART.SDIR, q['simulation']), VLAB.path.join(DART.SDIR, q['simulationName']))
+
+    # 1. b. Update the DART input files with parameters from GUI
+    # In maket change the pixel size
+    maket = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "maket.xml")
+    VLAB.XMLEditNode(maket, "CellDimensions", ["x", "z"], [q['pixelSize']]*2)
+    # In direction change the Sun viewving angle
+    direction = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "directions.xml")
+    VLAB.XMLEditNode(direction, "SunViewingAngles",
+                     ["sunViewingAzimuthAngle", "sunViewingZenithAngle"],
+                     [q['sa'], q['sz']])
+    # In direction set ifCosWeighted and numberOfPropagationDirections attributes
+    VLAB.XMLEditNode(direction, "Directions",
+                     ["ifCosWeighted", "numberOfPropagationDirections"],
+                     ["1", "100"])
+    # In direction set viewing direction
+    VLAB.XMLAddNode(direction, "Directions",
+                    ["AddedDirections", "ZenithAzimuth", "Square", "DefineOmega"],
+                    {"AddedDirections": {"attribute":
+                                         ["directionType", "ifSquareShape", "imageDirection"],
+                                         "value": ["0", "1", "1"],
+                                         "parent":"Directions"},
+                     "ZenithAzimuth": {"attribute":
+                                       ["directionAzimuthalAngle", "directionZenithalAngle"],
+                                       "value": [q['va'], q['vz']],
+                                       "parent":"AddedDirections"},
+                     "Square": {"attribute": ["widthDefinition"], "value": ["0"],
+                                "parent":"AddedDirections"},
+                     "DefineOmega": {"attribute": ["omega"], "value": ["0.001"], "parent":"Square"}
+                    }
+                   )
+    # In phase change the spectral bands
+    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
+    # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
+    bands = VLAB.getBandsFromGUI(q['bands'])
+    VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
+                               ["deltaLambda", "meanLambda"],
+                               bands, spectralBands=True)
+    # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
+    coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
+    VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=False)
+
+    # 2. a. Run DART direction module
     cmd = {
       'linux' : {
-        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDART_complet.sh', q['simulation']],
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-directions.sh', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
         'env'     : None,
         },
       'windows'   : {
-        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
         'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-       }
-    }
-    VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
-
-    # 1. Create a DART simulation with # of directions=100 and ifCosWeighted=1
-    # self._writeDirFile(q)
-    # self._writePhaseFile(q)
-    # self._writeMaketFile(q)
-
-    # 2. a. Run direction.exe
-    cmd = {
-      'linux' : {
-        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDirections.sh', q['simulation']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-        },
-      'windows'   : {
-        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-directions.bat', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2588,40 +2613,40 @@ class DART:
 
     # 2. b. Get the first two cols (sz, sa) where sz < 70 deg - use as sequence
     zlist = []; alist = []
-    for row in VLAB.valuesfromfile('%s/simulations/%s/output/directions.txt' % (DART.SDIR, q['simulation'])):
+    for row in VLAB.valuesfromfile('%s/%s/output/directions.txt' % (DART.SDIR, q['simulationName'])):
       (sz, sa, _, _)  = row
       if (sz < 70.0):
         zlist.append(sz); alist.append(sa)
-    zparam = '\'%s\'' % ";".join('%.2f' % x for x in zlist)
-    aparam = '\'%s\'' % ";".join('%.2f' % x for x in alist)
+    zparam = ";".join('%.2f' % x for x in zlist)
+    aparam = ";".join('%.2f' % x for x in alist)
+
+    # 2. c. Edit simulation directions.xml file to set the number of direcions to 200
+    VLAB.XMLEditNode(direction, "Directions", "numberOfPropagationDirections", "200")
  
-    seqparams = {
-       'name' : 'SunDirections',
- 'simulation' : q['simulation'],
-    'entries' : [
-  [aparam, 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
-  [zparam, 'Directions.SunViewingAngles.sunViewingZenithAngle']
-  ],
-        'lut' : 'true'
-    }
+    # 2. d. Write sequence file
+    seqparams = {'fileName'   : 'SunDirections.xml',
+                 'simulation' : q['simulationName'],
+                 'entries'    : [[aparam, 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
+                                 [zparam, 'Directions.SunViewingAngles.sunViewingZenithAngle']
+                                ]
+                }
     self._writeSeqFile(seqparams)
 
     # 3. Run the sun directions sequence with number of directions=200
-    # NOTE: command-line argument must be relative to 'sequence' directory
     cmd = {
       'linux' : {
-        'cwd'     : None,
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/DART_Lancement_Sequence.sh', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-sequence.sh', q['simulationName'], seqparams['fileName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
         'env'     : None,
         },
       'windows'   : {
-        'cwd'     : None,
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
         'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/sequenceur.bat', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-sequence.bat', q['simulationName'], seqparams['fileName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2629,35 +2654,68 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    #VLAB.doExec(cmd)
+    VLAB.doExec(cmd)
 
-    # 4.a. Select the values of cz < 70 to get angles.rpv.2.dat for libradtran
-    rpvlist = []
-    for seqSubDir in VLAB.listdir('%s/simulations/%s/sequence/' % (DART.SDIR, q['simulation'])):
-      for row in VLAB.valuesfromfile('%s/simulations/%s/sequence/%s/output/directions.txt' % (DART.SDIR, q['simulation'], seqSubDir)):
-        (sz, sa, _, _)  = row
-        if (sz < 70.0):
-          # FIXME: this is probably not exacly right
-          rpvlist.append('%.2f\t%.2f\t%2f\t%2f' % (sz, sa, 0.0, 0.0))
-    # write the libradtran input file
-    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['rpvfile']), 'w')
-    fp.write("\n".join(rpvlist))
-    fp.close()
+    # 4.a. Select the values of sz < 70 to get BANDX.angles.rpv.2.dat
+    # for each spectral band in the DART simulation
+    rpvlist = None
+    seqDir = VLAB.path.join(DART.SDIR, q['simulationName'], "sequence")
+    for bandNumber in xrange(len(bands)):
+      rpvlist = []
+      for seqSubDir in VLAB.listdir(seqDir):
+        dartBRF = VLAB.path.join(Dart_DARTSimulation(seqSubDir, seqDir).getIterMaxPath('BAND' + str(bandNumber)), "brf")
+        dirFile = VLAB.path.join(seqDir, seqSubDir, "input", "directions.xml")
+        sa = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingAzimuthAngle"))
+        sz = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingZenithAngle"))
+        for row in VLAB.valuesfromfile(dartBRF):
+          (vz, va, brf)  = row
+          if (vz < 70.0):
+            # Convert DART output to librattran input
+            vz, va = self.dartSZA2libradtranSZA(vz, va)
+            rpvlist.append('%.2f\t%.2f\t%2f\t%2f\t%2f' % (sz, sa, vz, va, brf))
+      # write the libradtran input file
+      fp = open(VLAB.path.join(DART.SDIR, q['simulationName'], "BAND" + str(bandNumber) + "." + q['rpvfile']), "w")
+      fp.write("\n".join(rpvlist))
+      fp.close()
 
     # 4.b. Run libradtran
     # FIXME: this needs to eventually use the same routine that librat uses
     dolibradtran = Dart_dolibradtran()
     dolibradtran.main(q)
 
+    # Run DART to generate the images
+    cmd = {
+      'linux' : {
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-full.sh', q['simulationName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
+
     #
     # collect result into a consolidated data cube
     #
     dargs = {
-      'di_simName'   : q['simulation'],
+      'di_simName'   : q['simulationName'],
       'di_isSeq'     : False,
       'di_sequence'  : 'sequence_apex',
       'di_outfname'  : 'DartOutput',
-      'ii_iLevel'    : Dart_DataLevel.SENSOR,
+      'ii_iLevel'    : Dart_DataLevel.BOA,
       'ii_isUsrDir'  : False,
       'ii_dirNum'    : 0,
       'ii_dType'     : Dart_DataUnit.RADIANCE,
