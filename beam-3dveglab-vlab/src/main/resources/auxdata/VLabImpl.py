@@ -2073,7 +2073,7 @@ class Dart_DARTRootSimulationDirectory :
     return VLAB.path.normcase(VLAB.path.normpath(path1)) == VLAB.path.normcase(VLAB.path.normpath(path2))
   
   def getAbsolutePath(self) :
-    return VLAB.path.join(DART.SDIR, Dart_DARTEnv.simulationsDirectory)
+    return VLAB.path.join(DART.SDIR)#, Dart_DARTEnv.simulationsDirectory)
   
   def getSimulationsList(self) :
     rootSimulationPath = self.getAbsolutePath()
@@ -2222,7 +2222,7 @@ wavelength         %s
       q['time'],
       q['wavelength'])
 
-    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['ipfile']), 'w')
+    fp = open('%s/%s/output/%s' % (DART.SDIR, q['simulationName'], q['ipfile']), 'w')
     fp.write(sdata)
     fp.close()
 
@@ -2374,7 +2374,7 @@ class Dart_DartImages :
     
     # write BSQ binary file
     if (len(args['OutputDirectory']) == 0):
-      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+      args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
     fname = '%s/%s%s.bsq' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output bsq %s' % (fname))
     fout = open( fname, 'wb')
@@ -2407,7 +2407,7 @@ class Dart_DartImages :
 
     # write ENVI header file
     if (len(args['OutputDirectory']) == 0):
-      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+      args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
     fname = '%s/%s%s.hdr' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output hdr %s' % (fname))
     fout = open( fname, 'w')
@@ -2447,9 +2447,9 @@ class Dart_DartImages :
 
 class DART:
   if VLAB.osName().startswith('Windows'):
-    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local')
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/simulations')
   else:
-    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dart_local')
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dart_local/simulations')
 
   """Integration glue for calling external DART programs"""
   def __init__(self):
