@@ -2523,7 +2523,7 @@ class DART:
     for a in args:
       if a == VLAB.P_3dScene:
         if args[a] == VLAB.K_RAMI:
-          q['simulation'] = 'Rami'
+          q['simulation'] = 'HET01_DIS_UNI_NIR_20'
         elif args[a] == VLAB.K_LAEGEREN:
           q['simulation'] = 'Laegeren'
         elif args[a] == VLAB.K_THARANDT:
@@ -2578,15 +2578,21 @@ class DART:
                     }
                    )
     # In phase change the spectral bands
-    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
-    # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
-    bands = VLAB.getBandsFromGUI(q['bands'])
-    VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
-                               ["deltaLambda", "meanLambda"],
-                               bands, spectralBands=True)
-    # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
-    coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
-    VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=False)
+    if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
+      phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
+      # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
+      bands = VLAB.getBandsFromGUI(q['bands'])
+      VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
+                                 ["deltaLambda", "meanLambda"],
+                                 bands, spectralBands=True)
+      # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
+      coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
+      VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=False)
+    else:
+      bands = [None]
+      VLAB.logger.info("*********************************************************************************")
+      VLAB.logger.info("* WARNING: RAMI scene cannot be multiband according to the RAMI scene definition. *")
+      VLAB.logger.info("*********************************************************************************")
 
     # 2. a. Run DART direction module
     cmd = {
