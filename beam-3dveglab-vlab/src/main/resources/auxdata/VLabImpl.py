@@ -2055,7 +2055,7 @@ class Dart_DARTSimulation :
     # Get spectralBand folder
     iterFolder = VLAB.path.join(self.rootSimulationsDirectory, self.name, "output", spectralBand, "BRF")
     # Get list of iter folders
-    iters = [ int(folder.lstrip('ITER')) for folder in VLAB.listdir(iterFolder)
+    iters = [ folder.lstrip('ITER') for folder in VLAB.listdir(iterFolder)
               if folder.startswith('ITER')]
     # Get iterX is exists otherwise select iterMax
     if iterX and 'X' in iters:
@@ -2063,6 +2063,7 @@ class Dart_DARTSimulation :
     else:
       if 'X' in iters:
         iters.remove('X')
+      iters = [ int(i) for i in iters ]
       return VLAB.path.join(iterFolder, "ITER" + str(max(iters)))
         
 
