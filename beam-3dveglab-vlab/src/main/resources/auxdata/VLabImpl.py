@@ -2485,7 +2485,7 @@ class DART:
             demGeneratorLaunched="false" directionLaunched="true"
             displayEnabled="true" hapkeLaunched="false"
             maketLaunched="true" numberParallelThreads="1"
-            phaseLaunched="true" prospectLaunched="false"
+            phaseLaunched="false" prospectLaunched="false"
             triangleFileProcessorLaunched="false" vegetationLaunched="false"/>
         <DartLutPreferences generateLUT="false" phiMax="" phiMin=""
             storeIndirect="false" thetaMax="" thetaMin=""/>
@@ -2639,7 +2639,32 @@ class DART:
                 }
     self._writeSeqFile(seqparams)
 
-    # 3. Run the sun directions sequence with number of directions=200
+
+    # 3. a. Run DART to pregenerate phase, maket, (3D obj..) before the sequence
+    cmd = {
+      'linux' : {
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-full.sh', q['simulationName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
+
+    # 3. b. Run the sun directions sequence with number of directions=200
     cmd = {
       'linux' : {
         'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
@@ -2689,30 +2714,6 @@ class DART:
     # FIXME: this needs to eventually use the same routine that librat uses
     dolibradtran = Dart_dolibradtran()
     dolibradtran.main(q)
-
-    # Run DART to generate the images
-    cmd = {
-      'linux' : {
-        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
-        'exe'     : '/bin/bash',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-full.sh', q['simulationName']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-        },
-      'windows'   : {
-        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-       }
-    }
-    VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
 
     #
     # collect result into a consolidated data cube
