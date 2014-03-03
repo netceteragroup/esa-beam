@@ -552,11 +552,12 @@ class VLAB:
         raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
   XMLGetNodeAttributeValue = staticmethod(XMLGetNodeAttributeValue)
   def getBandsFromGUI(bands):
-    """ Return a DART spectral bands list: [deltaLambda, meanLambda]
+    """ Return a DART spectral bands list: ["deltaLambda", "meanLambda"] in micro meter
     In case of several bands the result should be a list of list:
-    [[deltaLambda0, meanLambda0], [deltaLambda1, meanLambda1], [deltaLambda2, meanLambda2], ...]
+    [["deltaLambda0", "meanLambda0"], ["deltaLambda1", "meanLambda1"], ["deltaLambda2", "meanLambda2"], ...]
+    e.g.: [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
     """
-    # TODO: You should write the spectral band convertiseeur here!
+    # TODO: You should write the spectral band converter here!
     return [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
   getBandsFromGUI = staticmethod(getBandsFromGUI)
   class path:
