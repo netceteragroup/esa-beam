@@ -2692,6 +2692,7 @@ class DART:
     # 4.a. Select the values of sz < 70 to get BANDX.angles.rpv.2.dat
     # for each spectral band in the DART simulation
     rpvlist = None
+    rpvFiles = []
     seqDir = VLAB.path.join(DART.SDIR, q['simulationName'], "sequence")
     for bandNumber in xrange(len(bands)):
       rpvlist = []
@@ -2707,9 +2708,14 @@ class DART:
             vz, va = self.dartSZA2libradtranSZA(vz, va)
             rpvlist.append('%.2f\t%.2f\t%2f\t%2f\t%2f' % (sz, sa, vz, va, brf))
       # write the libradtran input file
-      fp = open(VLAB.path.join(DART.SDIR, q['simulationName'], "BAND" + str(bandNumber) + "." + q['rpvfile']), "w")
+      fname = VLAB.path.join(DART.SDIR,
+                             q['simulationName'],
+                             "BAND" + str(bandNumber) + "." + q['rpvfile'])
+      rpvFiles.append(fname)
+      fp = open(fname, "w")
       fp.write("\n".join(rpvlist))
       fp.close()
+    q['rpvFiles'] = rpvFiles
 
     # 4.b. Run libradtran
     # FIXME: this needs to eventually use the same routine that librat uses
