@@ -191,6 +191,18 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
+  def lineSeparator():
+    """Return the OS line separator"""
+    if sys.platform.startswith('java'):
+      from java.lang import System
+      if sys.platform.startswith('java1.6'):
+        return System.getProperty('line.separator')
+      elif sys.platform.startswith('java1.7'):
+        return System.lineSeparator()
+    else:
+      import os
+      os.linesep
+  lineSeparator = staticmethod(lineSeparator)
   def listdir(path):
     """list files in the directory given by path"""
     if sys.platform.startswith('java'):
@@ -784,12 +796,11 @@ class VLAB:
         """helper class for slurping up child streams"""
         from java.io import BufferedReader
         from java.io import InputStreamReader
-        from java.lang import System
         line = None; br = BufferedReader(InputStreamReader(self.strm))
         line = br.readLine()
         while (line != None):
           if self.fp != None:
-            self.fp.write(line + System.lineSeparator())
+            self.fp.write(line + VLAB.lineSeparator())
             self.fp.flush()
           VLAB.logger.info('%s %s' %(self.nm, line.rstrip()))
           line = br.readLine()
