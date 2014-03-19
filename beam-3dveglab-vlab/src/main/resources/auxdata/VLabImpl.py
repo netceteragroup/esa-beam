@@ -65,7 +65,7 @@ class VLAB:
   K_DART             = 'DART'
   K_DUMMY            = 'dummy'
 
-  K_LAEGEREN         = 'Laegeren'
+  K_LAEGERN          = 'Laegern'
   K_THARANDT         = 'Tharandt'
   K_RAMI             = 'RAMI'
 
@@ -113,7 +113,7 @@ class VLAB:
   model = (
 {'Forward Modeling': (
 {'Model Selection': (
- ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN, K_THARANDT)),
+ ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
  ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
  ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
@@ -144,7 +144,7 @@ class VLAB:
 )},
 {'DHP Simulation': (
 {'Model Selection': (
- ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGEREN, K_THARANDT)),
+ ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
  (),
  ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
@@ -2525,8 +2525,8 @@ class DART:
       if a == VLAB.P_3dScene:
         if args[a] == VLAB.K_RAMI:
           q['simulation'] = 'HET01_DIS_UNI_NIR_20'
-        elif args[a] == VLAB.K_LAEGEREN:
-          q['simulation'] = 'Laegeren'
+        elif args[a] == VLAB.K_LAEGERN:
+          q['simulation'] = 'Laegern'
         elif args[a] == VLAB.K_THARANDT:
           q['simulation'] = "Tharandt"
       elif a == VLAB.P_ViewingAzimuth:
