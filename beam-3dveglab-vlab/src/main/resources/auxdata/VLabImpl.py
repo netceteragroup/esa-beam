@@ -2590,9 +2590,11 @@ class DART:
                      "DefineOmega": {"attribute": ["omega"], "value": ["0.001"], "parent":"Square"}
                     }
                    )
+    # In phase force the radiance to be stored (could be not selected)
+    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
+    VLAB.XMLEditNode(phase, "BrfProductsProperties", "luminanceProducts", "1")
     # In phase change the spectral bands
     if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
-      phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
       # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
       bands = VLAB.getBandsFromGUI(q['bands'])
       VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
