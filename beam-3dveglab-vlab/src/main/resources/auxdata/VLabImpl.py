@@ -209,8 +209,9 @@ class VLAB:
       from java.io import File
       array = File(path).list()
       listFile = []
-      for i in xrange(len(array)):
-        listFile.append(array[i])
+      if array != None:
+        for i in xrange(len(array)):
+          listFile.append(array[i])
       return listFile
     else:
       import os
