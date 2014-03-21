@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (13 Feb 2014)'
+  VERSION_STRING     = '1.0 (21 Mar 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -57,6 +57,9 @@ class VLAB:
   P_CONDITION        = '.condition'
   P_EXPRESSION       = '.expression'
   P_OUTPUT           = '.output'
+
+  # NOTE: Once released, random number generation should NOT be reproducible
+  CONF_RND_REPRODUCE = True
 
   JCB                = 'JComboBox'
   JTF                = 'JTextField'
@@ -3330,8 +3333,10 @@ class Librat_drivers:
       # all those outside the angle range and then take the first n.
       nn = q['nsamples']*2
 
-      # FIXME: temporarily set a particular seed for reproducibility
-      rState = VLAB.rndInit(17)
+      if VLAB.CONF_RND_REPRODUCE:
+        rState = VLAB.rndInit(17)
+      else:
+        rState = VLAB.rndInit()
 
       # view angles first
       u1    = [VLAB.rndNextFloat(rState) for i in range(nn)]
