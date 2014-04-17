@@ -861,6 +861,7 @@ class VLAB:
       bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
       if 'stdin' in cmd and cmd['stdin'] != None:
         inFile = VLAB.expandEnv(cmd['stdin'])
+        VLAB.logger.info('stdin is [%s]' % inFile)
         if 'cwd' in cmd and cmd['cwd'] != None:
           if not VLAB.fileExists(inFile):
             # try pre-pending the cwd
@@ -3952,7 +3953,7 @@ class LIBRAT:
 'samplingPattern' : 'circular',
   'lookFile' : 'dhp.locations.ondem.dat',
     'angles' : 'angles.dhp.dat',
-       'fov' : 150,
+       'fov' : False,
        'rpp' : 8,
    'npixels' : 4000000,
      'opdir' : 'DHP_TEST'
@@ -3973,7 +3974,7 @@ class LIBRAT:
          'brdf' : True,
         'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
           'dhp' : True,
-          'fov' : 150,
+          'fov' : False,
          'hips' : True,
         'ideal' : (300., 300.),
           'lat' : 50, 
