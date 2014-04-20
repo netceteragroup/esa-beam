@@ -140,8 +140,8 @@ class VLAB:
  ('Water Vapor',       'AtmosphereWater',     JTF, '0.0'),
  ('Ozone Column',      'AtmosphereOzone',     JTF, '300'))},
 {'Output Parameters': (
- ('Result file prefix','OutputPrefix',        JTF, 'RAMI_'),
- ('Result Directory',  'OutputDirectory',     JTF, ''),
+ ('Result file prefix','OutputPrefix',        JTF, 'HET01_DIS_UNI_NIR_20.obj'),
+ ('Result Directory',  'OutputDirectory',     JTF, 'dart.rpv.rami.2'),
  ('Image file',        'ImageFile',           JCB, (K_YES, K_NO)),
  ('Ascii file',        'AsciiFile',           JCB, (K_YES, K_NO)))}
 )},
@@ -2823,13 +2823,17 @@ class Librat_dobrdf:
     if q['twist']:
       cdata += ' %s = %s;\n' %('geometry.twist', q['twist'])
     if q['fov']:
-      cdata += ' %s = %s;\n' %('geometry.fov', q['fov'])
+      cdata += ' %s = %s;\n' %('geometry.fieldOfView', q['fov'])
     if 'lidar' in q:
       if q['lidar']:
         cdata += ' %s = %s;\n' %('lidar.binStep', q['binStep']) \
                + ' %s = %s;\n' %('lidar.binStart', q['binStart']) \
                + ' %s = %s;\n' %('lidar.nBins', q['nBins'])
     cdata += '}'
+
+    if q['fov'] and q['ideal']:
+      raise Exception("camera: setting both 'ideal area' and 'fov' is not allowed")
+
     fp = open(camFile, 'w')
     try:
       fp.write(cdata)
@@ -2857,7 +2861,7 @@ class Librat_dobrdf:
 + ' %s = "%.1f";\n' %('geometry.twist', float(q['twist']))
 
     key = "sideal"
-    if key in q: ldata += '%s = %s\n' %('geometry.ideal', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
+    if key in q: ldata += '%s = %s\n' %('geometry.idealArea', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "slook_xyz"
     if key in q: ldata += '%s = %s\n' %('geometry.lookat', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "sboom"
@@ -3984,8 +3988,8 @@ class LIBRAT:
             'n' : 1000,
          'nice' : 19,
       'npixels' : 10000,
-          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
-        'opdir' : 'dart.rami.TOA',
+          'obj' : 'DEFAULT_OBJ',
+        'opdir' : 'DEFAULT_DIR',
     'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
          'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all',
      'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
@@ -4014,11 +4018,29 @@ class LIBRAT:
           q['wb'] = 'wb.OLCI.dat'
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
-      elif a == 'anotherexample':
-        if args[a] == 'somethingtobetranslated':
-          q['thingy'] = 'translatedthingy'
-        else:
-          q['thingy'] = 'defaultthingy'
+      elif a == 'OutputDirectory':
+        q['opdir'] = args[a]
+      elif a == 'OutputPrefix':
+        q['obj'] = args[a]
+
+    q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
+    q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
+    q['plot']      = '%s/rpv.%s.dat.all' %(q['opdir'],q['obj'])
+    q['plotfile']  = '%s/result.%s.brdf.3params' %(q['opdir'],q['obj'])
+    q['root']      = '%s/result.%s' %(q['opdir'],q['obj'])
+    q['rpv']       = '%s/%s.brdf.dat.3params.dat' %(q['opdir'],q['obj'])
+
+    for a in ['dataf', 'paramfile','plot','plotfile','root', 'rpv']:
+      VLAB.logger.info ('%s: q["%s"] is %s' % (me, a, q[a]))
+
+    if VLAB.osName().startswith('Windows'):
+      fullobjpath = '%s/%s' % (VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
+    else:
+      fullobjpath = '%s/%s' % (VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
+    
+    VLAB.logger.info ('%s: ensuring "%s" exists' %(me, fullobjpath))
+    if not VLAB.path.exists(fullobjpath):
+      VLAB.mkDirPath(fullobjpath)
 
     VLAB.logger.info('%s: instantiating objects' % (me))
     drivers      = Librat_drivers()
