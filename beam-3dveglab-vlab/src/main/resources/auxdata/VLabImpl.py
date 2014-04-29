@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (21 Apr 2014)'
+  VERSION_STRING     = '1.0 (29 Apr 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -453,7 +453,7 @@ class VLAB:
             attrib[atr] = v
           node.append(ET.Element(subnode, attrib=attrib))
       elif isinstance(attributName, str) and isinstance(value, str):
-        attribut[attributName] = value
+        attrib[attributName] = value
         node.append(ET.Element(subnode, attrib=attrib))
       else:
         raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
@@ -1541,7 +1541,7 @@ class Minimize_NMSimplex:
     for i in range(self.N +1):
       diff = self.f_list[i] - mean
       sum += diff * diff
-    std_dev = sqrt(sum / self.N)
+    std_dev = math.sqrt(sum / self.N)
     return mean, std_dev
 
   def centroid(self, exclude=-1):
@@ -3199,7 +3199,7 @@ class Librat_dolibradtran:
 
       if not VLAB.fileExists(libradtran_ip):
         libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
-        defaultLRT(libradtranfp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet)
+        self.defaultLRT(libradtranfp, solar_file, q['dens_column'], q['correlated_k'], q['rte_solver'], q['rpvfile'], q['deltam'], q['nstr'], q['zout'], q['output_user'], q['quiet'])
 
         if q['v']:
           sys.stderr.write('%s: doing ip file %s\n'%(sys.argv[0],libradtran_ip))
@@ -3219,7 +3219,7 @@ class Librat_dolibradtran:
         libradtranfp.write('phi ' + ' '.join(map(str, vaa)) + '\n')
 
         # add sz angles
-        if lat and lon and time:
+        if q['lat'] and q['lon'] and q['time']:
           libradtranfp.writelines('latitude ' + q['lat'] + '\n')
           libradtranfp.writelines('longitude ' + q['lon'] + '\n')
           libradtranfp.writelines('time ' + q['time'] + '\n')
@@ -3229,7 +3229,7 @@ class Librat_dolibradtran:
           libradtranfp.write('phi0 ' + ' '.join(map(str, saa)) + '\n')
 
           # write out wavelengths i.e. min and max. Step is determined by step in solar file i.e. 1nm default
-          libradtranfp.write('wavelength ' + np.str(np.int(wb.min())) + ' ' + np.str(np.int(wb.max())) + '\n')
+          libradtranfp.write('wavelength ' + str(int(wb.min())) + ' ' + str(int(wb.max())) + '\n')
           libradtranfp.flush()
 
           cmd = LIBRADTRAN + ' < ' + libradtran_ip + ' > ' + libradtran_op
@@ -3326,7 +3326,7 @@ class Librat_drivers:
 
       q['angles'] = [[0. for col in range(4)] for row in range(len(q['vzz'])*len(q['vzz']))]
 
-      for n, va in enumerate(data['vaa']):
+      for n, va in enumerate(q['vaa']):
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),0] = q['vzz']
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),1] = q['vz']
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),2] = q['sz']
@@ -3539,8 +3539,8 @@ class Librat_rpv_invert:
       else:
         q[a] = args[a]
 
-    wb = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
-    data = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['dataf']), transpose=True)
+    wb   = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
+    data = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['dataf']),  transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
@@ -3605,7 +3605,7 @@ class Librat_rpv_invert:
         if q['plotfile']:
           opplot = q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png'
         else:
-          opplot = dataf + '.inv.wb.' + str(wbNum) + '.png'
+          opplot = q['dataf'] + '.inv.wb.' + str(wbNum) + '.png'
 
         if q['verbose']: sys.stderr.write('%s: plotting to %s\n' % (sys.argv[0], opplot))
 
