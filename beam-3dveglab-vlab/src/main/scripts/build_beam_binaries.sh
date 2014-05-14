@@ -8,6 +8,7 @@ set -e
 
 JAVA_HOME=/usr/lib/jvm/java-1.7.0; export JAVA_HOME
 PRJ=esa-034-5
+BEAM_VERSION=4.11.x
 
 P=/home/${USER}/projects/esa-034-5
 
@@ -18,7 +19,7 @@ sudo yum install -y git
 sudo yum install -y maven2
 sudo yum install -y patch
 sudo yum install -y subversion
-sudo yum install -y vim
+#sudo yum install -y vim
 
 mkdir -p ${P}
 cd ${P}
@@ -27,6 +28,7 @@ git clone git://github.com/bcdev/beam.git
 cd ${P}/ceres
 mvn install
 cd ${P}/beam
+git checkout ${BEAM_VERSION}
 
 cat > beam-pom-xml.patch << EOF
 *** pom.xml.orig	2012-12-12 11:26:06.761799241 +0100
@@ -176,47 +178,6 @@ cat > CommandLineToolTest-patch << EOF
 ! }
 EOF
 patch -b -p0 < CommandLineToolTest-patch
-
-cat > CreateExpectedJsonCodeTest.patch << EOF
---- ./beam-reader-tests/src/test/java/org/esa/beam/visat/actions/CreateExpectedJsonCodeCommandTest.java
-+++ ./beam-reader-tests/src/test/java/org/esa/beam/visat/actions/CreateExpectedJsonCodeCommandTest.java
-@@ -15,6 +15,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
- import org.junit.Before;
- import org.junit.BeforeClass;
- import org.junit.Test;
-+import org.junit.Ignore;
- import org.junit.runner.RunWith;
- import org.mockito.Mockito;
- import org.mockito.stubbing.OngoingStubbing;
-@@ -118,7 +119,7 @@ public class CreateExpectedJsonCodeCommandTest {
-         return sb.toString();
-     }
- 
--    @Test
-+    @Ignore
-     public void testCreatedJson() throws Exception {
-         final CreateExpectedJsonCodeCommand jsonCodeCommand = new CreateExpectedJsonCodeCommand();
-         final Random mock = createMockedRandom();
-@@ -126,7 +127,7 @@ public class CreateExpectedJsonCodeCommandTest {
-         assertEquals(EXPECTED_JSON_CODE, actualJsonCode);
-     }
- 
--    @Test
-+    @Ignore
-     public void testCreatedJsonWith_Pins() throws Exception {
-         final CreateExpectedJsonCodeCommand jsonCodeCommand = new CreateExpectedJsonCodeCommand();
-         GeoCoding geoCoding = product.getGeoCoding();
-@@ -143,7 +144,7 @@ public class CreateExpectedJsonCodeCommandTest {
-         assertEquals(EXPECTED_JSON_PINS_CODE, actualJsonCode);
-     }
- 
--    @Test
-+    @Ignore
-     public void testFillClipboardWithJsonCode() throws Exception {
-         final Clipboard clipboard = new Clipboard("testClipboard");
-         final CreateExpectedJsonCodeCommand jsonCodeCommand = new CreateExpectedJsonCodeCommand(clipboard);
-EOF
-patch -b -p0 < CreateExpectedJsonCodeTest.patch 
 
 mvn install
 mkdir -p ${P}/beam/config

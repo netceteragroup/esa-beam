@@ -193,11 +193,11 @@ class light:
 			+ ' geometry.azimuth = {0:};\n'.format(self.sa) \
 			+ ' geometry.twist = {0:};\n'.format(self.twist)
 		
-		if self.ideal: msg += ' geometry.ideal = {0:};\n'.format(self.ideal[0], self.ideal[1])
+		if self.ideal: msg += ' geometry.idealArea = {0:};\n'.format(self.ideal[0], self.ideal[1])
 		if self.look: msg += ' geometry.lookAt = {0:}, {1:}, {2:};\n'.format(self.look[0], self.look[1], self.look[2])
 		if self.boom: msg += ' geometry.boom = {0:};\n'.format(self.boom)
 		if self.perspective: msg += ' geometry.perspective 0:};\n'.format(self.perspective)
-		if self.fov: msg += ' geometry.fov = {0:};\n'.format(self.fov)
+		if self.fov: msg += ' geometry.fieldOfView = {0:};\n'.format(self.fov)
 			
 		msg += '}'
 		

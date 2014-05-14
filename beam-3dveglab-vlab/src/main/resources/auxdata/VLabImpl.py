@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (13 Feb 2014)'
+  VERSION_STRING     = '1.0 (29 Apr 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -58,14 +58,18 @@ class VLAB:
   P_EXPRESSION       = '.expression'
   P_OUTPUT           = '.output'
 
+  # NOTE: Once released, random number generation should NOT be reproducible
+  CONF_RND_REPRODUCE = True
+
   JCB                = 'JComboBox'
   JTF                = 'JTextField'
 
   K_LIBRAT           = 'librat'
-  K_DART             = 'dart'
+  K_DART             = 'DART'
   K_DUMMY            = 'dummy'
 
-  K_LAEGEREN         = 'Laegeren'
+  K_LAEGERN          = 'Laegern'
+  K_THARANDT         = 'Tharandt'
   K_RAMI             = 'RAMI'
 
   K_YES              = 'Yes'
@@ -112,7 +116,7 @@ class VLAB:
   model = (
 {'Forward Modeling': (
 {'Model Selection': (
- ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGEREN)),
+ ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
  ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
  ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
@@ -136,14 +140,14 @@ class VLAB:
  ('Water Vapor',       'AtmosphereWater',     JTF, '0.0'),
  ('Ozone Column',      'AtmosphereOzone',     JTF, '300'))},
 {'Output Parameters': (
- ('Result file prefix','OutputPrefix',        JTF, 'RAMI_'),
- ('Result Directory',  'OutputDirectory',     JTF, ''),
+ ('Result file prefix','OutputPrefix',        JTF, 'HET01_DIS_UNI_NIR_20.obj'),
+ ('Result Directory',  'OutputDirectory',     JTF, 'dart.rpv.rami.2'),
  ('Image file',        'ImageFile',           JCB, (K_YES, K_NO)),
  ('Ascii file',        'AsciiFile',           JCB, (K_YES, K_NO)))}
 )},
 {'DHP Simulation': (
 {'Model Selection': (
- ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGEREN)),
+ ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
  (),
  ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
@@ -190,11 +194,28 @@ class VLAB:
       nm = sys.exc_info()[2].tb_frame.f_back.f_code.co_name
     return nm+'()'
   me = staticmethod(me)
+  def lineSeparator():
+    """Return the OS line separator"""
+    if sys.platform.startswith('java'):
+      from java.lang import System
+      if sys.platform.startswith('java1.6'):
+        return System.getProperty('line.separator')
+      elif sys.platform.startswith('java1.7'):
+        return System.lineSeparator()
+    else:
+      import os
+      os.linesep
+  lineSeparator = staticmethod(lineSeparator)
   def listdir(path):
     """list files in the directory given by path"""
     if sys.platform.startswith('java'):
       from java.io import File
-      return File(path).list()
+      array = File(path).list()
+      listFile = []
+      if array != None:
+        for i in xrange(len(array)):
+          listFile.append(array[i])
+      return listFile
     else:
       import os
       return os.listdir(path)
@@ -233,6 +254,328 @@ class VLAB:
       import os
       return os.path.abspath(fname)
   getFullPath = staticmethod(getFullPath)
+  def copyDir(dname, target):
+    """Recursively copy 'dname' directory to 'target'.
+       /!\If 'target' already exists it will be removed or overwrited.
+    """
+    if sys.platform.startswith('java'):
+      # import java module
+      from java.io import File
+      from java.io import FileInputStream
+      from java.io import FileOutputStream
+      from java.util import Scanner
+      from java.lang import String
+      dnameFile = File(dname)
+      targetFile = File(target)
+      # recursive copy
+      if dnameFile.isDirectory():
+        # Create folder if not exists
+        if not targetFile.exists():
+          targetFile.mkdir()
+        # Copy all content recursively
+        for fname in dnameFile.list().tolist():
+          VLAB.copyDir(dname + File.separator + fname, target + File.separator + fname)
+      else:
+        # Read dname file
+        istream = FileInputStream(dname)
+        scan = Scanner(istream).useDelimiter("\\Z")
+        # Test if file is empty
+        if scan.hasNextLine():
+          content = String(scan.next())
+        else:
+          content = String("")
+        scan.close()
+        # Create and write target
+        if not targetFile.exists():
+          targetFile.createNewFile()
+        ostream = FileOutputStream(target)
+        ostream.write(content.getBytes())
+        ostream.flush()
+        ostream.close()
+    else:
+      import shutil, os
+      # remove exisiting target
+      if os.path.isdir(target) or os.path.isfile(target):
+        shutil.rmtree(target)
+      # recursive copy of dnma to target
+      shutil.copytree(dname, target)
+  copyDir = staticmethod(copyDir)
+  def XMLEditNode(fname, nodeName, attributName, value, multiple=False):
+    """ Edit a given node (nodeName) in a given XML file (fname)
+    attributName and value could be either a list of string or a string
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(nodeName)
+      # Check if we get only one node (as expected)
+      if node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 1:
+        nodes = [node.item(0)]
+      else:
+        if not multiple:
+          raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+        else:
+          nodes = [ node.item(i) for i in xrange(node.getLength()) ]
+      for node in nodes:
+        # Modify the node attribute
+        if isinstance(attributName, list) and isinstance(value, list):
+          for att, val in zip(attributName, value):
+            node.setAttribute(att, val)
+        elif isinstance(attributName, str) and isinstance(value, str):
+          node.setAttribute(attributName, value)
+        else:
+          raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      nodes = tree.findall(".//*../%s" % nodeName)
+      # Check if we get only one node (as expected)
+      if len(nodes) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      elif len(nodes) > 1 and not multiple:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      for node in nodes:
+        # Modify the node attribute
+        if isinstance(attributName, list) and isinstance(value, list):
+          for att, val in zip(attributName, value):
+            node.set(att, val)
+        elif isinstance(attributName, str) and isinstance(value, str):
+          node.set(attributName, value)
+        else:
+          raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLEditNode = staticmethod(XMLEditNode)
+  def XMLReplaceNodeContent(fname, parent, subnode, attributName, value, spectralBands=False):
+    """ Edit an XML file (fname) and replace the content of a node with subnode(s) (subnode) within attribute(s) and value(s).
+    attributName and value could be either a list of string or a string
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(parent)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node.item(0)
+      # Remove content node
+      while node.hasChildNodes():
+        node.removeChild(node.getFirstChild())
+      # Modify the node attribute
+      elem = tree.createElement(subnode)
+      if spectralBands:
+        elem.setAttribute("bandNumber", "0")
+        elem.setAttribute("spectralDartMode", "0")
+      if isinstance(attributName, list) and isinstance(value, list):
+        if isinstance(value[0], list):
+          for bandNumber, val in enumerate(value):
+            if spectralBands:
+              elem.setAttribute("bandNumber", str(bandNumber))
+            for atr, v in zip(attributName, val):
+              elem.setAttribute(atr, v)
+            node.appendChild(elem.cloneNode(True))
+        else:
+          elem = tree.createElement(subnode)
+          for atr, v in zip(attributName, value):
+            elem.setAttribute(atr, v)
+          node.appendChild(elem)
+      elif isinstance(attributName, str) and isinstance(value, str):
+        elem = tree.createElement(subnode)
+        elem.setAttribute(attributName, value)
+        node.appendChild(elem)
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s" % parent)
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node[0]
+      # Remove content of node
+      node.clear()
+      # Modify the node attribute
+      if spectralBands:
+        attrib = {"bandNumber":"0", "spectralDartMode":"0"}
+      else:
+        attrib = {}
+      if isinstance(attributName, list) and isinstance(value, list):
+        if isinstance(value[0], list):
+          for bandNumber, val in enumerate(value):
+            if spectralBands:
+              attrib["bandNumber"] = str(bandNumber)
+            for atr, v in zip(attributName, val):
+              attrib[atr] = v
+            node.append(ET.Element(subnode, attrib=attrib))
+        else:
+          for atr, v in zip(attributName, value):
+            attrib[atr] = v
+          node.append(ET.Element(subnode, attrib=attrib))
+      elif isinstance(attributName, str) and isinstance(value, str):
+        attrib[attributName] = value
+        node.append(ET.Element(subnode, attrib=attrib))
+      else:
+        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLReplaceNodeContent = staticmethod(XMLReplaceNodeContent)
+  def XMLAddNode(fname, parent, treeNodes, nodesSetup):
+    """ Add a node (subnode) to a given parent in the provided fname file.
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from javax.xml.transform import TransformerFactory
+      from javax.xml.transform import OutputKeys
+      from javax.xml.transform.dom import DOMSource
+      from javax.xml.transform.stream import StreamResult
+      from java.io import File
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(parent)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node.item(0)
+      # Create all the new nodes
+      nodes = {parent:node}
+      for name in treeNodes:
+        nodes[name] = (tree.createElement(name))
+        for atr, val in zip(*[ nodesSetup[name][key] for key in nodesSetup[name].iterkeys() if key in ["attribute", "value"] ]):
+          nodes[name].setAttribute(atr, val)
+      # Add all created node to its parent (previous node in the list)
+      for name, elem in nodes.iteritems():
+        if name != parent:
+          nodes[nodesSetup[name]["parent"]].appendChild(elem)
+      # Write new XML tree in fname
+      transformer = TransformerFactory.newInstance().newTransformer()
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+      source = DOMSource(tree)
+      result = StreamResult(File(fname))
+      transformer.transform(source, result)
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s" % parent)
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+      else:
+        node = node[0]
+      # Create all the new nodes
+      nodes = {parent:node}
+      for name in treeNodes:
+        attrib = {}
+        for atr, val in zip(*[ nodesSetup[name][key] for key in nodesSetup[name].iterkeys() if key in ["attribute", "value"] ]):
+          attrib[atr] = val
+        nodes[name] = ET.Element(name, attrib)
+      # Add all created node to its parent (previous node in the list)
+      for name, elem in nodes.iteritems():
+        if name != parent:
+          nodes[nodesSetup[name]["parent"]].append(elem)
+      # Write new XML tree in fname
+      tree.write(fname)
+  XMLAddNode = staticmethod(XMLAddNode)
+  def XMLGetNodeAttributeValue(fname, nodeName, attributName):
+    """ Return the value of the given attributName for the given nodeName
+    """
+    if sys.platform.startswith('java'):
+      from javax.xml.parsers import DocumentBuilderFactory
+      from org.w3c.dom import Element
+      # Get whole tree
+      tree = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fname)
+      # Get nodeName
+      node = tree.getElementsByTagName(nodeName)
+      # Check if we get only one node (as expected)
+      if node.getLength() > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      elif node.getLength() == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node.item(0)
+      # Check if that node has attributName
+      if node.hasAttribute(attributName):
+        return node.getAttributes().getNamedItem(attributName).getNodeValue()
+      else:
+        raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
+    else:
+      import xml.etree.ElementTree as ET
+      # Get whole tree from xml
+      tree = ET.parse(fname)
+      # Get nodeName
+      #nodes = tree.findall(".//*%s" % nodeName) # This line seems to not work for root child node!! Bug?
+      node = tree.findall(".//*../%s[@%s]" % (nodeName, attributName))
+      # Check if we get only one node (as expected)
+      if len(node) > 1:
+        raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
+      elif len(node) == 0:
+        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+      else:
+        node = node[0]
+      # Check if that node has an attributName
+      if attributName in node.keys():
+        return node.get(attributName)
+      else:
+        raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
+  XMLGetNodeAttributeValue = staticmethod(XMLGetNodeAttributeValue)
+  def getBandsFromGUI(bands):
+    """ Return a DART spectral bands list: ["deltaLambda", "meanLambda"] in micro meter
+    In case of several bands the result should be a list of list:
+    [["deltaLambda0", "meanLambda0"], ["deltaLambda1", "meanLambda1"], ["deltaLambda2", "meanLambda2"], ...]
+    e.g.: [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
+    """
+    # TODO: You should write the spectral band converter here!
+    return [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
+  getBandsFromGUI = staticmethod(getBandsFromGUI)
   class path:
     def exists(path):
       if sys.platform.startswith('java'):
@@ -457,12 +800,11 @@ class VLAB:
         """helper class for slurping up child streams"""
         from java.io import BufferedReader
         from java.io import InputStreamReader
-        from java.lang import System
         line = None; br = BufferedReader(InputStreamReader(self.strm))
         line = br.readLine()
         while (line != None):
           if self.fp != None:
-            self.fp.write(line + System.lineSeparator())
+            self.fp.write(line + VLAB.lineSeparator())
             self.fp.flush()
           VLAB.logger.info('%s %s' %(self.nm, line.rstrip()))
           line = br.readLine()
@@ -519,6 +861,7 @@ class VLAB:
       bw = BufferedWriter(OutputStreamWriter(proc.getOutputStream()))
       if 'stdin' in cmd and cmd['stdin'] != None:
         inFile = VLAB.expandEnv(cmd['stdin'])
+        VLAB.logger.info('stdin is [%s]' % inFile)
         if 'cwd' in cmd and cmd['cwd'] != None:
           if not VLAB.fileExists(inFile):
             # try pre-pending the cwd
@@ -1063,13 +1406,10 @@ used."""
       VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10', 
       VLAB.P_OutputDirectory     : '', 
       VLAB.P_AtmosphereOzone     : '300', 
-      VLAB.P_AtmosphereDay       : '214', 
       VLAB.P_SceneLocFile        : '', 
       VLAB.P_SceneYC             : '100', 
       VLAB.P_DHP_OutputDirectory : '', 
       VLAB.P_DHP_OutputPrefix    : 'RAMI00_', 
-      VLAB.P_AtmosphereLat       : '47.4781', 
-      VLAB.P_AtmosphereLong      : '8.3650', 
       VLAB.P_RTProcessor         : VLAB.K_DUMMY,
       VLAB.P_SceneXW             : '50', 
       VLAB.P_IlluminationAzimuth : '0.0', 
@@ -1201,7 +1541,7 @@ class Minimize_NMSimplex:
     for i in range(self.N +1):
       diff = self.f_list[i] - mean
       sum += diff * diff
-    std_dev = sqrt(sum / self.N)
+    std_dev = math.sqrt(sum / self.N)
     return mean, std_dev
 
   def centroid(self, exclude=-1):
@@ -1726,6 +2066,24 @@ class Dart_DARTSimulation :
           mpSharpFile.close()
     return data
 
+  def getIterMaxPath(self, spectralBand, iterX=True):
+    """ Return the iterYY fodler where YY is X is exist and iterX is True or the iterMax folder
+    """
+    # Get spectralBand folder
+    iterFolder = VLAB.path.join(self.rootSimulationsDirectory, self.name, "output", spectralBand, "BRF")
+    # Get list of iter folders
+    iters = [ folder.lstrip('ITER') for folder in VLAB.listdir(iterFolder)
+              if folder.startswith('ITER')]
+    # Get iterX is exists otherwise select iterMax
+    if iterX and 'X' in iters:
+      return VLAB.path.join(iterFolder, "ITERX")
+    else:
+      if 'X' in iters:
+        iters.remove('X')
+      iters = [ int(i) for i in iters ]
+      return VLAB.path.join(iterFolder, "ITER" + str(max(iters)))
+        
+
 class Dart_DARTRootSimulationDirectory :
   def __init__(self) :
     pass
@@ -1734,7 +2092,7 @@ class Dart_DARTRootSimulationDirectory :
     return VLAB.path.normcase(VLAB.path.normpath(path1)) == VLAB.path.normcase(VLAB.path.normpath(path2))
   
   def getAbsolutePath(self) :
-    return VLAB.path.join(DART.SDIR, Dart_DARTEnv.simulationsDirectory)
+    return VLAB.path.join(DART.SDIR)#, Dart_DARTEnv.simulationsDirectory)
   
   def getSimulationsList(self) :
     rootSimulationPath = self.getAbsolutePath()
@@ -1883,7 +2241,7 @@ wavelength         %s
       q['time'],
       q['wavelength'])
 
-    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['ipfile']), 'w')
+    fp = open('%s/%s/output/%s' % (DART.SDIR, q['simulationName'], q['ipfile']), 'w')
     fp.write(sdata)
     fp.close()
 
@@ -2035,7 +2393,7 @@ class Dart_DartImages :
     
     # write BSQ binary file
     if (len(args['OutputDirectory']) == 0):
-      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+      args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
     fname = '%s/%s%s.bsq' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output bsq %s' % (fname))
     fout = open( fname, 'wb')
@@ -2068,7 +2426,7 @@ class Dart_DartImages :
 
     # write ENVI header file
     if (len(args['OutputDirectory']) == 0):
-      args['OutputDirectory'] = '%s/simulations/%s/' % (DART.SDIR, args['di_simName'])
+      args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
     fname = '%s/%s%s.hdr' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output hdr %s' % (fname))
     fout = open( fname, 'w')
@@ -2108,19 +2466,34 @@ class Dart_DartImages :
 
 class DART:
   if VLAB.osName().startswith('Windows'):
-    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local')
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/simulations')
   else:
-    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dart_local')
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dart_local/simulations')
 
   """Integration glue for calling external DART programs"""
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
     VLAB.logger.info('%s: constructor completed...' % me)
 
+  def dartSZA2libradtranSZA(self, sz, sa):
+    """ DART uses theta value from 0 to 180 for zenith angle (half a circle) 
+        and 0 to 360 for azimuth angle (full circle).
+        In the upper sphere the zenith range is from 0 to 90.
+        It is necessary to convert to libradtran zenith and azimuth range
+        (-90 to 90 for zenith and 0-180 for azimuth).
+    """
+    if sa > 180.0:
+      sz = -sz
+      sa = sa - 180.0
+
+    return sz, sa
+
   def _writeSeqFile(self, args):
+    """ Write DART sequence file
+    """
     sstr = """<?xml version="1.0" encoding="UTF-8"?>
 <DartFile version="1.0">
-    <DartSequencerDescriptor sequenceName="sequence/%s">
+    <DartSequencerDescriptor sequenceName="sequence;;%s">
         <DartSequencerDescriptorEntries>
             <DartSequencerDescriptorGroup groupName="group_%s">%s
             </DartSequencerDescriptorGroup>
@@ -2128,10 +2501,10 @@ class DART:
         <DartSequencerPreferences dartLaunched="true"
             demGeneratorLaunched="false" directionLaunched="true"
             displayEnabled="true" hapkeLaunched="false"
-            maketLaunched="true" numberParallelThreads="4"
-            phaseLaunched="true" prospectLaunched="false"
+            maketLaunched="true" numberParallelThreads="1"
+            phaseLaunched="false" prospectLaunched="false"
             triangleFileProcessorLaunched="false" vegetationLaunched="false"/>
-        <DartLutPreferences generateLUT="%s" phiMax="" phiMin=""
+        <DartLutPreferences generateLUT="false" phiMax="" phiMin=""
             storeIndirect="false" thetaMax="" thetaMin=""/>
     </DartSequencerDescriptor>
 </DartFile>
@@ -2143,157 +2516,10 @@ class DART:
     for ent in args['entries']:
       (dargs, prop) = ent
       groupstr += (dstr % (dargs, prop))
-    paramfilename = '%s/simulations/%s/%s.xml' % (DART.SDIR, args['simulation'], args['name'])
+    paramfilename = '%s/%s/%s' % (DART.SDIR, args['simulation'], args['fileName'])
     VLAB.logger.info('writing sequence paramfile "%s"' % paramfilename)
     fp = open(paramfilename, 'w')
-    fp.write(sstr % (args['name'], args['name'],groupstr, args['lut']))
-    fp.close()
-
-  def _writeDirFile(self, args):
-    sstr = """<?xml version="1.0" encoding="UTF-8"?>
-<DartFile version="5.4.3">
-    <Directions exactDate="2" ifCosWeighted="1" numberOfPropagationDirections="100">
-        <ExpertModeZone numberOfAngularSector="10" numberOfLayers="0"/>
-        <SunViewingAngles sunViewingAzimuthAngle="%s" sunViewingZenithAngle="%s"/>
-        <HotSpotProperties hotSpotParallelPlane="0"
-            hotSpotPerpendicularPlane="0" oversampleDownwardRegion="0" oversampleUpwardRegion="0"/>
-        <AddedDirections directionType="0" ifSquareShape="1" imageDirection="1">
-            <ZenithAzimuth directionAzimuthalAngle="207.2" directionZenithalAngle="5.75"/>
-            <Square widthDefinition="0">
-                <DefineOmega omega="0.0010"/>
-            </Square>
-        </AddedDirections>
-    </Directions>
-</DartFile>
-"""
-    paramfilename = '%s/simulations/%s/input/directions.xml' % (DART.SDIR, args['simulation'])
-    VLAB.logger.info('writing direction paramfile "%s"' % paramfilename)
-    q = {
-      'va' : '32.6',
-      'vz' : '27.1'
-    }
-    # overwrite defaults
-    for a in args:
-      if a == 'something_to_translate':
-        q['translated_something'] = args[a]
-      else:
-        q[a] = args[a]
-    fp = open(paramfilename, 'w')
-    fp.write(sstr % (q['va'], q['vz']))
-    fp.close()
-
-  def _writePhaseFile(self, args):
-    pstr = """<?xml version="1.0" encoding="UTF-8"?>
-<DartFile version="5.4.3">
-    <Phase expertMode="0">
-        <DartInputParameters calculatorMethod="0">
-            <nodefluxtracking gaussSiedelAcceleratingTechnique="1" numberOfIteration="4"/>
-            <SpectralDomainTir temperatureMode="0">
-                <Atmosphere_1 SKYLForTemperatureAssignation="0.0"/>
-            </SpectralDomainTir>
-            <SpectralIntervals>
-                <SpectralIntervalsProperties bandNumber="0"
-                    deltaLambda="%s" meanLambda="%s"
-                    radiativeBudgetProducts="0" spectralDartMode="0"/>
-            </SpectralIntervals>
-            <ExpertModeZone albedoThreshold="1.0E-5"
-                illuminationRepartitionMode="2"
-                lightPropagationThreshold="1.0E-4"
-                nbRandomPointsPerInteceptionAtmosphere="10"
-                nbSubSubcenterTurbidEmission="40"
-                nbSubcenterIllumination="10" nbSubcenterVolume="2"/>
-            <nodeIlluminationMode illuminationMode="0" irradianceMode="1">
-                <irradianceDatabaseNode irradianceDatabase="TOASolarIrradiance.txt"/>
-            </nodeIlluminationMode>
-        </DartInputParameters>
-        <DartProduct>
-            <dartModuleProducts allIterationsProducts="0"
-                brfProducts="1" lidarProducts="0"
-                order1Products="0" radiativeBudgetProducts="0">
-                <BrfProductsProperties brfProduct="1" extrapolation="1"
-                    horizontalOversampling="1" image="1"
-                    luminanceProducts="1" maximalThetaImages="0.1"
-                    nb_scene="1" outputHapkeFile="0" projection="1"
-                    sensorOversampling="1" sensorPlaneprojection="0">
-                    <ExpertModeZone_Etalement etalement="2"/>
-                    <ExpertModeZone_maskProjection mask_projection="0"/>
-                </BrfProductsProperties>
-            </dartModuleProducts>
-            <maketModuleProducts MNEProducts="0" areaMaketProducts="0"
-                coverRateProducts="0" laiProducts="0"/>
-        </DartProduct>
-    </Phase>
-</DartFile>
-"""
-    paramfilename = '%s/simulations/%s/input/phase.xml' % (DART.SDIR, args['simulation'])
-    VLAB.logger.info('writing phase paramfile "%s"' % paramfilename)
-    # defaults?
-    q = {
-      'deltaLambda' : '0.005493',
-      'meanLambda'  : '0.56925'
-    }
-    # overwrite defaults
-    for a in args:
-      if a == 'something_to_translate':
-        q['translated_something'] = args[a]
-      else:
-        q[a] = args[a]
-    fp = open(paramfilename, 'w')
-    fp.write(pstr % (q['deltaLambda'], q['meanLambda']))
-    fp.close()
-
-  def _writeMaketFile(self, args):
-    mstr = """<?xml version="1.0" encoding="UTF-8"?>
-<DartFile version="5.4.3">
-    <Maket dartZone="0" exactlyPeriodicScene="2">
-        <Scene>
-            <CellDimensions x="%s" z="%s"/>
-            <SceneDimensions x="%s" y="%s"/>
-        </Scene>
-        <Soil>
-            <OpticalPropertyLink ident="Unvegetated" indexFctPhase="1" type="0"/>
-            <ThermalPropertyLink
-                idTemperature="thermal_function_290_310" indexTemperature="0"/>
-            <Topography presenceOfTopography="1">
-                <TopographyProperties fileName="DEM.mp#"/>
-            </Topography>
-            <DEM_properties createTopography="1">
-                <DEMGenerator caseDEM="5" outputFileName="DEM.mp#">
-                    <DEM_5 dataEncoding="0" dataFormat="8" fileName="dtm.bin"/>
-                </DEMGenerator>
-            </DEM_properties>
-        </Soil>
-        <LatLon altitude="%s" latitude="%s" longitude="%s"/>
-    </Maket>
-</DartFile>
-"""
-    paramfilename = '%s/simulations/%s/input/phase.xml' % (DART.SDIR, args['simulation'])
-    VLAB.logger.info('writing phase paramfile "%s"' % paramfilename)
-    # defaults?
-    q = {
-      'cellX'     : '1.0',
-      'cellZ'     : '1.0',
-      'SceneDimX' : '30.0',
-      'SceneDimY' : '30.0',
-      'alt'       : '0.7008782',
-      'lat'       : '47.478707259',
-      'lon'       : '8.363187271'
-    }
-    # overwrite defaults
-    for a in args:
-      if a == 'something_to_translate':
-        q['translated_something'] = args[a]
-      else:
-        q[a] = args[a]
-    fp = open(paramfilename, 'w')
-    fp.write(mstr % (
-      q['cellX'],
-      q['cellZ'],
-      q['SceneDimX'],
-      q['SceneDimY'],
-      q['alt'],
-      q['lat'],
-      q['lon']))
+    fp.write(sstr % (args['fileName'].rstrip(".xml"), args['fileName'].rstrip('.xml'), groupstr))
     fp.close()
 
   def doProcessing(self, pm, args):
@@ -2314,62 +2540,94 @@ class DART:
     for a in args:
       if a == VLAB.P_3dScene:
         if args[a] == VLAB.K_RAMI:
-          q['simulation'] = 'Rami'
-        elif args[a] == VLAB.K_LAEGEREN:
-          q['simulation'] = 'Laegeren'
+          q['simulation'] = 'HET01_DIS_UNI_NIR_20'
+        elif args[a] == VLAB.K_LAEGERN:
+          q['simulation'] = 'Laegern'
+        elif args[a] == VLAB.K_THARANDT:
+          q['simulation'] = "Tharandt"
       elif a == VLAB.P_ViewingAzimuth:
-        # FIXME: do we have to convert?
         q['va'] = args[a]
       elif a == VLAB.P_ViewingZenith:
-        # FIXME: do we have to convert?
         q['vz'] = args[a]
+      elif a == VLAB.P_IlluminationAzimuth:
+        q['sa'] = args[a]
+      elif a == VLAB.P_IlluminationZenith:
+        q['sz'] = args[a]
+      elif a == VLAB.P_Bands:
+        q['bands'] = args[a]
+      elif a == VLAB.P_ScenePixel:
+        q['pixelSize'] = args[a]
       else:
         q[a] = args[a]
 
-    # FIXME: "smoke test" - try running complete with the pre-provided inputs
+    # 1. Create the DART scene
+    # 1. a. Copy DART original input file to a new folder
+    q['simulationName'] = q['simulation'] + "_run"
+    VLAB.copyDir(VLAB.path.join(DART.SDIR, q['simulation']), VLAB.path.join(DART.SDIR, q['simulationName']))
+
+    # 1. b. Update the DART input files with parameters from GUI
+    # In maket change the pixel size
+    maket = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "maket.xml")
+    VLAB.XMLEditNode(maket, "CellDimensions", ["x", "z"], [q['pixelSize']]*2)
+    # In direction change the Sun viewving angle
+    direction = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "directions.xml")
+    VLAB.XMLEditNode(direction, "SunViewingAngles",
+                     ["sunViewingAzimuthAngle", "sunViewingZenithAngle"],
+                     [q['sa'], q['sz']])
+    # In direction set ifCosWeighted and numberOfPropagationDirections attributes
+    VLAB.XMLEditNode(direction, "Directions",
+                     ["ifCosWeighted", "numberOfPropagationDirections"],
+                     ["1", "100"])
+    # In direction set viewing direction
+    VLAB.XMLAddNode(direction, "Directions",
+                    ["AddedDirections", "ZenithAzimuth", "Square", "DefineOmega"],
+                    {"AddedDirections": {"attribute":
+                                         ["directionType", "ifSquareShape", "imageDirection"],
+                                         "value": ["0", "1", "1"],
+                                         "parent":"Directions"},
+                     "ZenithAzimuth": {"attribute":
+                                       ["directionAzimuthalAngle", "directionZenithalAngle"],
+                                       "value": [q['va'], q['vz']],
+                                       "parent":"AddedDirections"},
+                     "Square": {"attribute": ["widthDefinition"], "value": ["0"],
+                                "parent":"AddedDirections"},
+                     "DefineOmega": {"attribute": ["omega"], "value": ["0.001"], "parent":"Square"}
+                    }
+                   )
+    # In phase force the radiance to be stored (could be not selected)
+    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
+    VLAB.XMLEditNode(phase, "BrfProductsProperties", "luminanceProducts", "1")
+    # In phase change the spectral bands
+    if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
+      # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
+      bands = VLAB.getBandsFromGUI(q['bands'])
+      VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
+                                 ["deltaLambda", "meanLambda"],
+                                 bands, spectralBands=True)
+      # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
+      coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
+      VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=False)
+    else:
+      bands = [None]
+      VLAB.logger.info("*********************************************************************************")
+      VLAB.logger.info("* WARNING: RAMI scene cannot be multiband according to the RAMI scene definition. *")
+      VLAB.logger.info("*********************************************************************************")
+
+    # 2. a. Run DART direction module
     cmd = {
       'linux' : {
-        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDART_complet.sh', q['simulation']],
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-directions.sh', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
         'env'     : None,
         },
       'windows'   : {
-        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
         'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-       }
-    }
-    VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
-
-    # 1. Create a DART simulation with # of directions=100 and ifCosWeighted=1
-    # self._writeDirFile(q)
-    # self._writePhaseFile(q)
-    # self._writeMaketFile(q)
-
-    # 2. a. Run direction.exe
-    cmd = {
-      'linux' : {
-        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux',
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/LancementDirections.sh', q['simulation']],
-        'stdin'   : None,
-        'stdout'  : None,
-        'stderr'  : None,
-        'env'     : None,
-        },
-      'windows'   : {
-        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/1_directions.bat', q['simulation']],
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-directions.bat', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2381,40 +2639,41 @@ class DART:
 
     # 2. b. Get the first two cols (sz, sa) where sz < 70 deg - use as sequence
     zlist = []; alist = []
-    for row in VLAB.valuesfromfile('%s/simulations/%s/output/directions.txt' % (DART.SDIR, q['simulation'])):
+    for row in VLAB.valuesfromfile('%s/%s/output/directions.txt' % (DART.SDIR, q['simulationName'])):
       (sz, sa, _, _)  = row
       if (sz < 70.0):
         zlist.append(sz); alist.append(sa)
-    zparam = '\'%s\'' % ";".join('%.2f' % x for x in zlist)
-    aparam = '\'%s\'' % ";".join('%.2f' % x for x in alist)
+    zparam = ";".join('%.2f' % x for x in zlist)
+    aparam = ";".join('%.2f' % x for x in alist)
+
+    # 2. c. Edit simulation directions.xml file to set the number of direcions to 200
+    VLAB.XMLEditNode(direction, "Directions", "numberOfPropagationDirections", "200")
  
-    seqparams = {
-       'name' : 'SunDirections',
- 'simulation' : q['simulation'],
-    'entries' : [
-  [aparam, 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
-  [zparam, 'Directions.SunViewingAngles.sunViewingZenithAngle']
-  ],
-        'lut' : 'true'
-    }
+    # 2. d. Write sequence file
+    seqparams = {'fileName'   : 'SunDirections.xml',
+                 'simulation' : q['simulationName'],
+                 'entries'    : [[aparam, 'Directions.SunViewingAngles.sunViewingAzimuthAngle'],
+                                 [zparam, 'Directions.SunViewingAngles.sunViewingZenithAngle']
+                                ]
+                }
     self._writeSeqFile(seqparams)
 
-    # 3. Run the sun directions sequence with number of directions=200
-    # NOTE: command-line argument must be relative to 'sequence' directory
+
+    # 3. a. Run DART to pregenerate phase, maket, (3D obj..) before the sequence
     cmd = {
       'linux' : {
-        'cwd'     : None,
-        'exe'     : '/bin/sh',
-        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/linux/DART_Lancement_Sequence.sh', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-full.sh', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
         'env'     : None,
         },
       'windows'   : {
-        'cwd'     : None,
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
         'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_local/tools/lignes_commande/windows/sequenceur.bat', '%s/%s.xml' % (seqparams['simulation'], seqparams['name'])],
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -2422,20 +2681,59 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    #VLAB.doExec(cmd)
+    VLAB.doExec(cmd)
 
-    # 4.a. Select the values of cz < 70 to get angles.rpv.2.dat for libradtran
-    rpvlist = []
-    for seqSubDir in VLAB.listdir('%s/simulations/%s/sequence/' % (DART.SDIR, q['simulation'])):
-      for row in VLAB.valuesfromfile('%s/simulations/%s/sequence/%s/output/directions.txt' % (DART.SDIR, q['simulation'], seqSubDir)):
-        (sz, sa, _, _)  = row
-        if (sz < 70.0):
-          # FIXME: this is probably not exacly right
-          rpvlist.append('%.2f\t%.2f\t%2f\t%2f' % (sz, sa, 0.0, 0.0))
-    # write the libradtran input file
-    fp = open('%s/simulations/%s/output/%s' % (DART.SDIR, q['simulation'], q['rpvfile']), 'w')
-    fp.write("\n".join(rpvlist))
-    fp.close()
+    # 3. b. Run the sun directions sequence with number of directions=200
+    cmd = {
+      'linux' : {
+        'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux',
+        'exe'     : '/bin/bash',
+        'cmdline' : ['$HOME/.beam/beam-vlab/auxdata/dart_lin64/tools/linux/dart-sequence.sh', q['simulationName'], seqparams['fileName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+        },
+      'windows'   : {
+        'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
+        'exe'     : 'cmd.exe',
+        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-sequence.bat', q['simulationName'], seqparams['fileName']],
+        'stdin'   : None,
+        'stdout'  : None,
+        'stderr'  : None,
+        'env'     : None,
+       }
+    }
+    VLAB.logger.info('command: %s' % cmd)
+    VLAB.doExec(cmd)
+
+    # 4.a. Select the values of sz < 70 to get BANDX.angles.rpv.2.dat
+    # for each spectral band in the DART simulation
+    rpvlist = None
+    rpvFiles = []
+    seqDir = VLAB.path.join(DART.SDIR, q['simulationName'], "sequence")
+    for bandNumber in xrange(len(bands)):
+      rpvlist = []
+      for seqSubDir in VLAB.listdir(seqDir):
+        dartBRF = VLAB.path.join(Dart_DARTSimulation(seqSubDir, seqDir).getIterMaxPath('BAND' + str(bandNumber)), "brf")
+        dirFile = VLAB.path.join(seqDir, seqSubDir, "input", "directions.xml")
+        sa = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingAzimuthAngle"))
+        sz = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingZenithAngle"))
+        for row in VLAB.valuesfromfile(dartBRF):
+          (vz, va, brf)  = row
+          if (vz < 70.0):
+            # Convert DART output to librattran input
+            vz, va = self.dartSZA2libradtranSZA(vz, va)
+            rpvlist.append('%.2f\t%.2f\t%2f\t%2f\t%2f' % (sz, sa, vz, va, brf))
+      # write the libradtran input file
+      fname = VLAB.path.join(DART.SDIR,
+                             q['simulationName'],
+                             "BAND" + str(bandNumber) + "." + q['rpvfile'])
+      rpvFiles.append(fname)
+      fp = open(fname, "w")
+      fp.write("\n".join(rpvlist))
+      fp.close()
+    q['rpvFiles'] = rpvFiles
 
     # 4.b. Run libradtran
     # FIXME: this needs to eventually use the same routine that librat uses
@@ -2446,11 +2744,11 @@ class DART:
     # collect result into a consolidated data cube
     #
     dargs = {
-      'di_simName'   : q['simulation'],
+      'di_simName'   : q['simulationName'],
       'di_isSeq'     : False,
       'di_sequence'  : 'sequence_apex',
       'di_outfname'  : 'DartOutput',
-      'ii_iLevel'    : Dart_DataLevel.SENSOR,
+      'ii_iLevel'    : Dart_DataLevel.BOA,
       'ii_isUsrDir'  : False,
       'ii_dirNum'    : 0,
       'ii_dType'     : Dart_DataUnit.RADIANCE,
@@ -2525,13 +2823,17 @@ class Librat_dobrdf:
     if q['twist']:
       cdata += ' %s = %s;\n' %('geometry.twist', q['twist'])
     if q['fov']:
-      cdata += ' %s = %s;\n' %('geometry.fov', q['fov'])
+      cdata += ' %s = %s;\n' %('geometry.fieldOfView', q['fov'])
     if 'lidar' in q:
       if q['lidar']:
         cdata += ' %s = %s;\n' %('lidar.binStep', q['binStep']) \
                + ' %s = %s;\n' %('lidar.binStart', q['binStart']) \
                + ' %s = %s;\n' %('lidar.nBins', q['nBins'])
     cdata += '}'
+
+    if q['fov'] and q['ideal']:
+      raise Exception("camera: setting both 'ideal area' and 'fov' is not allowed")
+
     fp = open(camFile, 'w')
     try:
       fp.write(cdata)
@@ -2559,7 +2861,7 @@ class Librat_dobrdf:
 + ' %s = "%.1f";\n' %('geometry.twist', float(q['twist']))
 
     key = "sideal"
-    if key in q: ldata += '%s = %s\n' %('geometry.ideal', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
+    if key in q: ldata += '%s = %s\n' %('geometry.idealArea', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "slook_xyz"
     if key in q: ldata += '%s = %s\n' %('geometry.lookat', ', '.join(map(str, map('%.1f'.__mod__, q[key]))))
     key = "sboom"
@@ -2897,7 +3199,7 @@ class Librat_dolibradtran:
 
       if not VLAB.fileExists(libradtran_ip):
         libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
-        defaultLRT(libradtranfp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet)
+        self.defaultLRT(libradtranfp, solar_file, q['dens_column'], q['correlated_k'], q['rte_solver'], q['rpvfile'], q['deltam'], q['nstr'], q['zout'], q['output_user'], q['quiet'])
 
         if q['v']:
           sys.stderr.write('%s: doing ip file %s\n'%(sys.argv[0],libradtran_ip))
@@ -2917,7 +3219,7 @@ class Librat_dolibradtran:
         libradtranfp.write('phi ' + ' '.join(map(str, vaa)) + '\n')
 
         # add sz angles
-        if lat and lon and time:
+        if q['lat'] and q['lon'] and q['time']:
           libradtranfp.writelines('latitude ' + q['lat'] + '\n')
           libradtranfp.writelines('longitude ' + q['lon'] + '\n')
           libradtranfp.writelines('time ' + q['time'] + '\n')
@@ -2927,7 +3229,7 @@ class Librat_dolibradtran:
           libradtranfp.write('phi0 ' + ' '.join(map(str, saa)) + '\n')
 
           # write out wavelengths i.e. min and max. Step is determined by step in solar file i.e. 1nm default
-          libradtranfp.write('wavelength ' + np.str(np.int(wb.min())) + ' ' + np.str(np.int(wb.max())) + '\n')
+          libradtranfp.write('wavelength ' + str(int(wb.min())) + ' ' + str(int(wb.max())) + '\n')
           libradtranfp.flush()
 
           cmd = LIBRADTRAN + ' < ' + libradtran_ip + ' > ' + libradtran_op
@@ -3024,7 +3326,7 @@ class Librat_drivers:
 
       q['angles'] = [[0. for col in range(4)] for row in range(len(q['vzz'])*len(q['vzz']))]
 
-      for n, va in enumerate(data['vaa']):
+      for n, va in enumerate(q['vaa']):
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),0] = q['vzz']
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),1] = q['vz']
         q['angles'][n*len(q['vzz']):(n+1)*len(q['vzz']),2] = q['sz']
@@ -3036,8 +3338,10 @@ class Librat_drivers:
       # all those outside the angle range and then take the first n.
       nn = q['nsamples']*2
 
-      # FIXME: temporarily set a particular seed for reproducibility
-      rState = VLAB.rndInit(17)
+      if VLAB.CONF_RND_REPRODUCE:
+        rState = VLAB.rndInit(17)
+      else:
+        rState = VLAB.rndInit()
 
       # view angles first
       u1    = [VLAB.rndNextFloat(rState) for i in range(nn)]
@@ -3235,8 +3539,8 @@ class Librat_rpv_invert:
       else:
         q[a] = args[a]
 
-    wb = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
-    data = VLAB.valuesfromfile('%s/%s' (LIBRAT.SDIR, q['dataf']), transpose=True)
+    wb   = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
+    data = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['dataf']),  transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
@@ -3301,7 +3605,7 @@ class Librat_rpv_invert:
         if q['plotfile']:
           opplot = q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png'
         else:
-          opplot = dataf + '.inv.wb.' + str(wbNum) + '.png'
+          opplot = q['dataf'] + '.inv.wb.' + str(wbNum) + '.png'
 
         if q['verbose']: sys.stderr.write('%s: plotting to %s\n' % (sys.argv[0], opplot))
 
@@ -3653,7 +3957,7 @@ class LIBRAT:
 'samplingPattern' : 'circular',
   'lookFile' : 'dhp.locations.ondem.dat',
     'angles' : 'angles.dhp.dat',
-       'fov' : 150,
+       'fov' : False,
        'rpp' : 8,
    'npixels' : 4000000,
      'opdir' : 'DHP_TEST'
@@ -3674,7 +3978,7 @@ class LIBRAT:
          'brdf' : True,
         'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
           'dhp' : True,
-          'fov' : 150,
+          'fov' : False,
          'hips' : True,
         'ideal' : (300., 300.),
           'lat' : 50, 
@@ -3684,8 +3988,8 @@ class LIBRAT:
             'n' : 1000,
          'nice' : 19,
       'npixels' : 10000,
-          'obj' : 'HET01_DIS_UNI_NIR_20.obj',
-        'opdir' : 'dart.rami.TOA',
+          'obj' : 'DEFAULT_OBJ',
+        'opdir' : 'DEFAULT_DIR',
     'paramfile' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
          'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all',
      'plotfile' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.3params',
@@ -3714,11 +4018,29 @@ class LIBRAT:
           q['wb'] = 'wb.OLCI.dat'
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
-      elif a == 'anotherexample':
-        if args[a] == 'somethingtobetranslated':
-          q['thingy'] = 'translatedthingy'
-        else:
-          q['thingy'] = 'defaultthingy'
+      elif a == 'OutputDirectory':
+        q['opdir'] = args[a]
+      elif a == 'OutputPrefix':
+        q['obj'] = args[a]
+
+    q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
+    q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
+    q['plot']      = '%s/rpv.%s.dat.all' %(q['opdir'],q['obj'])
+    q['plotfile']  = '%s/result.%s.brdf.3params' %(q['opdir'],q['obj'])
+    q['root']      = '%s/result.%s' %(q['opdir'],q['obj'])
+    q['rpv']       = '%s/%s.brdf.dat.3params.dat' %(q['opdir'],q['obj'])
+
+    for a in ['dataf', 'paramfile','plot','plotfile','root', 'rpv']:
+      VLAB.logger.info ('%s: q["%s"] is %s' % (me, a, q[a]))
+
+    if VLAB.osName().startswith('Windows'):
+      fullobjpath = '%s/%s' % (VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
+    else:
+      fullobjpath = '%s/%s' % (VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
+    
+    VLAB.logger.info ('%s: ensuring "%s" exists' %(me, fullobjpath))
+    if not VLAB.path.exists(fullobjpath):
+      VLAB.mkDirPath(fullobjpath)
 
     VLAB.logger.info('%s: instantiating objects' % (me))
     drivers      = Librat_drivers()
