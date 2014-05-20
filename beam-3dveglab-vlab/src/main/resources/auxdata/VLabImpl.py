@@ -827,7 +827,7 @@ class VLAB:
     else:
       cmd=cmdrec['linux']
     exe = VLAB.expandEnv(cmd['exe'])
-    if not VLAB.fileExists(exe):
+    if not (VLAB.fileExists(exe) or osName.startswith('Windows')):
       raise RuntimeError('Cannot find exe "%s"' % exe)
     cmdLine.append(exe)
     for i in cmd['cmdline']:
@@ -2892,6 +2892,8 @@ class Librat_dobrdf:
 
   def _writeGrabFile(self, grabFile, args):
     gFilePath = VLAB.getFullPath(grabFile)
+    if VLAB.osName().startswith('Windows'): 
+      gFilePath = gFilePath.replace("\\", "\\\\")
     # 'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
     gdata = """cmd = {
   'linux' : {
