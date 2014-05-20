@@ -69,10 +69,11 @@ template = '''
     </tr>
     <tr>
      <td>&nbsp;&nbsp; <a href=
-     "http://www.geo.uzh.ch/en/units/rsl/research/lidar-remote-sensing-lidarlab/ongoing-projects/3dveglab">
+     "http://www.geo.uzh.ch/microsite/3dveglab/index.html">
      [ Project ]</a>&nbsp;&nbsp; <a href="consortium">[ Consortium
      ]</a>&nbsp;&nbsp; <a href="people">[ People ]</a>&nbsp;&nbsp; <a href=
-     "documents">[ Documents ]</a>&nbsp;&nbsp; <a href="software">[
+     "documents">[ Documents ]</a>&nbsp;&nbsp; <a href="sites">[
+     Sites ]</a>&nbsp;&nbsp; <a href="software">[
      Software ]</a>&nbsp;&nbsp;</td>
     </tr>
    </table>
@@ -121,18 +122,48 @@ template = '''
 
 pageindex = '''
     <b>An integrated BEAM-plugin for ground-validated 3D vegetation
-     modeling</b><br />
-     <table border="0">
-      <tr>
-       <td><img alt="RAMI floating spheres" height="150" src=
-       "http://rami-benchmark.jrc.ec.europa.eu/HTML/RAMI3/EXPERIMENTS3/HETEROGENEOUS/FLOATING_SPHERES/SOLAR_DOMAIN/DISCRETE/MISCELLANEOUS/HET01-side.gif" /><br />
-       <img alt="RAMI azimuth" height="150" src=
-       "http://rami-benchmark.jrc.ec.europa.eu/HTML/RAMI3/EXPERIMENTS3/HETEROGENEOUS/FLOATING_SPHERES/SOLAR_DOMAIN/DISCRETE/MISCELLANEOUS/XY_azimuth_DIS.gif" />
-       <br /></td>
-       <td><img alt="Veg lab model" height="300" src=
-       "http://www.geo.uzh.ch/uploads/tx_templavoila/3DvegLab_ALS_Laeg.png" /></td>
-      </tr>
-     </table>
+     modeling</b><br />  
+<figure>
+       <img alt="3d Reconstruction" height="300" src=
+       "graphics/3D_forest_reconstruction.jpg" />
+      <center> <caption> <small> <i>From: Schneider, F.; Leiterer, R.; Morsdorf, F.; Gastellu-Etchegorry, J.-P.; Lauret, N.; Pfeifer, N. & Schaepman, M. E. Simulating imaging spectrometer data: 3D forest modeling based on LiDAR and in situ data Remote Sensing of Environment, 2014, in review.</small></i></caption> </center>
+</figure>
+  <b>Abstract</b><br />
+The up-coming generation of ESA operational missions - the Sentinels -
+will enhance the capability to observe the vegetated surfaces of the
+Earth.  Nevertheless the quantitative interpretation of the Earth
+Observation (EO) signal is a challenging task because vegetation is a
+complex and dynamic medium. Effects of horizontal and vertical
+heterogeneities and asymmetrical structures of vegetation as well as
+their high temporal dynamics are often neglected in the algorithm
+development, calibration and validation procedures.  To better
+understand the scientific basis as well as the potential of future and
+upcoming missions we need detailed knowledge about the observed medium
+and the processes governing the radiative transfer. The combination of
+a realistic description of the medium in high detail together with a
+validated radiative transfer model will create a virtual lab mimicking
+reality which is capable to assess the potential of novel observation
+systems as well as to develop new algorithms and understand scaling
+issues from point measurements to the landscape. The advancement of
+ground based LiDAR systems now provides information that helps
+describing and reconstructing forest stands in 3D down to the
+leaf/shoot level. Such detailed representations of the canopy
+structure and the distribution of leaves/branches within a 3D
+radiative transfer model will thus allow the simulation of current and
+future missions in a controlled but realistic environment. It would
+thus offer an opportunity to test and develop dedicated applications
+to integrate EO into Earth system modeling.  The 3D-VegtationLab will
+develop a concept for land surface reference sites, which will be
+demonstrated for two selected pilot super-sites as a scientific
+support tool. The tool will include a standardized and comprehensive
+multi-temporal and multi-scale benchmark dataset together with a
+scientific toolbox based on a radiative transfer model. The
+3D-Vegetation Lab will provide the scientific community with a common
+benchmarking tool to develop, validate and compare biophysical EO
+products from space-borne missions with special attention to prepare
+for upcoming Sentinels.  The 3D-VegetationLab is financed by ESA's
+STSE funding scheme, and partners are University College of London
+(UK), TU Wien (AUT), CESBIO Toulouse (FR) and Netcetera (CH).
 '''
 
 pageconsortium = '''
@@ -266,27 +297,48 @@ pagedocuments = '''
      Scipal, D. Fernandez-Prieto</font><br />
 '''
 
+pagesites = '''
+<form enctype="text/html" method="post" action="http://www.etc.ch/bin/cgiwrap/jason/registration">
+<h3>Site Download</h3>
+
+Please provide your email address so that we may keep you informed of the
+latest updates to 3D Vegetation Lab activities.<br>
+<br>
+
+Email:
+<input type="email" name="regemail">
+<input type="submit" value="Go to Download Page">
+<input type="hidden" name="cmd" value="register">
+</form>
+'''
+
 pagesoftware = '''
      <h2>BEAM toolkit plugin</h2>
-     An <a href="https://github.com/netceteragroup/esa-beam">integrated 
-     plugin module</a> is available for version 4.11 of the <a 
-     href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth 
+     An <a href="https://github.com/netceteragroup/esa-beam">integrated
+     plugin module</a> is available for version 4.11 of the <a
+     href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth
      Observation Toolbox and Development Platform</a>
+     <br>
+     <br>
+     <b>Note:</b> <i>This toolbox software plugin is not yet final, but
+     a current development snapshot.</i>
 
      <h3>Binary Installation</h3>Binary installation of the 3D Vegetation
-     Lab plugin is automated by a standalone Java program and involves:
+     Lab plugin is automated by a command line Java installer (step 5 below)
+     which does the following:
 
      <ul>
-      <li>copying/replacing the plugin (jar) in $HOME/beam-4.11/modules</li>
+      <li>copy/replace the 3D VegLab plugin (jar) in BEAM's
+      <tt>${BEAMHOME}/beam-4.11/modules</tt></li>
 
-      <li>first-time run to create/unpack BEAM's
-      ${HOME}/.beam/beam-vlab/auxdata/</li>
+      <li>first-time batch execution to create/unpack data in BEAM's
+      <tt>${HOME}/.beam/beam-vlab/auxdata/</tt></li>
 
-      <li>fetch/unpack latest versions of dependent 3rd party software into
-      BEAM's auxdata directory</li>
+      <li>fetch/unpack 3rd party dependent software (e.g. DART, librat,
+      libRADTRAN) into BEAM's <tt>${HOME}/.beam/beam-vlab/auxdata</tt></li>
 
-      <li>create command line wrappers in the bin directory for batch
-      operation</li>
+      <li>create command line wrapper scripts for batch operation BEAM's
+      <tt>${BEAMHOME}/beam-4.11/bin/</tt></li>
      </ul>
 
      <h3>Binary Installation (windows)</h3>
@@ -330,6 +382,7 @@ pages = (
  ('consortium/index.html', pageconsortium),
  ('people/index.html',     pagepeople),
  ('documents/index.html',  pagedocuments),
+ ('sites/index.html',      pagesites),
  ('software/index.html',   pagesoftware)
 )
 
