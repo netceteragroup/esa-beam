@@ -72,9 +72,9 @@ template = '''
      "http://www.geo.uzh.ch/microsite/3dveglab/index.html">
      [ Project ]</a>&nbsp;&nbsp; <a href="consortium">[ Consortium
      ]</a>&nbsp;&nbsp; <a href="people">[ People ]</a>&nbsp;&nbsp; <a href=
-     "documents">[ Documents ]</a>&nbsp;&nbsp; <a href="software">[
-     Software ]</a>&nbsp;&nbsp; <a href="site">[
-     Site ]</a>&nbsp;&nbsp;</td>
+     "documents">[ Documents ]</a>&nbsp;&nbsp; <a href="sites">[
+     Sites ]</a>&nbsp;&nbsp; <a href="software">[
+     Software ]</a>&nbsp;&nbsp;</td>
     </tr>
    </table>
    <hr />
@@ -297,27 +297,48 @@ pagedocuments = '''
      Scipal, D. Fernandez-Prieto</font><br />
 '''
 
+pagesites = '''
+<form enctype="text/html" method="post" action="http://www.etc.ch/bin/cgiwrap/jason/registration">
+<h3>Site Download</h3>
+
+Please provide your email address so that we may keep you informed of the
+latest updates to 3D Vegetation Lab activities.<br>
+<br>
+
+Email:
+<input type="email" name="regemail">
+<input type="submit" value="Go to Download Page">
+<input type="hidden" name="cmd" value="register">
+</form>
+'''
+
 pagesoftware = '''
      <h2>BEAM toolkit plugin</h2>
-     An <a href="https://github.com/netceteragroup/esa-beam">integrated 
-     plugin module</a> is available for version 4.11 of the <a 
-     href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth 
-     Observation Toolbox and Development Platform</a> Please note that the toolbox software is not yet final, but a current development snapshot.
+     An <a href="https://github.com/netceteragroup/esa-beam">integrated
+     plugin module</a> is available for version 4.11 of the <a
+     href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth
+     Observation Toolbox and Development Platform</a>
+     <br>
+     <br>
+     <b>Note:</b> <i>This toolbox software plugin is not yet final, but
+     a current development snapshot.</i>
 
      <h3>Binary Installation</h3>Binary installation of the 3D Vegetation
-     Lab plugin is automated by a standalone Java program and involves:
+     Lab plugin is automated by a command line Java installer (step 5 below)
+     which does the following:
 
      <ul>
-      <li>copying/replacing the plugin (jar) in $HOME/beam-4.11/modules</li>
+      <li>copy/replace the 3D VegLab plugin (jar) in BEAM's
+      <tt>${BEAMHOME}/beam-4.11/modules</tt></li>
 
-      <li>first-time run to create/unpack BEAM's
-      ${HOME}/.beam/beam-vlab/auxdata/</li>
+      <li>first-time batch execution to create/unpack data in BEAM's
+      <tt>${HOME}/.beam/beam-vlab/auxdata/</tt></li>
 
-      <li>fetch/unpack latest versions of dependent 3rd party software into
-      BEAM's auxdata directory</li>
+      <li>fetch/unpack 3rd party dependent software (e.g. DART, librat,
+      libRADTRAN) into BEAM's <tt>${HOME}/.beam/beam-vlab/auxdata</tt></li>
 
-      <li>create command line wrappers in the bin directory for batch
-      operation</li>
+      <li>create command line wrapper scripts for batch operation BEAM's
+      <tt>${BEAMHOME}/beam-4.11/bin/</tt></li>
      </ul>
 
      <h3>Binary Installation (windows)</h3>
@@ -356,64 +377,13 @@ ${HOME}/beam-4.11/bin/visat
 </pre>
 '''
 
-pagesite = '''
-     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
-     </script>
-     <script>
-         function random() {
-             return Math.floor(Math.random() * 9 + 1)
-         }
-         var a = random();
-         var b = random();
-
-         var email_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-         var email = "<tr><td><label for=\\"email\\">E-Mail</label></td><td> \
-                      <input type=\\"text\\" id=\\"email\\" value=\\"\\"/> \
-                      </td><td id=\\"em_error\\"></td></tr>";
-         var anti_spam = "<tr><td><label for=\\"anti_spam\\">The sum of " + a +
-                         " and " + b + " is</label></td><td><input \
-                         type=\\"text\\" id=\\"anti_spam\\" value=\\"\\"/> \
-                         </td><td id=\\"as_error\\"></td></tr>";
-
-         $(document).ready(function () {
-             $("#download-form").prepend(email, anti_spam);
-             $("#download").click(function () {
-                 if (!email_regex.test($("#email").val())) {
-                     $("#em_error").text("Invalid.");
-                     return false;
-                 } else $("#em_error").text("");
-                 if ($("#anti_spam").val() != a + b) {
-                     $("#as_error").text("Wrong answer. Try again.");
-                     return false;
-                 } else $("#as_error").text("");
-                 $.get("<e-mail_db>",
-                       { email: $("#email").val(),
-                         anti_spam: $("#anti_spam").val(), a: a, b: b }
-                      );
-                 return true;});});
-     </script>
-     <noscript>
-       The e-mail address can't be submitted without JavaScript enabled.
-     </noscript>
-     <form action="<real_download>">
-         <table id="download-form" border="0">
-             <tr>
-                 <td></td>
-                 <td><input type="submit" id="download" value="Download"/></td>
-                 <td></td>
-             </tr>
-         </table>
-     </form>
-'''
-
 pages = (
  ('index.html',            pageindex),
  ('consortium/index.html', pageconsortium),
  ('people/index.html',     pagepeople),
  ('documents/index.html',  pagedocuments),
- ('software/index.html',   pagesoftware),
- ('site/index.html',       pagesite)
+ ('sites/index.html',      pagesites),
+ ('software/index.html',   pagesoftware)
 )
 
 class UTIL:
