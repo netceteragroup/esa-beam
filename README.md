@@ -71,12 +71,13 @@ There are two modes of development, which are described in [a separate README](h
  2. [Development for BEAM developers](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/README.md#for-it-developers) (in Java and python - full development, including Java plugin infrastructure, help files, support scripts, etc.)
 
 
-BEAM Plugin Contributing Authors
+BEAM 3DVegLab Plugin Contributing Authors
 -----------------------------------------
 * Mat Disney
 * Cyrill Schenkel
 * Fabian Schneider
 * Nicolas Lauret
+* Tristan Gregoire
 * Daniel Kuekenbrink 
 * Joshy Cyriac 
 * Marcel Kessler 
