@@ -219,7 +219,7 @@ public class Install {
   private static void runDARTinstaller(String DARTfor3DVegLab, String[] args)
     throws MalformedURLException, IOException {
     // Load URL from String argument
-    URL url = new URL("file://" + DARTfor3DVegLab);
+    URL url = new URL("file:" + DARTfor3DVegLab);
     // Init the URLClassLoader
     URLClassLoader URLcl = new URLClassLoader(new URL[] {url});
 
@@ -379,18 +379,19 @@ public class Install {
       }
 
       // Test if targetName is a DART archive
-      if (new File(targetName).getName().startsWith("DART")) {
+      if (new File(targetName).getName().startsWith("DART")
+          && !(System.getProperty("os.name").startsWith("Windows") ^ targetName.endsWith(".zip"))) {
         // Get DART directory
-        String DARTfodler = newPath;
+        String DARTfolder = newPath;
 
         // Get DARTfor3DVegLab.jar path
         String DARTfor3DVegLab = newPath + File.separator + "DARTfor3DVegLab.jar";
 
         // Create arguments array that will be passed to DARTfor3DVegLab.jar
         String[] args = new String[2];
-        args[0] = DARTfodler;
+        args[0] = DARTfolder;
         // /!\ WARNING /!\ Keep this variable up to date and consistent with the dart_scene*.zip
-        args[1] = new File(DARTfodler).getParent() + File.separator + "dart_local";
+        args[1] = new File(DARTfolder).getParent() + File.separator + "dart_local";
 
         // run DART installer
         System.out.println("Running DART installer");
