@@ -20,29 +20,30 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.Thread;
 import java.math.BigInteger;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import java.net.JarURLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Enumeration;
-import java.util.Scanner;
+import java.util.jar.Attributes;
 import java.util.regex.Matcher;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.jar.Attributes;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 public class Install {
   private static final String TYPE_BIN         = "bin";
@@ -55,8 +56,22 @@ public class Install {
   public static void die(String msg) {System.err.println(msg); System.exit(1);}
   public static void fetch(String urlName, String targetName) throws Exception {
       System.out.println("fetch " + urlName + " " + targetName);
-      URL url                 = new URL(urlName);
-      ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+      URL url                 = null;
+      ReadableByteChannel rbc = null;
+      while (rbc == null) {
+        try {
+          url = new URL(urlName);
+          rbc = Channels.newChannel(url.openStream());
+        } catch (Exception e) {
+          // might be trying to fetch from a busy server - sleep and retry
+          System.out.println("got " + e.getMessage() + "\ngc, sleep, and retry...");
+          url = null;
+          rbc = null;
+          // without calling gc(), this seems to loop forever
+          System.gc();
+          Thread.sleep(4000);
+        }
+      }
       FileOutputStream fos    = new FileOutputStream(targetName);
       long nbytes = fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
       fos.close();
