@@ -60,7 +60,7 @@ Once you have started BEAM (visat), use Tools/3D Vegetation Lab Processor to sta
 The BEAM Vegetation Lab plugin relies on the following 3rd party software. Binary snapshots of this software compiled for linux64/win32 platforms are automatically installed by the 3DVegLabInstaller.jar described above
 
 * [librat (Monte Carlo Ray Tracing library)](http://www2.geog.ucl.ac.uk/~plewis/bpms/src/lib/)
-* [DART (Discrete Anisotropic Radiative Transfer)](http://www.cesbio.ups-tlse.fr/us/dart/dart_description.html)
+* [DART (Discrete Anisotropic Radiative Transfer)](http://www.cesbio.ups-tlse.fr/dart/license/en/dartModel.php)
 * [libRadtran (library for radiative transfer)](http://www.libradtran.org/)
 
 
