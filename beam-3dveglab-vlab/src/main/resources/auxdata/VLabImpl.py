@@ -4013,17 +4013,33 @@ class LIBRAT:
 
     # overwrite defaults
     for a in args:
-      if a == 'wb':
-        if args[a] == VLAB.K_SENTINAL2:
+      if a == 'Sensor':
+        if args[a] == VLAB.K_SENTINEL2:
           q['wb'] = 'wb.MSI.dat'
-        elif args[a] == VLAB.K_SENTINAL3:
+          q['wbfile'] = 'wb.MSI.dat'
+        elif args[a] == VLAB.K_SENTINEL3:
           q['wb'] = 'wb.OLCI.dat'
+          q['wbfile'] = 'wb.OLCI.dat'
+        elif args[a] == VLAB.K_MODIS:
+          q['wb'] = 'wb.MODIS.dat'
+          q['wbfile'] = 'wb.MODIS.dat'
+        elif args[a] == VLAB.K_MERIS:
+          q['wb'] = 'wb.MERIS.dat'
+          q['wbfile'] = 'wb.MERIS.dat'
+        elif args[a] == VLAB.K_LANDSAT:
+          q['wb'] = 'wb.LANDSAT.OLI.dat' # OLI or ETM ??
+          q['wbfile'] = 'wb.LANDSAT.OLI.dat'
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
+          q['wbfile'] = 'wb.full_spectrum.1nm.dat'
       elif a == 'OutputDirectory':
         q['opdir'] = args[a]
       elif a == 'OutputPrefix':
         q['obj'] = args[a]
+      elif a == 'Bands':
+        q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
+      elif a == 'DHP_ImageFile':
+        q['dhp'] = args[a] == 'Yes'
 
     q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
     q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
