@@ -72,6 +72,7 @@ class VLAB:
   K_LAEGERN          = 'Laegern'
   K_THARANDT         = 'Tharandt'
   K_RAMI             = 'RAMI'
+  K_USER_DEFINED     = 'User defined (UserDefined.obj)'
 
   K_YES              = 'Yes'
   K_NO               = 'No'
@@ -80,7 +81,8 @@ class VLAB:
   K_SENTINEL3        = 'OLCI (Sentinel 3)'
   K_MODIS            = 'MODIS'
   K_MERIS            = 'MERIS'
-  K_LANDSAT          = 'Landsat'
+  K_LANDSAT_OLI      = 'Landsat (OLI)'
+  K_LANDSAT_ETM      = 'Landsat (ETM)'
 
   K_RURAL            = 'Rural'
   K_MARITIME         = 'Maritime'
@@ -117,10 +119,10 @@ class VLAB:
   model = (
 {'Forward Modeling': (
 {'Model Selection': (
- ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
+ ('3D Scene',          '3dScene',             JCB, (K_RAMI, K_LAEGERN, K_THARANDT, K_USER_DEFINED)),
  ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
- ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT)),
+ ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT_OLI, K_LANDSAT_ETM)),
  ('Bands',             'Bands',               JTF, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10'))},
 {'Viewing Characteristics': (
  ('Zenith',            'ViewingZenith',       JTF, '20.0'),
@@ -152,14 +154,14 @@ class VLAB:
  (),
  ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
- ('Resolution',        'DHP_Resolution',      JTF, 4000000),
+ ('Resolution',        'DHP_Resolution',      JTF, '4000000'),
  ())},
 {'DHP Location': (
  ('X',                 'DHP_X',               JTD, 'not available yet'),
  ('Y',                 'DHP_Y',               JTD, 'not available yet'))},
 {'DHP Properties': (
- ('Zenith',            'DHP_Zenith',          JTD, 'not available yet'),
- ('Azimuth',           'DHP_Azimuth',         JTD, 'not available yet'))},
+ ('Zenith',            'DHP_Zenith',          JTF, '0.0'),
+ ('Azimuth',           'DHP_Azimuth',         JTF, '0.0'))},
 {'DHP Imaging Plane': (
  ('Orientation',       'DHP_Orientation',     JTD, 'not available yet'),
  ('Height(z)',         'DHP_Height',          JTD, 'not available yet'))},
@@ -2793,7 +2795,7 @@ class Librat_dobrdf:
     q = {
       'cam_camera'      : 'simple camera',
       'perspective'     : False,
-      'result_image'    : 'result.hips',
+      'result_image'    : 'result.image',
       'integral_mode'   : 'scattering order',
       'integral'        : 'result',
       'vz'              : 0,
@@ -2804,6 +2806,7 @@ class Librat_dobrdf:
       'boom'            : 1000.,
       'npixels'         : 100000,
       'rpp'             : 1,
+      'fov'             : 180
     }
 
     # overwrite defaults
@@ -3444,8 +3447,6 @@ class Librat_plot:
          'spec' : 'SPECTRAL_TEST/result.laegeren.obj_vz_0.0_va_0.0_sz_34.0_sa_141.0_xyz_150.0_150.0_700.0_wb_wb.full_spectrum.dat.direct',
        'wbfile' : 'wb.full_spectrum.dat',
          'root' : 'OLCI_brdf.scene/result.laegeren.obj',
-      'angfile' : 'angles.OLCI.dat',
-       'wbfile' : 'wb.MSI.dat',
          'spec' : False,
          'brdf' : True
     }
@@ -3986,7 +3987,8 @@ class LIBRAT:
         'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
           'dhp' : True,
           'fov' : False,
-         'hips' : True,
+         'hips' : False,
+        'image' : True,
         'ideal' : (300., 300.),
           'lat' : 50, 
           'lon' : 0,
@@ -4003,7 +4005,7 @@ class LIBRAT:
          'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
        'random' : True,
          'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
-          'rpp' : 4, 
+          'rpp' : 1, 
           'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
           'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
 'samplingPattern' : 'circular',
@@ -4022,33 +4024,69 @@ class LIBRAT:
         if args[a] == VLAB.K_SENTINEL2:
           q['wb'] = 'wb.MSI.dat'
           q['wbfile'] = 'wb.MSI.dat'
+          q['angfile'] = 'angles.MSI.dat'
         elif args[a] == VLAB.K_SENTINEL3:
           q['wb'] = 'wb.OLCI.dat'
           q['wbfile'] = 'wb.OLCI.dat'
+          q['angfile'] = 'angles.OLCI.dat'
         elif args[a] == VLAB.K_MODIS:
           q['wb'] = 'wb.MODIS.dat'
           q['wbfile'] = 'wb.MODIS.dat'
+          q['angfile'] = 'angles.MODIS.dat'
         elif args[a] == VLAB.K_MERIS:
           q['wb'] = 'wb.MERIS.dat'
           q['wbfile'] = 'wb.MERIS.dat'
-        elif args[a] == VLAB.K_LANDSAT:
-          q['wb'] = 'wb.LANDSAT.OLI.dat' # OLI or ETM ?? add a second option
+          q['angfile'] = 'angles.MERIS.dat'
+        elif args[a] == VLAB.K_LANDSAT_OLI:
+          q['wb'] = 'wb.LANDSAT.OLI.dat'
           q['wbfile'] = 'wb.LANDSAT.OLI.dat'
+          q['angfile'] = 'angles.LANDSAT.dat'
+        elif args[a] == VLAB.K_LANDSAT_ETM:
+          q['wb'] = 'wb.LANDSAT.ETM.dat'
+          q['wbfile'] = 'wb.LANDSAT.ETM.dat'
+          q['angfile'] = 'angles.LANDSAT.dat'
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
           q['wbfile'] = 'wb.full_spectrum.1nm.dat'
+          q['angfile'] = 'angles.rami.dat'
       elif a == 'OutputDirectory':
         q['opdir'] = args[a]
-      elif a == 'OutputPrefix':
-        q['obj'] = args[a]
+      elif a == '3dScene':
+        if args[a] == VLAB.K_RAMI:
+          q['obj'] = 'HET01_DIS_UNI_NIR_20.obj'
+          q['lat'] = 0
+          q['lon'] = 0
+        elif args[a] == VLAB.K_LAEGERN:
+          q['obj'] = 'laegeren.obj'
+          q['lat'] = 47.4817
+          q['lon'] = -8.3947
+        elif args[a] == VLAB.K_THARANDT:
+          q['obj'] = 'HET01_DIS_UNI_NIR_20.obj' # FIXME: define when file is available
+          q['lat'] = 50.9833
+          q['lon'] = -13.5808
+        elif args[a] == VLAB.K_USER_DEFINED:
+          q['obj'] = 'UserDefined.obj'
+          # What about q['lat'] and q['lon']?
       elif a == 'Bands':
         q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
       elif a == 'DHP_ImageFile':
         q['dhp'] = args[a] == 'Yes'
       elif a == 'ImageFile':
         q['image'] = args[a] == 'Yes'
-        # vz and va
-        # sz and sa
+      elif a == 'AsciiFile':
+        q['ascii'] = args[a] == 'Yes'
+      elif a == 'ViewingAzimuth':
+        q['va'] = args[a]
+      elif a == 'ViewingZenith':
+        q['vz'] = args[a]
+      elif a == 'DHP_Zenith':
+        q['dhp_vz'] = args[a]
+      elif a == 'DHP_Azimuth':
+        q['dhp_va'] = args[a]
+      elif a == 'IlluminationAzimuth':
+        q['sz'] = args[a]
+      elif a == 'IlluminationZenith':
+        q['sa'] = args[a]
 
     q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
     q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
@@ -4056,6 +4094,10 @@ class LIBRAT:
     q['plotfile']  = '%s/result.%s.brdf.3params' %(q['opdir'],q['obj'])
     q['root']      = '%s/result.%s' %(q['opdir'],q['obj'])
     q['rpv']       = '%s/%s.brdf.dat.3params.dat' %(q['opdir'],q['obj'])
+
+    if 'dhp' in q:
+      q['vz'] = q['dhp_vz']
+      q['va'] = q['dhp_va']
 
     for a in ['dataf', 'paramfile','plot','plotfile','root', 'rpv']:
       VLAB.logger.info ('%s: q["%s"] is %s' % (me, a, q[a]))
@@ -4303,6 +4345,8 @@ else:
                       (self.pmap[nm]).getProperties().setLabel(lbl)
                     else:
                       self.pmap[nm] = self._reqElemFac.createParameter(nm, dflt)
+                    if type(typ) == tuple:
+                      self.pmap[nm].getEditor().setEnabled(typ[1])
                     #p.add((self.pmap[nm]).getEditor().getLabelComponent())
                     p.add(swing.JLabel(lbl+':', swing.SwingConstants.RIGHT))
                     p.add((self.pmap[nm]).getEditor().getComponent())
