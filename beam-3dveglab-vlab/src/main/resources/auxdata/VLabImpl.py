@@ -63,6 +63,7 @@ class VLAB:
 
   JCB                = 'JComboBox'
   JTF                = 'JTextField'
+  JTD                = (JTF, False)
 
   K_LIBRAT           = 'librat'
   K_DART             = 'DART'
@@ -128,12 +129,12 @@ class VLAB:
  ('Zenith',            'IlluminationZenith',  JTF, '20.0'),
  ('Azimuth',           'IlluminationAzimuth', JTF, '0.0'))},
 {'Scene Parameters': (
- ('Pixel Size',        'ScenePixel',          JTF, '8'),
- ('(Alt A) Filename',  'SceneLocFile',        JTF, ''),
- ('(Alt B) XC',        'SceneXC',             JTF, '-50'),
- ('(Alt B) XW',        'SceneXW',             JTF, '50'),
- ('(Alt B) YC',        'SceneYC',             JTF, '100'),
- ('(Alt B) YW',        'SceneYW',             JTF, '100'))},
+ ('Pixel Size',        'ScenePixel',          JTD, 'not available yet'),
+ ('(Alt A) Filename',  'SceneLocFile',        JTD, 'not available yet'),
+ ('(Alt B) XC',        'SceneXC',             JTD, 'not available yet'),
+ ('(Alt B) XW',        'SceneXW',             JTD, 'not available yet'),
+ ('(Alt B) YC',        'SceneYC',             JTD, 'not available yet'),
+ ('(Alt B) YW',        'SceneYW',             JTD, 'not available yet'))},
 {'Atmospheric Parameters': (
  ('CO2 Mixing Ratio',  'AtmosphereCO2',       JTF, '1.6'),
  ('Aerosol Profile',   'AtmosphereAerosol',   JCB, (K_RURAL, K_MARITIME, K_URBAN, K_TROPOSPHERIC)),
@@ -151,17 +152,17 @@ class VLAB:
  (),
  ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
- ('Resolution',        'DHP_Resolution',      JTF, '100x100'),
+ ('Resolution',        'DHP_Resolution',      JTF, 4000000),
  ())},
 {'DHP Location': (
- ('X',                 'DHP_X',               JTF, '0'),
- ('Y',                 'DHP_Y',               JTF, '0'))},
+ ('X',                 'DHP_X',               JTD, 'not available yet'),
+ ('Y',                 'DHP_Y',               JTD, 'not available yet'))},
 {'DHP Properties': (
- ('Zenith',            'DHP_Zenith',          JTF, '20.0'),
- ('Azimuth',           'DHP_Azimuth',         JTF, '0.0'))},
+ ('Zenith',            'DHP_Zenith',          JTD, 'not available yet'),
+ ('Azimuth',           'DHP_Azimuth',         JTD, 'not available yet'))},
 {'DHP Imaging Plane': (
- ('Orientation',       'DHP_Orientation',     JTF, '0'),
- ('Height(z)',         'DHP_Height',          JTF, '0'))},
+ ('Orientation',       'DHP_Orientation',     JTD, 'not available yet'),
+ ('Height(z)',         'DHP_Height',          JTD, 'not available yet'))},
 {'Output Parameters': (
  ('Result file prefix','DHP_OutputPrefix',    JTF, 'RAMI00_'),
  ('Result Directory',  'DHP_OutputDirectory', JTF, ''),
@@ -1363,7 +1364,11 @@ used."""
                 if type(vals) == tuple:
                   self.cmap[nm] = swing.JComboBox(self.vmap[nm])
                 else:
-                  exec('self.cmap[nm] = swing.'+typ+'(self.vmap[nm])')
+                  if type(typ) == tuple:
+                    exec('self.cmap[nm] = swing.'+typ[0]+'(self.vmap[nm])')
+                    self.cmap[nm].setEditable(typ[1])
+                  else:
+                    exec('self.cmap[nm] = swing.'+typ+'(self.vmap[nm])')
                 self.plst.append(nm)
                 p.add(self.cmap[nm])
               else:
@@ -4027,7 +4032,7 @@ class LIBRAT:
           q['wb'] = 'wb.MERIS.dat'
           q['wbfile'] = 'wb.MERIS.dat'
         elif args[a] == VLAB.K_LANDSAT:
-          q['wb'] = 'wb.LANDSAT.OLI.dat' # OLI or ETM ??
+          q['wb'] = 'wb.LANDSAT.OLI.dat' # OLI or ETM ?? add a second option
           q['wbfile'] = 'wb.LANDSAT.OLI.dat'
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
@@ -4040,6 +4045,10 @@ class LIBRAT:
         q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
       elif a == 'DHP_ImageFile':
         q['dhp'] = args[a] == 'Yes'
+      elif a == 'ImageFile':
+        q['image'] = args[a] == 'Yes'
+        # vz and va
+        # sz and sa
 
     q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
     q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
