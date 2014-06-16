@@ -2510,9 +2510,13 @@ class DART:
             displayEnabled="true" hapkeLaunched="false"
             maketLaunched="true" numberParallelThreads="1"
             phaseLaunched="false" prospectLaunched="false"
-            triangleFileProcessorLaunched="false" vegetationLaunched="false"/>
-        <DartLutPreferences generateLUT="false" phiMax="" phiMin=""
-            storeIndirect="false" thetaMax="" thetaMin=""/>
+            triangleFileProcessorLaunched="false"
+            vegetationLaunched="false" zippedResults="false"/>
+        <DartLutPreferences addedDirection="false" coupl="true"
+            generateLUT="false" iterx="true" luminance="true"
+            ordre="true" otherIter="true" phiMax="" phiMin=""
+            reflectance="true" sensor="true" storeIndirect="false"
+            thetaMax="" thetaMin="" toa="true"/>
     </DartSequencerDescriptor>
 </DartFile>
 """
