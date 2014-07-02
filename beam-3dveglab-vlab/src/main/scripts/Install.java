@@ -17,15 +17,19 @@
  */
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.PrintWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.Thread;
@@ -41,6 +45,7 @@ import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -267,6 +272,36 @@ public class Install {
       System.exit(-1);
     }
   }
+
+  private static void makePathsInLibratSceneFilesAbsolute(File dir) throws IOException {
+    for (File fileOrDir : dir.listFiles())
+      if (fileOrDir.isDirectory())
+        makePathsInLibratSceneFilesAbsolute(fileOrDir);
+      else if (fileOrDir.getName().matches("^[a-zA-Z0-9\\-_\\.]+(.obj|.obj.crown|.dem)$"))
+        makePathsInFileAbsolute(fileOrDir);
+  }
+
+  private static void makePathsInFileAbsolute(File destination) throws IOException {
+    File source = makeBackupFile(destination);
+    destination.createNewFile();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(source), "UTF-8"));
+    PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(destination), "UTF-8"));
+    String lineBuffer = null;
+    while ((lineBuffer = reader.readLine()) != null)
+      writer.println(makePathInStringAbsolute(lineBuffer, destination.getParentFile()));
+    reader.close();
+    writer.close();
+  }
+
+  private static String makePathInStringAbsolute(String string, File dir) {
+    return string.replaceAll("\\./", dir.getAbsolutePath());
+  }
+  
+  private static File makeBackupFile(File source) {
+    File destination = new File(source.getPath() + ".bak");
+    source.renameTo(destination);
+    return destination;
+  }
   
   private static void install(String repoURL, String manifestUrl) throws Exception {
     // Get current working directory
@@ -393,8 +428,13 @@ public class Install {
         }
       }
 
+      File target = new File(targetName);
+      String targetFilename = target.getName();
+      
+      if (targetFilename.startsWith("librat_scenes")) makePathsInLibratSceneFilesAbsolute(target.getParentFile());
+
       // Test if targetName is a DART archive
-      if (new File(targetName).getName().startsWith("DART")
+      if (targetFilename.startsWith("DART")
           && !(System.getProperty("os.name").startsWith("Windows") ^ targetName.endsWith(".zip"))) {
         // Get DART directory
         String DARTfolder = newPath;

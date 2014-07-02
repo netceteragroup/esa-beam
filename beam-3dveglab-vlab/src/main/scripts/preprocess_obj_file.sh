@@ -1,7 +1,11 @@
 #!/bin/bash
 
 FILE="$@"
-DIR="$(dirname "$FILE" | sed "s/\\//\\\\\\//g")"
+
+DIR="\\."
+
+# Make paths absoulte:
+# DIR="$(dirname "$FILE" | sed "s/\\//\\\\\\//g")" 
 
 if [ -z "$FILE" ]
 then
