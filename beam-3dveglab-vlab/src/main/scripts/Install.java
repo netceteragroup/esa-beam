@@ -294,7 +294,7 @@ public class Install {
   }
 
   private static String makePathInStringAbsolute(String string, File dir) {
-    return string.replaceAll("\\./", dir.getAbsolutePath());
+    return string.replaceAll("\\./", (dir.getAbsolutePath() + File.separator).replaceAll("\\\\", "\\\\\\\\"));
   }
   
   private static File makeBackupFile(File source) {
