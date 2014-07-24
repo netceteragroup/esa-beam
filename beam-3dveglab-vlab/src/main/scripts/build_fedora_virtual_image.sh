@@ -17,8 +17,8 @@ cd ${IDIR}
 wget https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/${ORIGKS}
 
 cat > ks-patch.txt <<EOF
---- fedora-cloud-base.ks.orig	2014-06-03 17:37:19.288689158 +0200
-+++ fedora-cloud-base.ks	2014-06-03 17:44:29.371312386 +0200
+--- fedora-cloud-base.ks.orig	2014-07-23 17:24:46.000000000 +0200
++++ fedora-cloud-base.ks	2014-07-24 20:31:38.857500161 +0200
 @@ -1,3 +1,6 @@
 +#
 +# https://git.fedorahosted.org/cgit/spin-kickstarts.git/plain/fedora-cloud-base.ks
@@ -26,26 +26,31 @@ cat > ks-patch.txt <<EOF
  # This is a basic Fedora 21 spin designed to work in OpenStack and other
  # private cloud environments. It's configured with cloud-init so it will
  # take advantage of ec2-compatible metadata services for provisioning ssh
-@@ -30,22 +33,34 @@
+@@ -30,9 +33,13 @@
  
  zerombr
  clearpart --all
 -part / --size 3000 --fstype ext4
--
--%include fedora-repo.ks
 +part / --size 25000 --fstype ext4
  
+-%include fedora-repo.ks
 +#%include fedora-repo.ks
 +repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=x86_64
 +repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f20&arch=x86_64
 +repo --name=rpmfusion-free --baseurl=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/x86_64/os/
 +repo --name=rpmfusion-free-updates --baseurl=http://download1.rpmfusion.org/free/fedora/updates/20/x86_64
  
- reboot
  
+ reboot
+@@ -40,15 +47,25 @@
  # Package list.
  %packages
+ 
+-fedora-release-cloud
++# fedora-release-cloud
+ 
 -kernel-core
++# kernel-core
  @core
  grubby
 +kernel
@@ -66,7 +71,7 @@ cat > ks-patch.txt <<EOF
  
  # this is used by openstack's cloud orchestration framework (and it's small)
  heat-cfntools
-@@ -57,6 +72,8 @@
+@@ -60,6 +77,8 @@
  # We need this image to be portable; also, rescue mode isn't useful here.
  dracut-config-generic
  -dracut-config-rescue
@@ -75,7 +80,7 @@ cat > ks-patch.txt <<EOF
  
  syslinux-extlinux 
  
-@@ -116,9 +133,9 @@
+@@ -120,9 +139,9 @@
  sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
  
  # setup systemd to boot to the right runlevel
@@ -87,7 +92,7 @@ cat > ks-patch.txt <<EOF
  echo .
  
  # If you want to remove rsyslog and just use journald, remove this!
-@@ -183,6 +200,14 @@
+@@ -187,6 +206,14 @@
  echo "Disabling tmpfs for /tmp."
  systemctl mask tmp.mount
  
@@ -102,7 +107,7 @@ cat > ks-patch.txt <<EOF
  # make sure firstboot doesn't start
  echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
  
-@@ -223,11 +248,23 @@
+@@ -227,11 +254,23 @@
  /usr/sbin/fixfiles -R -a restore
  chattr +i /boot/extlinux/ldlinux.sys
  
