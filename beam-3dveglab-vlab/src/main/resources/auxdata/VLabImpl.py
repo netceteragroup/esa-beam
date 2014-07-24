@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (21 May 2014)'
+  VERSION_STRING     = '1.0 (20 July 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -151,8 +151,6 @@ class VLAB:
 {'DHP Simulation': (
 {'Model Selection': (
  ('3D Scene',          'DHP_3dScene',         JCB, (K_RAMI, K_LAEGERN, K_THARANDT)),
- (),
- ('RT Processor',      'DHP_RTProcessor',     JCB, (K_LIBRAT, K_DART, K_DUMMY)),
  (),
  ('Resolution',        'DHP_Resolution',      JTF, '4000000'),
  ())},
@@ -678,8 +676,9 @@ class VLAB:
     """open file exclusively"""
     if sys.platform.startswith('java'):
       from java.io import File
+      File(filename).getParentFile().mkdirs()
       if File(filename).createNewFile():
-        return open(filename)
+        return open(filename, 'w')
       else:
         return None
     else:
@@ -798,7 +797,10 @@ class VLAB:
       def __init__(self, nm, strm, fName):
         self.nm=nm; self.strm=strm; self.fp=None
         if fName != None:
-          self.fp = open(fName, 'w')
+          if VLAB.fileExists(fName):
+            self.fp = open(fName, 'w')
+          else:
+            self.fp = VLAB.openFileIfNotExists(fName)
       def run(self):
         """helper class for slurping up child streams"""
         from java.io import BufferedReader
@@ -1099,6 +1101,18 @@ class VLAB:
     """The `approx_grad' is not yet implemented, because it's not yet
 used."""
     if sys.platform.startswith('java'):
+      from java.lang import ClassLoader
+      from java.io import File
+      for path in sys.path:
+        if path.endswith('.jar'):
+          libdir = File(path).getParent()
+          break
+      VLAB.logger.info(libdir)
+      # hack taken from: http://blog.cedarsoft.com/2010/11/setting-java-library-path-programmatically
+      System.setProperty("java.library.path", libdir)
+      syspathfield = ClassLoader.getDeclaredField("sys_paths")
+      syspathfield.setAccessible(True);
+      syspathfield.set(None, None)
       from lbfgsb import DifferentiableFunction, FunctionValues, Bound, Minimizer
       class function(DifferentiableFunction):
         def __init__(self, function, args=()):
@@ -1124,6 +1138,119 @@ used."""
       ei[k] = 0.0
     return grad
   approx_fprime = staticmethod(approx_fprime)
+  def doLibradtran(args):
+
+    q = {
+      'rpv_file':  args['rpv_file'],
+      'outfile' :  args['outfile'],
+      'infile'  :  args['infile'],
+    }
+
+    for k in args:
+      q[k] = args[k]
+
+    if args['scene'] == VLAB.K_LAEGERN:
+      q['latitude']  = '47.481667'
+      q['longitude'] = '-8.394722,17'
+    elif args['scene'] == VLAB.K_THARANDT:
+      q['latitude']  = '50.9676498'
+      q['longitude'] = '-13.520354'
+
+    if args['aerosol'] == VLAB.K_RURAL:
+      q['aerosol'] = '1'
+    elif args['aerosol'] == VLAB.K_MARITIME:
+      q['aerosol'] = '2'
+    elif args['aerosol'] == VLAB.K_URBAN:
+      q['aerosol'] = '5'
+    elif args['aerosol'] == VLAB.K_TROPOSPHERIC:
+      q['aerosol'] = '6'
+
+    # TODO: verify these
+    if args['sensor'] ==   VLAB.K_SENTINEL2:
+      q['wavelength'] = '443 2190'
+    elif args['sensor'] == VLAB.K_SENTINEL3:
+      q['wavelength'] = '400 2400'
+    elif args['sensor'] == VLAB.K_MODIS:
+      q['wavelength'] = '405 2155'
+    elif args['sensor'] == VLAB.K_MERIS:
+      q['wavelength'] = '412 900'
+    elif args['sensor'] == VLAB.K_LANDSAT_OLI:
+      q['wavelength'] = '433 2300'
+    elif args['sensor'] == VLAB.K_LANDSAT_ETM:
+      q['wavelength'] = '450 2300'
+
+    if VLAB.osName().startswith('Windows'):
+      q['solar_file'] = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.day')
+    else:
+      q['solar_file'] = VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat')
+
+    sdata = """
+solar_file         %s
+correlated_k       LOWTRAN
+rte_solver         cdisort
+rpv_file           %s
+deltam             on
+nstr               6
+zout               TOA
+output_user        lambda uu
+quiet
+""" % (q['solar_file'],
+      q['rpv_file'])
+
+    if 'aerosol' in q:
+      sdata += "aerosol_default\n"
+      sdata += "aerosol_haze       %s\n" % (q['aerosol']) 
+    if 'O3' in q:
+      sdata += "dens_column        O3 %s\n" % (q['O3']) 
+    if 'CO2' in q:
+      sdata += "co2_mixing_ratio   %s\n" % (q['CO2']) 
+    if 'H2O' in q:
+      sdata += "h2o_mixing_ratio   %s\n" % (q['H2O']) 
+    if 'umu' in q:
+      sdata += "umu                %s\n" % (q['umu']) 
+    if 'phi' in q:
+      sdata += "phi                %s\n" % (q['phi']) 
+    if 'latitude' in q:
+      sdata += "latitude           %s\n" % (q['latitude']) 
+    if 'longitude' in q:
+      sdata += "longitude          %s\n" % (q['longitude']) 
+    if 'time' in q:
+      sdata += "time               %s\n" % (q['time'])
+    if 'sza' in q:
+      sdata += "sza                %s\n" % (q['sza'])
+    if 'phi0' in q:
+      sdata += "phi0               %s\n" % (q['phi0'])
+    if 'wavelength' in q:
+      sdata += "wavelength         %s\n" % (q['wavelength'])
+
+    fp = open(q['infile'], 'w')
+    fp.write(sdata)
+    fp.close()
+
+    cmd = {
+     'linux' : {
+       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples',
+       'exe'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/bin/uvspec',
+       'cmdline' : [],
+       'stdin'   : q['infile'],
+       'stdout'  : q['outfile'],
+       'stderr'  : None,
+       'env'     : None
+     },
+     'windows' : {
+       'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
+       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\uvspec.exe',
+       'cmdline' : [],
+       'stdin'   : q['infile'],
+       'stdout'  : q['outfile'],
+       'stderr'  : None,
+       'env'     : None
+    }
+    }
+    VLAB.logger.info('%s: spawning libradtran...' % VLAB.me())
+    VLAB.doExec(cmd)
+  doLibradtran = staticmethod(doLibradtran)
+
 
   ###########################################################################
   # 
@@ -2074,7 +2201,7 @@ class Dart_DARTSimulation :
     return data
 
   def getIterMaxPath(self, spectralBand, iterX=True):
-    """ Return the iterYY fodler where YY is X is exist and iterX is True or the iterMax folder
+    """ Return the iterYY folder where YY is X is exist and iterX is True or the iterMax folder
     """
     # Get spectralBand folder
     iterFolder = VLAB.path.join(self.rootSimulationsDirectory, self.name, "output", spectralBand, "BRF")
@@ -2182,142 +2309,25 @@ def Dart_Bandes(simulationProperties):
     bandes.append(bande)
   return bandes
 
-# FIXME: this needs to use the same code that librat uses
 class Dart_dolibradtran:
-  def __init__(self) :
-    pass
 
-  def _writeRadtranFile(self, args):
-    # FIXME: what defaults makes sense?
-    q = {
-      'solar_file'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat',
-      'dens_column'  :  'O3 300',
-      'correlated_k' : 'LOWTRAN',
-      'rte_solver'   : 'cdisort',
-      'rpv_file'     : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
-      'deltam'       : 'on',
-      'nstr'         : '6',
-      'zout'         : 'TOA',
-      'output_user'  : 'lambda uu',
-      'quiet'        : 'quiet',
-      'umu'          : '1.0',
-      'phi'          : '0.',
-      'latitude'     : '50',
-      'longitude'    : '0',
-      'time'         : '2013 06 01 12 00 00',
-      'wavelength'  : '1375.0',
+  def main(q):
+    # generate arguments for doLibradtran
+    r = {
+      'CO2'      : q[VLAB.P_AtmosphereCO2],
+      'H2O'      : q[VLAB.P_AtmosphereWater],
+      'O3'       : q[VLAB.P_AtmosphereOzone],
+      'scene'    : q['obj'],
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'sensor'   : q['wb'],
+      'rpv_file' : '%s/rami.TOA/rpv.rami.libradtran.dat.all' % LIBRAT.SDIR,
+      'infile'   : '%s/%s/input/%s' % (DART.SDIR, q['simulationName'], 'UVSPEC-in.txt'),
+      'outfile'  : '%s/%s/output/%s' % (DART.SDIR, q['simulationName'], q['ipfile']),
     }
-
-    for a in args:
-      if a == 'something_to_translate':
-        q['translated_thing'] = args[a]
-      else:
-        q[a] = args[a]
-
-    sdata = """
-solar_file         %s
-dens_column        %s
-correlated_k       %s
-rte_solver         %s
-rpv_file           %s
-deltam             %s
-nstr               %s
-zout               %s
-output_user        %s
-%s
-umu                %s
-phi                %s
-latitude           %s
-longitude          %s
-time               %s
-wavelength         %s
-""" % (q['solar_file'],
-      q['dens_column'],
-      q['correlated_k'] ,
-      q['rte_solver'],
-      q['rpv_file'],
-      q['deltam'],
-      q['nstr'],
-      q['zout'],
-      q['output_user'],
-      q['quiet'],
-      q['umu'],
-      q['phi'],
-      q['latitude'],
-      q['longitude'],
-      q['time'],
-      q['wavelength'])
-
-    fp = open('%s/%s/output/%s' % (DART.SDIR, q['simulationName'], q['ipfile']), 'w')
-    fp.write(sdata)
-    fp.close()
-
-  def main(self, args):
-    me=self.__class__.__name__+'::'+VLAB.me()
-    VLAB.logger.info('======> %s' % me)
-    for a in args:
-      VLAB.logger.info('%s -> %s' % (a, args[a]))
-
-    # FIXME: hardcoded for now...
-    q = {
-               'ipfile' : 'libradtran.ip',
-               'opfile' : 'libradtran.ip.op',
-                'opdir' : 'libradtran',
-               'wbfile' : 'wb.MSI.dat',
-            'anglefile' : 'angles.MSI.dat',
-              'rpvfile' : 'rpv.laegeren.libradtran.dat',
-                 'root' : 'libradtran',
-                  'lat' : False,
-                  'lon' : False,
-                 'time' : False,
-             'dartflag' : True,
-                'solar' : 'data/solar_flux/NewGuey2003.dat',
-          'dens_column' : 'O3 300.\n',
-         'correlated_k' : 'LOWTRAN\n',
-           'rte_solver' : 'cdisort\n',
-               'deltam' : 'on\n',
-                 'nstr' : '6\n',
-                 'zout' : 'TOA\n',
-          'output_user' : 'lambda uu\n',
-                'quiet' : 'quiet\n',
-           'plotfilefp' : False,
-                    'v' : False,
-             'plotfile' : False
-    }
-    # overwrite defaults with incoming parameters
-    for a in args:
-      if a == 'something_to_translate':
-        q['translated_thing'] = args[a]
-      else:
-        q[a] = args[a]
-
-    # write libradtran input file
-    self._writeRadtranFile(q)
-
-    # run libradtran
-    # FIXME: use the just-written radtran file above instead of dummy example
-    cmd = {
-     'linux' : {
-       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples',
-       'exe'     : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/bin/uvspec',
-       'cmdline' : [],
-       'stdin'   : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR.INP',
-       'stdout'  : '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/examples/UVSPEC_CLEAR-BEAM-OUTPUT.txt',
-       'stderr'  : None,
-       'env'     : None
-     },
-     'windows' : {
-       'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
-       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\uvspec.exe',
-       'cmdline' : [],
-       'stdin'   : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR.INP',
-       'stdout'  : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples\\UVSPEC_CLEAR-BEAM-OUTPUT.txt',
-       'stderr'  : None,
-       'env'     : None
-    }
-    }
-    VLAB.logger.info('%s: spawning libradtran...' % me)
-    VLAB.doExec(cmd)
+    # 
+    # TODO: loop over something to produce umu, phi ,phi0, sza, etc.
+    #
+    VLAB.doLibradtran(r)
 
 #==============================================================================
 #title            :Dart_DartImages.py
@@ -3021,7 +3031,7 @@ class Librat_dobrdf:
 
     if len(ang) < 4 or (len(ang) > 4 and len(ang[0]) != 4):
       sys.stderr.write("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
-      sys.exit([True])
+      raise Exception()
 
     if len(ang) == 4:
       ang = ((ang),)
@@ -3092,84 +3102,32 @@ class Librat_dobrdf:
     VLAB.logger.info('done')
 
 #############################################################################
+
 class Librat_dolibradtran:
-  def defaultLRT(self, fp, solar_file, dens_column, correlated_k, rte_solver, rpvfile, deltam, nstr, zout, output_user, quiet):
-    fp.write('solar_file ' + solar_file + '\n')
-    fp.write('dens_column ' + dens_column)
-    fp.write('correlated_k ' + correlated_k)
-    fp.write('rte_solver ' + rte_solver)
-    fp.write('rpv_file ' + rpvfile + '\n')
-    fp.write('deltam ' + deltam)
-    fp.write('nstr ' + nstr)
-    fp.write('zout ' + zout)
-    fp.write('output_user ' + output_user)
-    fp.write(quiet)
-  def main(self, args):
-    me=self.__class__.__name__ +'::'+VLAB.me()
-    VLAB.logger.info('======> %s' % me)
-    for a in args:
-      VLAB.logger.info("%s -> %s" % (a, args[a]))
 
-    osName = VLAB.osName()
-    if osName.startswith('Windows'):
-      radpath = '$HOME/.beam/beam-vlab/auxdata/libRadtran_win32/'
-    else:
-      radpath = '$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/'
-
-    q = {
-      'LIBRADTRAN_PATH' : radpath,
-               'ipfile' : 'libradtran.ip',
-               'opfile' : 'libradtran.ip.op',
-                'opdir' : 'libradtran',
-               'wbfile' : 'wb.MSI.dat',
-            'anglefile' : 'angles.MSI.dat',
-              'rpvfile' : 'rpv.laegeren.libradtran.dat',
-                 'root' : 'libradtran',
-                  'lat' : False,
-                  'lon' : False,
-                 'time' : False,
-             'dartflag' : True,
-                'solar' : 'data/solar_flux/NewGuey2003.dat',
-          'dens_column' : 'O3 300.\n',
-         'correlated_k' : 'LOWTRAN\n',
-           'rte_solver' : 'cdisort\n',
-               'deltam' : 'on\n',
-                 'nstr' : '6\n',
-                 'zout' : 'TOA\n',
-          'output_user' : 'lambda uu\n',
-                'quiet' : 'quiet\n',
-           'plotfilefp' : False,
-                    'v' : False,
-             'plotfile' : False
+  def main(self, q):
+    # initial arguments for doLibradtran
+    r = {
+      'CO2'      : q[VLAB.P_AtmosphereCO2],
+      'H2O'      : q[VLAB.P_AtmosphereWater],
+      'O3'       : q[VLAB.P_AtmosphereOzone],
+      'scene'    : q['obj'],
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'sensor'   : q['sensor'],
+      'rpv_file' : VLAB.path.join(LIBRAT.SDIR, q['rpv'])
     }
 
-    for a in args:
-      if a == 'lrtp':
-        q['LIBRADTRAN_PATH']  = args[a]
-      elif a == 'plot':
-        q['plotfile'] = args[a]
-      elif a == 'rpv':
-        q['rpvfile'] = args[a]
-      else:
-        q[a] = args[a]
-
-    LIBRADTRAN = q['LIBRADTRAN_PATH'] + 'bin/uvspec'
-    solar_file = q['LIBRADTRAN_PATH'] + q['solar']
-
     VLAB.mkDirPath('%s/%s' % (LIBRAT.SDIR, q['opdir']))
-
-    # TODO prove that LIBRADTRAN_PATH dir exists
-
-    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['angfile']))
     wbfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
-    rpvfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
+    rpvfp = VLAB.checkFile(r['rpv_file'])
 
-    rpv = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['rpvfile']))
+    rpv = VLAB.valuesfromfile(r['rpv_file'])
     if len(rpv[0]) != 4: # length of index 1 because index 0 is heading
-      sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], q['rpvfile']))
-      sys.exit([True])
+      sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], rpv_file))
+      raise Exception()
 
-    angt = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    angt = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['angfile']))
     wb = [i[1] for i in VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))]
 
     nbands = len(wb)
@@ -3184,10 +3142,11 @@ class Librat_dolibradtran:
 
     # check for op file if required
     if not VLAB.fileExists('%s/%s' % (LIBRAT.SDIR, q['plotfile'])):
+      VLAB.logger.info('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
       plotfilefp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
     else:
       sys.stderr.write('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
-      sys.exit(1)
+      raise Exception('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
 
     # loop over angles and do all wb at once for each angle
     for a, aa in enumerate(angt):
@@ -3205,57 +3164,57 @@ class Librat_dolibradtran:
         szz = angt[a][2]
         saa = angt[a][3]
 
+      VLAB.logger.info(str(vzz))
       umu = math.cos(vzz)
       angstr = str(vzz) + '_' + str(vaa) + '_' + str(szz) + '_' + str(saa)
       
-      libradtran_ip = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
-      libradtran_op = VLAB.fPath('%s/%s' % (LIBRAT.SDIR, q['opdir']), 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_ip = VLAB.fPath(LIBRAT.SDIR, 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+      libradtran_op = VLAB.fPath(LIBRAT.SDIR, 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
 
-      if not VLAB.fileExists(libradtran_ip):
-        libradtranfp = VLAB.openFileIfNotExists(libradtran_ip)
-        self.defaultLRT(libradtranfp, solar_file, q['dens_column'], q['correlated_k'], q['rte_solver'], q['rpvfile'], q['deltam'], q['nstr'], q['zout'], q['output_user'], q['quiet'])
+      if q['v']:
+        sys.stderr.write('%s: doing ip file %s\n'%(sys.argv[0],libradtran_ip))
+        #sort out zen/azimuth angles i.e. if vz is -ve
+      if vzz < 0:
+        # doesn't matter as we use umu from above anyway but ...
+        vzz *= -1.
+      if vaa < 0:
+        vaa = 180. - vaa
+      if szz < 0:
+        szz *= -1.
+      if saa < 0:
+        saa = 180. - saa
 
-        if q['v']:
-          sys.stderr.write('%s: doing ip file %s\n'%(sys.argv[0],libradtran_ip))
-          #sort out zen/azimuth angles i.e. if vz is -ve
-        if vzz < 0:
-          # doesn't matter as we use umu from above anyway but ...
-          vzz *= -1.
-        if vaa < 0:
-          vaa = 180. - vaa
-        if szz < 0:
-          szz *= -1.
-        if saa < 0:
-          saa = 180. - saa
+      # add view angles
+      def valueorlisttostring(val):
+        try:
+          return ' '.join(map(str, val))
+        except TypeError:
+          return str(val)
+        
+      r['umu'] = valueorlisttostring(umu)
+      r['phi'] = valueorlisttostring(vaa)
 
-        # add view angles
-        libradtranfp.write('umu ' + ' '.join(map(str, umu)) + '\n')
-        libradtranfp.write('phi ' + ' '.join(map(str, vaa)) + '\n')
+      # add sz angles
+      if q['lat'] and q['lon'] and q['time']:
+        r['latitude'] = q['lat']
+        r['longitude'] = q['lon']
+        r['time'] = q['time']
+      else:
+        # print out sun angles
+        r['sza'] = valueorlisttostring(szz)
+        r['phi0'] = valueorlisttostring(saa)
 
-        # add sz angles
-        if q['lat'] and q['lon'] and q['time']:
-          libradtranfp.writelines('latitude ' + q['lat'] + '\n')
-          libradtranfp.writelines('longitude ' + q['lon'] + '\n')
-          libradtranfp.writelines('time ' + q['time'] + '\n')
-        else:
-          # print out sun angles
-          libradtranfp.write('sza ' + ' '.join(map(str, szz)) + '\n')
-          libradtranfp.write('phi0 ' + ' '.join(map(str, saa)) + '\n')
+      # write out wavelengths i.e. min and max. Step is determined by step in solar file i.e. 1nm default
+      r['wavelength'] = str(int(min(wb))) + ' ' + str(int(max(wb)))
+      # run the libradtran command
+      r['infile']  = libradtran_ip
+      r['outfile'] = libradtran_op
+      for k,v in r.items():
+        VLAB.logger.info("  [%s] => %s" % (k, v))
+      VLAB.doLibradtran(r)
 
-          # write out wavelengths i.e. min and max. Step is determined by step in solar file i.e. 1nm default
-          libradtranfp.write('wavelength ' + str(int(wb.min())) + ' ' + str(int(wb.max())) + '\n')
-          libradtranfp.flush()
-
-          cmd = LIBRADTRAN + ' < ' + libradtran_ip + ' > ' + libradtran_op
-
-          if q['v']:
-            sys.stderr.write('%s: doing cmd %s\n'%(sys.argv[0],cmd))
-
-          # run the libradtran command
-          raise Exception("os.system(cmd)")
-
-        # now check if a single angle (i.e. angt.size == 4 ) and if so, break out of loop
-        if 4 == len(angt) * len(angt[0]) or (q['lat'] and q['lon'] and q['time']): break
+      # now check if a single angle (i.e. angt.size == 4 ) and if so, break out of loop
+      if 4 == len(angt) * len(angt[0]) or (q['lat'] and q['lon'] and q['time']): break
 
       # finish angle loop & srt out collating results into LUT file at end if required
       # write header line i.e. vz va sz sa wb_min -> wb_max
@@ -3478,8 +3437,8 @@ class Librat_plot:
     # TODO Implement rest of function
     raise Exception("spec_plot()")
   def brdf_plot(self,root,angfile,wbfile):
-    opdat = root + '.brdf.dat'
-    opplot = root + '.brdf.png'
+    opdat = LIBRAT.SDIR + '/' + root + '.brdf.dat'
+    opplot = LIBRAT.SDIR + '/' + root + '.brdf.png'
     ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, angfile), transpose=True)
     wb = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, wbfile), transpose=True)[1]
 
@@ -3523,7 +3482,8 @@ class Librat_plot:
     outdata = [[0. for i in xrange(len(result[0]) + len(ang))]
                for j in xrange(len(result))]
     VLAB.replacerectinarray(outdata, zip(*ang), 0, 0, len(result), len(ang))
-    VLAB.replacerectinarray(outdata, zip(*ang), 0, len(ang), len(result), len(result) + len(ang))
+    # FIXME: assign result instead of zip(*ang) (see plot.py:88)
+    VLAB.replacerectinarray(outdata, result, 0, len(ang), len(result), len(result[0]) + len(ang))
     VLAB.savetxt(opdat, outdata, fmt='%.4f')
     VLAB.save_chart(chart, opplot)
 
@@ -3557,7 +3517,7 @@ class Librat_rpv_invert:
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
       sys.stderr.write('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],q['dataf'],q['wbfile']))
-      sys.exit(1)
+      raise Exception('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],q['dataf'],q['wbfile']))
 
     rho0, k, bigtet, rhoc = 0.03, 1.2, 0.1, 0.2
 
@@ -3615,9 +3575,9 @@ class Librat_rpv_invert:
         opfp.write('%.1f %.8f %.8f %.8f %.8f\n' % (band, p_est[0], p_est[1], p_est[2], p_est[3]))
       if q['plot']:
         if q['plotfile']:
-          opplot = q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png'
+          opplot = VLAB.path.join(LIBRAT.SDIR, q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png')
         else:
-          opplot = q['dataf'] + '.inv.wb.' + str(wbNum) + '.png'
+          opplot = VLAB.path.join(LIBRAT.SDIR, q['dataf'] + '.inv.wb.' + str(wbNum) + '.png')
 
         if q['verbose']: sys.stderr.write('%s: plotting to %s\n' % (sys.argv[0], opplot))
 
@@ -3672,8 +3632,8 @@ class Librat_rpv_invert:
     denom = VLAB.powa(map(lambda x : 1. + bgthsq + 2. * bigtet * x, csmllg),
                       1.5)
     f2 = list(denom)
-    f2 = map(lambda x : {True : (1.0 - bgthsq) * 1e20, False : (1.0 - bgthsq) / x}
-             [x == 0.], relphi)
+    f2 = map(lambda x : {True : (lambda : (1.0 - bgthsq) * 1e20),
+                         False : (lambda : (1.0 - bgthsq) / x)}[x == 0.](), relphi)
     f3 = map(lambda x : 1.0 + (1 - rhoc) / (1. + x), bigg)
     return map(lambda x : rho0 * x, VLAB.mula(VLAB.mula(f1, f2), f3))
 
@@ -4025,6 +3985,7 @@ class LIBRAT:
     # overwrite defaults
     for a in args:
       if a == 'Sensor':
+        q['sensor'] = args[a]
         if args[a] == VLAB.K_SENTINEL2:
           q['wb'] = 'wb.MSI.dat'
           q['wbfile'] = 'wb.MSI.dat'
@@ -4062,12 +4023,12 @@ class LIBRAT:
           q['lon'] = 0
         elif args[a] == VLAB.K_LAEGERN:
           q['obj'] = 'laegeren.obj'
-          q['lat'] = 47.4817
-          q['lon'] = -8.3947
+          q['lat'] = '47.4817'
+          q['lon'] = '-8.3947'
         elif args[a] == VLAB.K_THARANDT:
           q['obj'] = 'HET01_DIS_UNI_NIR_20.obj' # FIXME: define when file is available
-          q['lat'] = 50.9833
-          q['lon'] = -13.5808
+          q['lat'] = '50.9833'
+          q['lon'] = '-13.5808'
         elif args[a] == VLAB.K_USER_DEFINED:
           q['obj'] = 'UserDefined.obj'
           # What about q['lat'] and q['lon']?
@@ -4091,13 +4052,15 @@ class LIBRAT:
         q['sz'] = args[a]
       elif a == 'IlluminationZenith':
         q['sa'] = args[a]
+      else:
+        q[a] = args[a]
 
-    q['dataf']     = '%s/result.%s.1.brdf.dat' %(q['opdir'], q['obj'])
+    q['dataf']     = '%s/result.%s.brdf.dat' %(q['opdir'], q['obj'])
     q['paramfile'] = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'], q['obj'])
     q['plot']      = '%s/rpv.%s.dat.all' %(q['opdir'],q['obj'])
     q['plotfile']  = '%s/result.%s.brdf.3params' %(q['opdir'],q['obj'])
     q['root']      = '%s/result.%s' %(q['opdir'],q['obj'])
-    q['rpv']       = '%s/%s.brdf.dat.3params.dat' %(q['opdir'],q['obj'])
+    q['rpv']       = '%s/result.%s.brdf.dat.3params.dat' %(q['opdir'],q['obj'])
 
     if 'dhp' in q:
       q['vz'] = q['dhp_vz']
@@ -4479,7 +4442,7 @@ else:
         param = Parameter(paramName, paramProps.createCopy())
         param.setDefaultValue()
         return param
-        
+      
       def getParamInfo(self, parameterName):
         paramProps = self.pMap[parameterName]
         if (paramProps == None):
