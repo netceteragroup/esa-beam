@@ -55,7 +55,7 @@ public class Install {
   private static final String TYPE_MODULES     = "modules";
   private static final String TYPE_AUX         = "aux";
   private static final String TYPE_LIB         = "lib";
-  private static final String DEFAULT_REPO     = "ftp://ftp.netcetera.ch/pub";
+  private static final String DEFAULT_REPO     = "http://www.geo.uzh.ch/microsite/3dveglab/software";
   private static final String DEFAULT_MANIFEST = DEFAULT_REPO + "/3DVegLab.manifest";
   
   public static void die(String msg) {System.err.println(msg); System.exit(1);}
