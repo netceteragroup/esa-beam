@@ -15,7 +15,7 @@
 # @(#) $Id: $
 #
 # small script to generate static content pages for the microsite
-#
+# ANAS COPY
 
 baseurl = 'http://www.geo.uzh.ch/microsite/3dveglab/index.html'
 
