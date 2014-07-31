@@ -40,16 +40,17 @@ template = '''
  #body        { margin:0 auto; background:white; }
  #header      { margin:0 auto; background:white; border-bottom: 3px solid #48A17E; }
  #header table 
-              { margin: 0  auto; width: 960px; padding: 50px 0;}
+              { margin: 0  auto; width: 960px; padding: 30px 0;}
  #header table td.menu 
-              { padding-top: 17px; text-align: right;}
+              { text-align: right;}
  #header table a
               { text-decoration: none; font-family: 'Oxygen', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 14px; padding-top: 10px; color: #4D4D4D; margin-right: 30px; }
  #header table a:last-child 
               { margin-right: 0;}
  #header table a:hover
               { color: #C27638; border-bottom: 3px solid #C27638; }
- table.people { width: 55%; }
+ table.people { width: 55%%; }
+ .logo img    { width: 290px; height: auto;}
  a.logo:hover { border-bottom: 0px !important; }            
  #main        { background: url('./images/bg.png') repeat;}
  #content     { margin: 0 auto; width: 960px;}
@@ -61,10 +62,10 @@ template = '''
  #footer      { margin:0 auto; background:white; border-top: 3px solid #48A17E; }
  #footer-wrapper
               { width: 960px; margin: 0 auto; }
- .logos       { float: right; padding-bottom: 30px; }
- .logos img   { width: 200px; height: auto; display: inline-block; }
+ .logos       { float: right; }
+ .logos img   { width: 140px; height: auto; display: inline-block; }
  .logos img:first-child
-              { height: 64px; margin-right: 10px; width: auto; } 
+              { height: 46px; margin-right: 10px; width: auto; } 
  .sidebar-links
               { margin: 5px 0 30px 0;}
  .sidebar-links a 
@@ -92,7 +93,7 @@ template = '''
               { background-color: #48a17e; border: 2px solid #48a17e; color: #fff; display: block; font-family: 'Oxygen',sans-serif; font-size: 13px; font-weight: 700; margin-top: 5px; outline: 0 none; padding: 8px; text-transform: uppercase; width: 230px; }
  .abstract    { text-align: center; }
  figure img
-              { width: 100%; height: auto; margin: 30px 0; }
+              { width: 100%%; height: auto; margin: 30px 0; }
  /* http://positioniseverything.net/easyclearing.html) */
  .cf:after { display:block; clear:both; height:0; visibility:hidden; content:" "; font-size:0; }
  /* use conditional comments for this bit if you want valid CSS */
@@ -100,17 +101,25 @@ template = '''
 
  /*]]>*/
  </style>
+ </style>
 </head>
 
 <body>
  <div id="body">
   <div id="header" class="cf">
    <table border="0" width="960">
-    <tr>
+	<tr>
      <td width="1" rowspan="2">
       <a href=
      "http://www.geo.uzh.ch/microsite/3dveglab/" target="_blank" class="logo"><img alt=
-     "3d vegetation lab" height="90" src="./images/veglablogo.png" /></a></td>
+     "3d vegetation lab" height="90" src="http://www.geo.uzh.ch/microsite/3dveglab/software/veglablogo.png" /></a>
+    </td>
+    <td>
+      <div class="logos">
+        <img src="http://www.esa.int/esalogo/images/downloads/Digital_logo/Hi_resolution/42_digital_logo_dark_blue_HI.png" />
+        <img src="http://www.uzh.ch/uzh/authoring/images/uzh_logo_e_pos_web_main.jpg" />
+      </div>
+    </td>
     </tr>
     <tr>
       <td class="menu">
@@ -168,10 +177,6 @@ template = '''
   <div id="footer" class="cf">
     <div id="footer-wrapper">
       <p>Copyright &copy;2014</p>
-      <div class="logos">
-        <img src="./images/ESA.png" />
-        <img src="./images/UZH.jpg" />
-      </div>
     </div>
    
   </div>
@@ -230,7 +235,10 @@ pageindex = '''
 '''
 
 pageconsortium = '''
-     <h2>Consortium</h2>
+    <style type="text/css" media="screen, print, projection">
+        a[href*="consortium"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
+    <h2>Consortium</h2>
 	<table border="0">
 		 <tr>
 		   <td colspan="2"><h3>Prime Contractor</h3></td>
@@ -278,6 +286,9 @@ pageconsortium = '''
 '''
 
 pagepeople = '''
+    <style type="text/css" media="screen, print, projection">
+        a[href*="people"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
      <h2>People</h2>
 	 <table class="people">
       <tr> <td colspan="2"><h3>Team</h3></td> </tr>
@@ -324,6 +335,9 @@ pagepeople = '''
 '''
 
 pagedocuments = '''
+    <style type="text/css" media="screen, print, projection">
+        a[href*="documents"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
      <h2>Documents</h2>
      <div class="document">
           <a href="http://discovery.ucl.ac.uk/1371132/"  target="_blank">Novel reference site
@@ -372,6 +386,9 @@ pagedocuments = '''
 '''
 
 pagesites = '''
+    <style type="text/css" media="screen, print, projection">
+        a[href*="sites"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
 	<h2>Site Download</h2>
 	<form enctype="text/html" method="post" action="http://www.etc.ch/bin/cgiwrap/jason/registration">
 	Please provide your email address so that we may keep you informed of the
@@ -383,6 +400,9 @@ pagesites = '''
 '''
 
 pagesoftware = '''
+    <style type="text/css" media="screen, print, projection">
+        a[href*="software"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
      <h2>BEAM toolkit plugin</h2>
      An <a href="https://github.com/netceteragroup/esa-beam">integrated
      plugin module</a> is available for version 4.11 of the <a
