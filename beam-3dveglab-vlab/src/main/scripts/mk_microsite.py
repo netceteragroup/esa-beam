@@ -236,7 +236,7 @@ pageindex = '''
 
 pageconsortium = '''
     <style type="text/css" media="screen, print, projection">
-        a[href*="consortium"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+        .menu a[href*="consortium"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
     <h2>Consortium</h2>
 	<table border="0">
@@ -287,7 +287,7 @@ pageconsortium = '''
 
 pagepeople = '''
     <style type="text/css" media="screen, print, projection">
-        a[href*="people"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+        .menu a[href*="people"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
      <h2>People</h2>
 	 <table class="people">
@@ -336,7 +336,7 @@ pagepeople = '''
 
 pagedocuments = '''
     <style type="text/css" media="screen, print, projection">
-        a[href*="documents"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+        .menu a[href*="documents"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
      <h2>Documents</h2>
      <div class="document">
@@ -387,7 +387,7 @@ pagedocuments = '''
 
 pagesites = '''
     <style type="text/css" media="screen, print, projection">
-        a[href*="sites"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+        .menu a[href*="sites"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
 	<h2>Site Download</h2>
 	<form enctype="text/html" method="post" action="http://www.etc.ch/bin/cgiwrap/jason/registration">
@@ -401,7 +401,7 @@ pagesites = '''
 
 pagesoftware = '''
     <style type="text/css" media="screen, print, projection">
-        a[href*="software"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+        .menu a[href*="software"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
      <h2>BEAM toolkit plugin</h2>
      An <a href="https://github.com/netceteragroup/esa-beam">integrated
