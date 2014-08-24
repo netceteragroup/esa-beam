@@ -55,9 +55,9 @@ Since nearly everything is implemented in that single python file, we were able 
 
 1. From within BEAM, using log statements (as described in the "Example change" above)
 2. Standalone "headless" (either jython or python)
-```jython -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py```
+```jython -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar ${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py```
 3. Standalone with a "fake" swing-based GUI (jython only)
-```java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py```
+```java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dbeam.libDirs=${HOME}/beam-4.11/lib -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar:${HOME}/beam-4.11/lib/lbfgsb_wrapper-1.1.3.jar ~/.beam/beam-vlab/auxdata/VLabImpl.py```
 
 For case 2, search for the method selftests() to see (or change) which tests will be run in a GUI-less way (with log messages appearing on the console from where the command is run).
 

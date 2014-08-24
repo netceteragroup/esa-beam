@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (20 July 2014)'
+  VERSION_STRING     = '1.0 (24 Aug 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -221,6 +221,22 @@ class VLAB:
       import os
       return os.listdir(path)
   listdir = staticmethod(listdir)
+  def renameFile(src,dst):
+    VLAB.logger.info("renaming " + src + " to " + dst)
+    if sys.platform.startswith('java'):
+      from java.io import File
+      srcf = File(src)
+      if not srcf.exists():
+        VLAB.logger.info("source file: " + srcf.toString() + " does not exist")
+      dstf = File(dst)
+      if dstf.exists():
+        VLAB.logger.info("dest file: " + dstf.toString() + " already exists")
+      if not srcf.renameTo(dstf):
+        VLAB.logger.info("rename to " + dstf.toString() + " failed")
+    else:
+      import os
+      os.rename(src, dst)
+  renameFile = staticmethod(renameFile)
   def getenv(key, default=None):
     if sys.platform.startswith('java'):
       from java.lang.System import getenv
@@ -1097,19 +1113,32 @@ class VLAB:
         return a + [i]
     return reduce(add, a)
   ravel = staticmethod(ravel)
+  def approx_fprime(xk, f, epsilon, *args):
+    f0 = f(xk, *args)
+    grad = [0. for i in xrange(len(xk))]
+    ei = [0. for i in xrange(len(xk))]
+    for k in xrange(len(xk)):
+      ei[k] = 1.0
+      d = map(lambda i : i * epsilon, ei)
+      grad[k] = (f(VLAB.adda(xk, d), *args) - f0) / d[k]
+      ei[k] = 0.0
+    return grad
+  approx_fprime = staticmethod(approx_fprime)
   def min_l_bfgs_b(f, initial_guess, args=(), bounds=None, epsilon=1e-8):
     """The `approx_grad' is not yet implemented, because it's not yet
 used."""
+    pnt = None
     if sys.platform.startswith('java'):
-      from java.lang import ClassLoader
+      from java.lang import System, ClassLoader
       from java.io import File
-      for path in sys.path:
-        if path.endswith('.jar'):
-          libdir = File(path).getParent()
-          break
-      VLAB.logger.info(libdir)
+      libDirs = System.getProperty("beam.libDirs")
+      if libDirs == None:
+        raise RuntimeError("beam.libDirs is not known to Java")
+
       # hack taken from: http://blog.cedarsoft.com/2010/11/setting-java-library-path-programmatically
-      System.setProperty("java.library.path", libdir)
+      libPath = System.getProperty("java.library.path")
+      libPath += File.pathSeparator + libDirs
+      System.setProperty("java.library.path", libPath)
       syspathfield = ClassLoader.getDeclaredField("sys_paths")
       syspathfield.setAccessible(True);
       syspathfield.set(None, None)
@@ -1125,19 +1154,9 @@ used."""
       min = Minimizer()
       min.setBounds([Bound(bound[0], bound[1]) for bound in bounds])
       result = min.run(function(f, args), VLAB.ravel(initial_guess))
-      return result.point
+      pnt = result.point
+    return pnt
   min_l_bfgs_b = staticmethod(min_l_bfgs_b)
-  def approx_fprime(xk, f, epsilon, *args):
-    f0 = f(xk, *args)
-    grad = [0. for i in xrange(len(xk))]
-    ei = [0. for i in xrange(len(xk))]
-    for k in xrange(len(xk)):
-      ei[k] = 1.0
-      d = map(lambda i : i * epsilon, ei)
-      grad[k] = (f(VLAB.adda(xk, d), *args) - f0) / d[k]
-      ei[k] = 0.0
-    return grad
-  approx_fprime = staticmethod(approx_fprime)
   def doLibradtran(args):
 
     q = {
@@ -3099,6 +3118,19 @@ class Librat_dobrdf:
           }
           self._writeGrabFile(grabme, nq)
           execfile(grabme)
+
+          # move resulting .hdr and result.image 
+          hdrFile = None
+          imgFile = None
+          for f in VLAB.listdir(LIBRAT.SDIR):
+            if f.endswith(".hdr"):
+              hdrFile = f
+            elif f.endswith("result.image"):
+              imgFile = f
+          if hdrFile != None:
+            VLAB.renameFile(LIBRAT.SDIR + "/" + hdrFile, grabme + '.hdr')
+          if imgFile != None:
+            VLAB.renameFile(LIBRAT.SDIR + "/" + imgFile, grabme + '.img')
     VLAB.logger.info('done')
 
 #############################################################################
@@ -3145,8 +3177,8 @@ class Librat_dolibradtran:
       VLAB.logger.info('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
       plotfilefp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, q['plotfile']))
     else:
-      sys.stderr.write('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
-      raise Exception('%s: plotfile %s already exists - move/delete and re-run\n'%(sys.argv[0],q['plotfile']))
+      VLAB.logger.info('plotfile %s already exists - move/delete and re-run\n'%(q['plotfile']))
+      raise Exception('plotfile %s already exists - move/delete and re-run\n'%(q['plotfile']))
 
     # loop over angles and do all wb at once for each angle
     for a, aa in enumerate(angt):
@@ -3167,12 +3199,12 @@ class Librat_dolibradtran:
       VLAB.logger.info(str(vzz))
       umu = math.cos(vzz)
       angstr = str(vzz) + '_' + str(vaa) + '_' + str(szz) + '_' + str(saa)
-      
-      libradtran_ip = VLAB.fPath(LIBRAT.SDIR, 'ip.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
-      libradtran_op = VLAB.fPath(LIBRAT.SDIR, 'op.' + q['root'] + '.' + q['wbfile'] + '_' + angstr)
+
+      libradtran_ip = VLAB.fPath(LIBRAT.SDIR, q['root'] + '.ip.' + q['wbfile'] + '_' + angstr)
+      libradtran_op = VLAB.fPath(LIBRAT.SDIR, q['root'] + '.op.' + q['wbfile'] + '_' + angstr)
 
       if q['v']:
-        sys.stderr.write('%s: doing ip file %s\n'%(sys.argv[0],libradtran_ip))
+        VLAB.logger.info('doing ip file %s\n'%(libradtran_ip))
         #sort out zen/azimuth angles i.e. if vz is -ve
       if vzz < 0:
         # doesn't matter as we use umu from above anyway but ...
@@ -4085,21 +4117,30 @@ class LIBRAT:
     rpv_invert   = Librat_rpv_invert()
     dolibradtran = Librat_dolibradtran()
 
+    # not needed because we are using the dart angles
+    # drivers.main()
+
     if (pm != None):
       pm.beginTask("Computing BRF...", 10)
     # ensure at least 1 second to ensure progress popup feedback
     time.sleep(1)
 
-    # not needed because we are using the dart angles
-    # drivers.main()
-
     VLAB.logger.info('%s: calling dobrdf.main()' % (me))
     dobrdf.main(q)
+
+    if (pm != None):
+      pm.beginTask("Plotting...", 10)
     VLAB.logger.info('%s: calling plot.main()' % (me))
     plot.main(q)
+
     VLAB.logger.info('%s: calling rpv.main()' % (me))
+    if (pm != None):
+      pm.beginTask("Inverting...", 10)
     rpv_invert.main(q)
+
     VLAB.logger.info('%s: calling dolibradtran.main()' % (me))
+    if (pm != None):
+      pm.beginTask("Libradtran...", 10)
     dolibradtran.main(q)
 
     VLAB.logger.info('%s: Done...' % me)
