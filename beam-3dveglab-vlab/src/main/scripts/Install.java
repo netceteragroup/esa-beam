@@ -55,6 +55,8 @@ public class Install {
   private static final String TYPE_MODULES     = "modules";
   private static final String TYPE_AUX         = "aux";
   private static final String TYPE_LIB         = "lib";
+  private static final String TYPE_SO32        = "so32";
+  private static final String TYPE_SO64        = "so64";
   private static final String DEFAULT_REPO     = "http://www.geo.uzh.ch/microsite/3dveglab/software";
   private static final String DEFAULT_MANIFEST = DEFAULT_REPO + "/3DVegLab.manifest";
   
@@ -317,6 +319,7 @@ public class Install {
     String bindir = cwd;
     String moddir = new File(cwd, ".." + File.separator + TYPE_MODULES).getAbsolutePath();
     String libdir = new File(cwd, ".." + File.separator + TYPE_LIB).getAbsolutePath();
+    String jredir = new File(cwd, ".." + File.separator + "jre").getAbsolutePath();
     String auxsuffix = ".beam:beam-vlab:auxdata".replaceAll(":", Matcher.quoteReplacement(File.separator));
     String auxdir = null;
     if (System.getProperty("os.name").startsWith("Windows")) {
@@ -350,6 +353,14 @@ public class Install {
         targetName = auxdir + File.separator + tuple[2];
       } else if (TYPE_LIB.equals(tuple[1])) {
         targetName = libdir + File.separator + tuple[2];
+      } else if (TYPE_SO32.equals(tuple[1])) {
+        // for now, this means it must be a windows dll
+        targetName = jredir + File.separator + "bin" + File.separator + tuple[2];
+      } else if (TYPE_SO64.equals(tuple[1])) {
+        // for now, this means it must be a linux .so
+        targetName = jredir + File.separator + "lib" + File.separator + "amd64" + File.separator + tuple[2];
+        // on windows, do this to prevent fetch from failing
+        (new File(targetName).getParentFile()).mkdirs();
       } else if (TYPE_MODULES.equals(tuple[1])) {
         for (File toDelete : new File(moddir).listFiles(new FilenameFilter() {
           public boolean accept(File directory, String fileName) {
@@ -360,7 +371,7 @@ public class Install {
         }
         targetName = moddir + File.separator + tuple[2];
       } else {
-        die("unknown file locator: " + tuple[1]);
+        die("unknown manifest locator: " + tuple[1]);
       }
 
       // Fetch targetName from repoURL
@@ -493,7 +504,7 @@ public class Install {
         }
         break;
       default:
-        die("Invalid arguments");
+        die("usage error: known sub-commands [fetch src [dest]] [unzip baseDir zipPath] [repo repoURL manifestURL]");
         break;
     }
   }
