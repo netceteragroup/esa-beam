@@ -30,7 +30,7 @@
 #
 # 3. standalone with a 'fake' swing-based gui
 # 
-#    java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar VLabImpl.py
+#    java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar ${HOME}/.beam/beam-vlab/auxdir/VLabImpl.py
 #
 # Those BEAM-supplied jars can also be obtained like this:
 #    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (24 Aug 2014)'
+  VERSION_STRING     = '1.0 (4 Sep 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -72,7 +72,7 @@ class VLAB:
   K_LAEGERN          = 'Laegern'
   K_THARANDT         = 'Tharandt'
   K_RAMI             = 'RAMI'
-  K_USER_DEFINED     = 'User defined (UserDefined.obj)'
+  K_USER_DEFINED     = '(UserDefined.obj)'
 
   K_YES              = 'Yes'
   K_NO               = 'No'
@@ -1129,19 +1129,21 @@ class VLAB:
 used."""
     pnt = None
     if sys.platform.startswith('java'):
-      from java.lang import System, ClassLoader
-      from java.io import File
-      libDirs = System.getProperty("beam.libDirs")
-      if libDirs == None:
-        raise RuntimeError("beam.libDirs is not known to Java")
+      ### no longer needed - installer resolves SOs/DLLs
+      # from java.lang import System, ClassLoader
+      # from java.io import File
+      # libDirs = System.getProperty("beam.libDirs")
+      # if libDirs == None:
+      #   raise RuntimeError("beam.libDirs is not known to Java")
+      #
+      ### http://blog.cedarsoft.com/2010/11/setting-java-library-path-programmatically
+      # libPath = System.getProperty("java.library.path")
+      # libPath += File.pathSeparator + libDirs
+      # System.setProperty("java.library.path", libPath)
+      # syspathfield = ClassLoader.getDeclaredField("sys_paths")
+      # syspathfield.setAccessible(True);
+      # syspathfield.set(None, None)
 
-      # hack taken from: http://blog.cedarsoft.com/2010/11/setting-java-library-path-programmatically
-      libPath = System.getProperty("java.library.path")
-      libPath += File.pathSeparator + libDirs
-      System.setProperty("java.library.path", libPath)
-      syspathfield = ClassLoader.getDeclaredField("sys_paths")
-      syspathfield.setAccessible(True);
-      syspathfield.set(None, None)
       from lbfgsb import DifferentiableFunction, FunctionValues, Bound, Minimizer
       class function(DifferentiableFunction):
         def __init__(self, function, args=()):
@@ -1754,6 +1756,11 @@ class Minimize_NMSimplex:
 
 #### DUMMY start #############################################################
 class DUMMY:
+  if VLAB.osName().startswith('Windows'):
+    SDIR=VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dummy_win32')
+  else:
+    SDIR=VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/dummy_lin64')
+
   """A dummy processor for testing the VLAB plugin """
   def __init__(self):
     me=self.__class__.__name__ +'::'+VLAB.me()
@@ -1762,12 +1769,27 @@ class DUMMY:
     """do processing for DUMMY processor"""
     me=self.__class__.__name__ +'::'+VLAB.me()
 
+    # defaults
+    q = {
+      'rpvfile'    : 'angles.rpv.2.dat',
+    }
+
+    # overwrite defaults
+    for a in args:
+      q[a] = args[a]
+
+    if (pm != None):
+      pm.beginTask("Computing BRF...", 10)
+    # ensure at least 1 second to ensure progress popup feedback
+    time.sleep(1)
+
+    # dummy processor
     VLAB.logger.info('%s: doExec() on %s' % (me, args))
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/',
       'exe'     : '$HOME/.beam/beam-vlab/auxdata/dummy_lin64/dummy',
-      'cmdline' : [ '-e', '1', '-r', '5' ],
+      'cmdline' : [ '-e', '1', '-r', '3' ],
       'stdin'   : None,
       'stdout'  : None,
       'stderr'  : None,
@@ -1776,7 +1798,7 @@ class DUMMY:
     'windows' : {
       'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dummy_win32',
       'exe'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dummy_win32//dummy.exe',
-      'cmdline' : [ '-e', '1', '-r', '5' ],
+      'cmdline' : [ '-e', '1', '-r', '3' ],
       'stdin'   : None,
       'stdout'  : None,
       'stderr'  : None,
@@ -1786,10 +1808,81 @@ class DUMMY:
     VLAB.doExec(cmd)
 
     if (pm != None):
-      pm.beginTask("Computing BRF...", 10)
-    # ensure at least 1 second to ensure progress popup feedback
+      pm.beginTask("Plotting...", 10)
     time.sleep(1)
-    VLAB.logger.info('%s: finished running...' % me)
+    # create a dummy chart
+    dataset = VLAB.make_dataset()
+    VLAB.plot(dataset, [20,  30, 60], [0.1,  0.2, 0.3],  'original')
+    VLAB.plot(dataset, [-60, -30, 0], [0.05, 0.1, 0.15], 'inverted')
+    chart = VLAB.make_chart('', 'Viewing Zenith (deg)', u"\u03A1", dataset)
+    VLAB.save_chart(chart, "%s/%s" % (DUMMY.SDIR, 'vlab_chart.png'))
+
+    if (pm != None):
+      pm.beginTask("Inverting...", 10)
+    time.sleep(1)
+    VLAB.logger.info("inverting...");
+
+    from lbfgsb import LBFGSBException, DifferentiableFunction, FunctionValues, Minimizer, Bound, IterationFinishedListener
+
+    class VLabFun(DifferentiableFunction):
+      def getValues(self, points):
+        p = points[0]
+        VLAB.logger.info("Calculating function for x=%s" % (p))
+        return FunctionValues(math.pow(p+4, 2), [2*(p+4)])
+
+    class VLabListener(IterationFinishedListener):
+      ii = 0
+      def iterationFinished(self, points, fVal, gradients):
+        VLAB.logger.info("[%d] x=%f, v=%f, g=%f" % (self.ii, points[0], fVal, gradients[0]))
+        self.ii = self.ii + 1
+        return True
+
+    # make it a subclass of lbfgsb
+    class lbfgsb:
+      class VLabDummyRun:
+        def main(self,args):
+          try:
+            fun = VLabFun()
+            alg = Minimizer()
+            alg.setIterationFinishedListener(VLabListener())
+            alg.setBounds([Bound(float(10), None)])
+            result = alg.run(fun, [float(40)])
+            VLAB.logger.info('The final result: %s' % (result))
+          except LBFGSBException, e:
+            VLAB.logger.info(e)
+
+    run = lbfgsb.VLabDummyRun()
+    run.main(sys.argv)
+
+    VLAB.logger.info("writing rpv inputfile");
+    # create rpv input file for radtran
+    fp = open("%s/%s" % (DUMMY.SDIR, 'rpv_file.in'), 'w')
+    for wb in [443, 490, 560, 665, 705, 740, 783, 842, 945, 1375, 1610, 2190]:
+      fp.write("%s.0 %s %s %s\n" % (wb,"0.00000000","1.17285487","0.17957034"))
+    fp.close()
+      
+    # arguments for doLibradtran
+    r = {
+      'CO2'      : q[VLAB.P_AtmosphereCO2],
+      'H2O'      : q[VLAB.P_AtmosphereWater],
+      'O3'       : q[VLAB.P_AtmosphereOzone],
+      'scene'    : q[VLAB.P_3dScene],
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'sensor'   : q[VLAB.P_Sensor],
+      'rpv_file' : '%s/%s' % (DUMMY.SDIR, "rpv_file.in"),
+      'infile'   : '%s/%s' % (DUMMY.SDIR, 'UVSPEC-in.txt'),
+      'outfile'  : '%s/%s' % (DUMMY.SDIR, 'UVSPEC-out.txt'),
+    }
+    # 
+    # TODO: loop over something to produce umu, phi ,phi0, sza, etc.
+    #
+    if (pm != None):
+      pm.beginTask("Running libradtran...", 10)
+    VLAB.logger.info("running Radtran");
+    VLAB.doLibradtran(r)
+
+    VLAB.logger.info("done");
+    VLAB.logger.info('%s: done...' % me)
 
 #### DUMMY end ###############################################################
 
@@ -3049,7 +3142,7 @@ class Librat_dobrdf:
       q['look_xyz'] = ((q['look_xyz']),)
 
     if len(ang) < 4 or (len(ang) > 4 and len(ang[0]) != 4):
-      sys.stderr.write("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
+      VLAB.logger.info("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
       raise Exception()
 
     if len(ang) == 4:
@@ -3156,7 +3249,7 @@ class Librat_dolibradtran:
 
     rpv = VLAB.valuesfromfile(r['rpv_file'])
     if len(rpv[0]) != 4: # length of index 1 because index 0 is heading
-      sys.stderr.write("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], rpv_file))
+      VLAB.logger.info("%s: rpv file %s wrong no. of cols (should be 4: lambda (nm), rho0, k, theta\n" % (sys.argv[0], rpv_file))
       raise Exception()
 
     angt = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['angfile']))
@@ -3165,12 +3258,12 @@ class Librat_dolibradtran:
     nbands = len(wb)
     wbstep = 1
     if q['v']:
-      sys.stderr.write('%s: wbmin = %i, wbmax = %i, wbstep = %i\n'%(sys.argv[0],min(wb),max(wb),wbstep))
+      VLAB.logger.info('%s: wbmin = %i, wbmax = %i, wbstep = %i\n'%(sys.argv[0],min(wb),max(wb),wbstep))
 
     if q['v']:
       # only do all angles if time not specified, if time specified use that to get sza and phi0
       if q['lat'] and ['lon'] and ['time']:
-        sys.stderr.write("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['anglefile']))
+        VLAB.logger.info("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['anglefile']))
 
     # check for op file if required
     if not VLAB.fileExists('%s/%s' % (LIBRAT.SDIR, q['plotfile'])):
@@ -3509,8 +3602,8 @@ class Librat_plot:
            "waveband: %.1f" % wb [b])
     chart = VLAB.make_chart("plot.py out", "view zenith angle (deg.)",
                             u"\u03A1", dataset)
-    sys.stderr.write('%s: plotting brdf to: %s\n'%(sys.argv[0], opplot))
-    sys.stderr.write('%s: saving brdf data to: %s\n'%(sys.argv[0], opdat))
+    VLAB.logger.info('%s: plotting brdf to: %s\n'%(sys.argv[0], opplot))
+    VLAB.logger.info('%s: saving brdf data to: %s\n'%(sys.argv[0], opdat))
     outdata = [[0. for i in xrange(len(result[0]) + len(ang))]
                for j in xrange(len(result))]
     VLAB.replacerectinarray(outdata, zip(*ang), 0, 0, len(result), len(ang))
@@ -3548,7 +3641,7 @@ class Librat_rpv_invert:
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
-      sys.stderr.write('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],q['dataf'],q['wbfile']))
+      VLAB.logger.info('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],q['dataf'],q['wbfile']))
       raise Exception('%s: no of wavebands different in brdf file %s and wb file %s\n'%(sys.argv[0],q['dataf'],q['wbfile']))
 
     rho0, k, bigtet, rhoc = 0.03, 1.2, 0.1, 0.2
@@ -3563,7 +3656,7 @@ class Librat_rpv_invert:
     else:
       opdat = q['dataf'] + '.params.dat'
 
-    if q['verbose']: sys.stderr.write('%s: saving params to %s\n'%(sys.argv[0], opdat))
+    if q['verbose']: VLAB.logger.info('%s: saving params to %s\n'%(sys.argv[0], opdat))
 
     # create the file if it doesn't exist
     dfp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, opdat))
@@ -3582,7 +3675,7 @@ class Librat_rpv_invert:
     xmin, xmax = (-75., 75)
 
     for wbNum, band in enumerate(wb):
-      if q['verbose']: sys.stderr.write('%s: doing band %i (%f)\n'%(sys.argv[0], wbNum, band))
+      if q['verbose']: VLAB.logger.info('%s: doing band %i (%f)\n'%(sys.argv[0], wbNum, band))
 
       invdata = [[0. for i in xrange(len(data))] for i in xrange(5)]
       invdata[0:4] = data[0:4]
@@ -3611,7 +3704,7 @@ class Librat_rpv_invert:
         else:
           opplot = VLAB.path.join(LIBRAT.SDIR, q['dataf'] + '.inv.wb.' + str(wbNum) + '.png')
 
-        if q['verbose']: sys.stderr.write('%s: plotting to %s\n' % (sys.argv[0], opplot))
+        if q['verbose']: VLAB.logger.info('%s: plotting to %s\n' % (sys.argv[0], opplot))
 
         dataset = VLAB.make_dataset()
         VLAB.plot(dataset, invdata[0], invdata[4], "original")
@@ -4488,11 +4581,11 @@ else:
         paramProps = self.pMap[parameterName]
         if (paramProps == None):
           if (parameterName.endsWith(VLAB.P_EXPRESSION)):
-            VLAB.lof('to be implemented!!!')
+            VLAB.logger.info('to be implemented!!!')
           elif (parameterName.endsWith(VLAB.P_CONDITION)):
-            VLAB.lof('to be implemented!!!')
+            VLAB.logger.info('to be implemented!!!')
           elif (parameterName.endsWith(VLAB.P_OUTPUT)):
-            VLAB.lof('to be implemented!!!')
+            VLAB.logger.info('to be implemented!!!')
   
         if (paramProps == None):
           raise IllegalArgumentException("Invalid parameter name '" + parameterName + "'.")
