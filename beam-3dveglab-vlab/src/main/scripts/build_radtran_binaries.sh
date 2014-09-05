@@ -16,6 +16,7 @@ sudo yum -y install mingw32-gcc-gfortran
 sudo yum -y install patch
 sudo yum -y install elinks
 sudo yum -y install flex
+sudo yum -y install file
 
 wget http://www.libradtran.org/bin/history/libRadtran-${VERSION}.tar.gz
 tar -xzvf libRadtran-${VERSION}.tar.gz
