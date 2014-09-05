@@ -49,7 +49,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (4 Sep 2014)'
+  VERSION_STRING     = '1.0 (5 Sep 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -1201,7 +1201,7 @@ used."""
       q['wavelength'] = '450 2300'
 
     if VLAB.osName().startswith('Windows'):
-      q['solar_file'] = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.day')
+      q['solar_file'] = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.dat')
     else:
       q['solar_file'] = VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat')
 
@@ -1260,7 +1260,7 @@ quiet
      },
      'windows' : {
        'cwd'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\examples',
-       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\uvspec.exe',
+       'exe'     : '%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\bin\\uvspec.exe',
        'cmdline' : [],
        'stdin'   : q['infile'],
        'stdout'  : q['outfile'],
