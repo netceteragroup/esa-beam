@@ -13,12 +13,18 @@ sudo yum -y install mingw32-gcc
 sudo yum -y install mingw32-gcc-gfortran
 sudo yum -y install patch
 sudo yum -y install elinks
+sudo yum -y install flex
 
-wget http://www.libradtran.org/bin/libRadtran-${VERSION}.tar.gz
+wget http://www.libradtran.org/bin/history/libRadtran-${VERSION}.tar.gz
 tar -xzvf libRadtran-${VERSION}.tar.gz
 cd libRadtran-${VERSION}
 ./configure
 make
+
+for d in libgfortran.so.3 libquadmath.so.0 libgcc_s.so.1; do
+  cp /lib64/$d lib
+done
+
 cd ..
 mv libRadtran-${VERSION} ${LINNAME}
 tar -czf ${LINNAME}.tar.gz ${LINNAME}
@@ -52,6 +58,10 @@ done
 make
 # add .exe extension to the win32 executables
 find . -type f -print0 | xargs -0 file | grep PE32 | awk -F: '{printf "mv \"%s\" \"%s.exe\"\n", $1,$1}' | egrep -v  '\.exe$' | sh -x
+
+for d in libquadmath-0.dll libwinpthread-1.dll libgfortran-3.dll libgcc_s_sjlj-1.dll; do
+  cp /usr/i686-w64-mingw32/sys-root/mingw/bin/${d} bin
+done
 
 cd ..
 mv libRadtran-${VERSION} ${WINNAME}

@@ -1,0 +1,11 @@
+--- python/uvspec_lex.l.orig	2014-09-05 14:25:23.341699344 +0200
++++ python/uvspec_lex.l	2014-09-05 14:25:51.304206954 +0200
+@@ -140,7 +140,7 @@
+ SPACE_SIGNED_FLOAT {SPACE}+{SIGNED_FLOAT}
+ SIGNED_FLOATS {SPACE_SIGNED_FLOAT}+
+ SIGNED_INTEGER {SIGN}?{INTEGER}
+-WORD     [_\.\/A-Za-z][_\.\/A-Za-z0-9\-]*
++WORD     [_\.\/\\A-Za-z][_\.\/\\A-Za-z0-9\-:]*
+ DIM      [1,3][d,D]
+ SPACE_PROFILETYPE {SPACE}+({DIM}|{WORD})
+ SPACE_WORD {SPACE}+{WORD}
