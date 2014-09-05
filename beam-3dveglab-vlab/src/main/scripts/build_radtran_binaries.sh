@@ -9,6 +9,8 @@ LINNAME=libRadtran-${VERSION}_linux64-`date +%Y%m%d`
 
 set -e
 
+sudo yum -y install gcc
+sudo yum -y install gcc-gfortran
 sudo yum -y install mingw32-gcc
 sudo yum -y install mingw32-gcc-gfortran
 sudo yum -y install patch
