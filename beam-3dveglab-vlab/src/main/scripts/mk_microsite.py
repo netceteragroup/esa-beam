@@ -193,7 +193,7 @@ pageindex = '''
 	</figure>
     
 	<div class="document abstract">
-        <i>From: Schneider, F.; Leiterer, R.; Morsdorf, F.; Gastellu-Etchegorry, J.-P.; Lauret, N.; Pfeifer, N. & Schaepman, M. E. <a href="dx.doi.org/10.1016/j.rse.2014.06.015">Simulating imaging spectrometer data: 3D forest modeling based on LiDAR and in situ data</a>, Remote Sensing of Environment, Vol 152, pg 235-250, Sept 2014.</i>
+        <i>From: Schneider, F.; Leiterer, R.; Morsdorf, F.; Gastellu-Etchegorry, J.-P.; Lauret, N.; Pfeifer, N. and Schaepman, M. E. <a href="http://dx.doi.org/10.1016/j.rse.2014.06.015">Simulating imaging spectrometer data: 3D forest modeling based on<br> LiDAR and in situ data</a> Remote Sensing of Environment, Vol 152, pg 235-250, Sept 2014.</i>
      </div>
   
 	<h3>Abstract</h3>
