@@ -10,47 +10,39 @@ Binary Installation
 ---------------------------
 
 Binary installation of the 3D Vegetation Lab plugin is automated [in Java](https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scripts/Install.java) and involves
- * copying/replacing the plugin jar in $HOME/beam-4.11/modules 
- * first-time plugin run to create/unpack $HOME/.beam/beam-vlab/auxdata/
- * fetch/unpack latest versions of dependent 3rd party software into auxdata
- * create command line wrappers in the bin directory for batch operation
+ * copying (or replacing) the plugin jar into ${BEAMHOME}/beam-4.11/modules
+ * first-time batch run to install ${HOME}/.beam/beam-vlab/auxdata/beam-vlab
+ * fetch/unpack 3rd-party software into ${HOME}/.beam/beam-vlab/auxdata/beam-vlab
+ * create command line wrappers in the bin directory for batch operation 
 
 Binary Installation (windows version)
 ------------------------------------------
+Two pre-install steps:
+1. Visit the [windows 32-bit BEAM-installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_win32_installer.exe) and download into your **_Downloads_** folder
+2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder.
 
 ```dos
-rem 1. MANUALLY: Download BEAM  - you have to click to Proceed
-rem press Windows-R  to get the "run" prompt
-iexplore "http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_win32_installer.exe"
-rem 2. run installer
+rem press Windows-R to get the "run" prompt, then type "cmd" to get a shell
+cd %HOMEDRIVE%%HOMEPATH%\Downloads
+rem Note: when prompted, we suggest C:\data\Program Files (x86)\beam-4.11
+rem because 3DVeglabInstaller.jar will fail if Administrator access is needed
 beam_4.11_win32_installer.exe
-rem 3. go to the beam bin directory (the directory where you just installed it)
-rem press Windows-R to get the "run" prompt 
-cmd /K "cd /d C:\Program Files (x86)\beam-4.11\bin"
-rem 4. download the 3DVegLabInstaller.jar into the bin directory from step 3.
-iexplore "ftp://ftp.netcetera.ch/pub/"
-rem 5. run the 3DVegLabInstaller.jar from inside the bin directory 
-press Windows-R to get the "run" prompt
-cmd /K "cd /d C:\Program Files (x86)\beam-4.11\bin"
-java -jar 3DVegLabInstaller.jar
+move 3DVegLabInstaller.jar "C:\data\Program Files (x86)\beam-4.11\bin"
+cd /d "C:\data\Program Files (x86)\beam-4.11\bin"
+..\jre\bin\java -jar 3DVegLabInstaller.jar
 ```
 Binary Installation (linux version)
 ------------------------------------------
+Two pre-install steps:
+1. Visit the [linux 64-bit BEAM installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_linux64_installer.sh) and download into your **_Downloads_** folder
+2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder
 
 ```bash
-# 1. MANUALLY: Download BEAM  - you have to click to Proceed
-firefox 'http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_linux64_installer.sh'
-# 2. run installer
+cd ${HOME}/Downloads
 sh beam_4.11_linux64_installer.sh
-# NOTE: an early version of BEAM's 4.11 installer still named the installed directory beam-4.10.3. If so, please rename it to beam-4.11
-# 3. go to the beam bin directory (the directory where you just installed it)
+mv 3DVegLabInstaller.jar ${HOME}/beam-4.11/bin
 cd ${HOME}/beam-4.11/bin
-# 4. download 3DVegLabInstaller.jar into the bin directory from step 3.
-wget ftp://ftp.netcetera.ch/pub/3DVegLabInstaller.jar
-# 5. run the 3DVegLabInstall.jar from inside the bin directory
-java -jar 3DVegLabInstaller.jar
-# 6. run BEAM
-${HOME}/beam-4.11/bin/visat
+../jre/bin/java -jar 3DVegLabInstaller.jar
 ```
 
 Once you have started BEAM (visat), use Tools/3D Vegetation Lab Processor to start the plugin.
