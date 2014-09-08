@@ -54,7 +54,7 @@ Testing
 Since nearly everything is implemented in that single python file, we were able to provide multiple alternatives for testing.
 
 1. From within BEAM, using log statements (as described in the "Example change" above)
-2. Recommended: standalone with a "fake beam" swing-based GUI
+2. Stand-alone with a "fake beam" swing-based GUI
 ```bash
 # for linux
 ${HOME}/beam-4.11/jre/bin/java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar:${HOME}/beam-4.11/lib/lbfgsb_wrapper-1.1.3.jar ${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py
@@ -64,10 +64,12 @@ rem for windows
 set BEAMDIR="C:\data\Program Files (x86)\beam-4.11"
 %BEAMDIR%\jre\bin\java -jar %BEAMDIR%\lib\jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=%BEAMDIR%\lib\jcommon-1.0.16.jar;%BEAMDIR%\lib\jfreechart-1.0.13.jar;%BEAMDIR%\lib\lbfgsb_wrapper-1.1.3.jar %HOMEDRIVE%%HOMEPATH%\.beam\beam-vlab\auxdata\VLabImpl.py
 ```
-3. Standalone "headless" (either jython or python)
-Same as with #2, but don't pass java the `-Dvlab.fakebeam=1` flag
 
-For case 3, search for the method selftests() to see (or change) which tests will be run in a GUI-less way (with log messages appearing on the console from where the command is run).
+A third alternative is a "headless" standalone mode, which is the same
+as #2, but don't pass java the `-Dvlab.fakebeam=1` flag. In this case,
+search for the method selftests() to see (or change) which tests will
+be run in a GUI-less way (with log messages appearing on the console
+from where the command is run).
 
 VLabImpl.py Code Layout
 ---------------------------
