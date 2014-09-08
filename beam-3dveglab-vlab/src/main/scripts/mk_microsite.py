@@ -160,7 +160,7 @@ template = '''
           "http://www.cesbio.ups-tlse.fr/us/dart/dart_contexte.html">DART</a><br />
           <a href=
           "http://www2.geog.ucl.ac.uk/~plewis/librat/">librat</a><br />
-          <a href="http://www.libradtran.org">libRADTRAN</a><br />
+          <a href="http://www.libradtran.org">libRadtran</a><br />
         </div>
        </div>
 
@@ -404,40 +404,45 @@ pagesoftware = '''
         .menu a[href*="software"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
      <h2>BEAM toolkit plugin</h2>
+
+     <img alt="Beam 3dveglab plugin" src="http://www.geo.uzh.ch/microsite/3dveglab/graphics/vlab-screenshot.png" />
+
+     <blockquote>
      An <a href="https://github.com/netceteragroup/esa-beam">integrated
      plugin module</a> is available for version 4.11 of the <a
      href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth
      Observation Toolbox and Development Platform</a>
      <br>
-     <br>
-     <b>Note:</b> <i>This toolbox software plugin is not yet final, but
-     a current development snapshot.</i>
+     <b>Note:</b> This software plugin is functional <i><b>technically</b>, but validation is ongoing.</i>
+     </blockquote>
 
      <h3>Binary Installation</h3>Binary installation of the 3D Vegetation
      Lab plugin is automated by a command line Java installer (details below)
      which does the following:
 
      <ul>
-      <li>copy/replace the 3D VegLab plugin (jar) in BEAM's
+      <li>copy (or replace) the plugin jar into BEAM's
       <tt>${BEAMHOME}/beam-4.11/modules</tt></li>
 
-      <li>first-time batch execution to create/unpack data in BEAM's
-      <tt>${HOME}/.beam/beam-vlab/auxdata/</tt></li>
+      <li>first-time batch run to install into BEAM's
+      <tt>${HOME}/.beam/beam-vlab/auxdata/beam-vlab</tt></li>
 
-      <li>fetch/unpack 3rd party dependent software (e.g. DART, librat,
-      libRADTRAN) into BEAM's <tt>${HOME}/.beam/beam-vlab/auxdata</tt></li>
+      <li>fetch/unpack dependent software (e.g. DART, librat, libRadtran) 
+      into BEAM's <tt>${HOME}/.beam/beam-vlab/auxdata/beam-vlab</tt></li>
 
-      <li>create command line wrapper scripts for batch operation BEAM's
+      <li>create command line wrappers for batch operation into BEAM's
       <tt>${BEAMHOME}/beam-4.11/bin/</tt></li>
      </ul>
 
      <h3>Binary Installation (windows)</h3>
+      <b>Two pre-install steps:</b><br>
       1. Visit the <a href="http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&amp;what=software/beam/4.11/beam_4.11_win32_installer.exe">windows 32-bit BEAM installer page</a> and download into your <b><tt>Downloads</tt></b> folder<br> 
       2. Save our <a href="http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar">3DVegLab plugin installer jar</a> file in your <b><tt>Downloads</tt></b> folder<br>
      <pre>
 rem press Windows-R to get the "run" prompt, then type "cmd" to get a shell
 cd %HOMEDRIVE%%HOMEPATH%\Downloads
-rem When prompted, we suggest <b>C:\\data\\Program Files (x86)\\beam-4.11</b>
+rem <b>Note</b>: when prompted, we suggest <b>C:\\data\\Program Files (x86)\\beam-4.11</b>
+rem because 3DVeglabInstaller.jar <i>will fail if Administrator access is needed</i>
 beam_4.11_win32_installer.exe
 move 3DVegLabInstaller.jar "C:\\data\\Program Files (x86)\\beam-4.11\\bin"
 cd /d "C:\\data\\Program Files (x86)\\beam-4.11\\bin"
@@ -445,6 +450,7 @@ cd /d "C:\\data\\Program Files (x86)\\beam-4.11\\bin"
 </pre>
 
      <h3>Binary Installation (linux)</h3>
+      <b>Two pre-install steps:</b><br>
       1. Visit the <a href="http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&amp;what=software/beam/4.11/beam_4.11_linux64_installer.sh">linux 64-bit BEAM installer page</a> and download into your <b><tt>Downloads</tt></b> folder<br> 
       2. Save our <a href="http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar">3DVegLab plugin installer jar</a> file in your <b><tt>Downloads</tt></b> folder<br>
      <pre>
