@@ -18,8 +18,8 @@ Binary installation of the 3D Vegetation Lab plugin is automated [in Java](https
 Binary Installation (windows version)
 ------------------------------------------
 Two pre-install steps:
-1. Visit the [windows 32-bit BEAM-installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_win32_installer.exe) and download into your **_Downloads_** folder
-2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder.
+ 1. Visit the [windows 32-bit BEAM-installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_win32_installer.exe) and download into your **_Downloads_** folder
+ 2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder.
 
 ```dos
 rem press Windows-R to get the "run" prompt, then type "cmd" to get a shell
@@ -34,8 +34,8 @@ cd /d "C:\data\Program Files (x86)\beam-4.11\bin"
 Binary Installation (linux version)
 ------------------------------------------
 Two pre-install steps:
-1. Visit the [linux 64-bit BEAM installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_linux64_installer.sh) and download into your **_Downloads_** folder
-2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder
+ 1. Visit the [linux 64-bit BEAM installer page](http://www.brockmann-consult.de/cms/web/beam/dlsurvey?p_p_id=downloadportlet_WAR_beamdownloadportlet10&what=software/beam/4.11/beam_4.11_linux64_installer.sh) and download into your **_Downloads_** folder
+ 2. Save our [3DVegLab plugin installer jar](http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLabInstaller.jar) file in your **_Downloads_** folder
 
 ```bash
 cd ${HOME}/Downloads
