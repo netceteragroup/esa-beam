@@ -26,7 +26,7 @@ cd ${P}
 git clone git://github.com/bcdev/ceres.git
 git clone git://github.com/bcdev/beam.git
 cd ${P}/ceres
-mvn install
+mvn install -DskipTests
 cd ${P}/beam
 git checkout ${BEAM_VERSION}
 
@@ -179,7 +179,7 @@ cat > CommandLineToolTest-patch << EOF
 EOF
 patch -b -p0 < CommandLineToolTest-patch
 
-mvn install
+mvn install -DskipTests
 mkdir -p ${P}/beam/config
 cp ${P}/beam/src/main/config/beam.config ${P}/beam/config/
 
