@@ -1981,7 +1981,7 @@ class DUMMY:
     if (pm != None):
       pm.beginTask("Running libradtran...", 10)
     VLAB.logger.info("running Radtran");
-    # VLAB.doLibradtran(r)
+    VLAB.doLibradtran(r)
     VLAB.logger.info('%s: finished computing...' % me)
 
     # Copy to results directory
