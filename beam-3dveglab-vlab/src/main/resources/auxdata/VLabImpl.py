@@ -15,24 +15,23 @@
 # 
 # @(#) $Id: $
 #
-# Authors: Cyrill Schenkel, Daniel Kueckenbrink, Joshy Cyriac, Marcel Kessler, Jason Brazile
+# Authors: Mat Disney, Cyrill Schenkel, Fabian Schneider, Nicolas Lauret, Tristan Gregoire, Daniel Kueckenbrink, Joshy Cyriac, Marcel Kessler, Jason Brazile
 #
 
 ##############################################################################
-# Three ways to run it:
+# Two ways to run:
 # 
-# 1. embedded within the BEAM processor (normal case)
+# 1. Embedded within BEAM's 3DVegLab processor (normal case)
+# 2. Stand-alone with a "fake beam" swig-based GUI
 #
-# 2. standalone tests - headless (either jython or python)
+# windows:
+# set BEAMDIR="C:\data\Program Files (x86)\beam-4.11"
+# %BEAMDIR%\jre\bin\java -jar %BEAMDIR%\lib\jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=%BEAMDIR%\lib\jcommon-1.0.16.jar;%BEAMDIR%\lib\jfreechart-1.0.13.jar;%BEAMDIR%\lib\lbfgsb_wrapper-1.1.3.jar %HOMEDRIVE%%HOMEPATH%\.beam\beam-vlab\auxdata\VLabImpl.py
 #
-#    jython -Dpython.path=jcommon-1.0.16.jar:jfreechart-1.0.13.jar VLabImpl.py
-#    python VLabImpl.py
+# linux:
+# ${HOME}/beam-4.11/jre/bin/java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar:${HOME}/beam-4.11/lib/lbfgsb_wrapper-1.1.3.jar ${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py
 #
-# 3. standalone with a 'fake' swing-based gui
-# 
-#    java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar ${HOME}/.beam/beam-vlab/auxdir/VLabImpl.py
-#
-# Those BEAM-supplied jars can also be obtained like this:
+# Note: those BEAM-supplied jars can also be obtained like this:
 #    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar
 #    wget -U "Mozilla/5.0" http://repo1.maven.org/maven2/jfree/jcommon/1.0.16/jcommon-1.0.16.jar
 #
@@ -49,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (5 Sep 2014)'
+  VERSION_STRING     = '1.0 (10 Oct 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -123,7 +122,7 @@ class VLAB:
  ('RT Processor',      'RTProcessor',         JCB, (K_DUMMY, K_LIBRAT, K_DART)))},
 {'Spectral Characteristics': (
  ('Sensor',            'Sensor',              JCB, (K_SENTINEL2, K_SENTINEL3, K_MODIS, K_MERIS, K_LANDSAT_OLI, K_LANDSAT_ETM)),
- ('Bands',             'Bands',               JTF, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10'))},
+ ('Bands',             'Bands',               JTD, 'full set for sensor'))},
 {'Viewing Characteristics': (
  ('Zenith',            'ViewingZenith',       JTF, '20.0'),
  ('Azimuth',           'ViewingAzimuth',      JTF, '0.0'))},
@@ -584,14 +583,117 @@ class VLAB:
       else:
         raise IOError("Attribute name '%s' not found for node '%s' in file '%s'" % (attributName, nodeName, fname))
   XMLGetNodeAttributeValue = staticmethod(XMLGetNodeAttributeValue)
-  def getBandsFromGUI(bands):
+  def getBandsFromGUI(sensor):
     """ Return a DART spectral bands list: ["deltaLambda", "meanLambda"] in micro meter
     In case of several bands the result should be a list of list:
     [["deltaLambda0", "meanLambda0"], ["deltaLambda1", "meanLambda1"], ["deltaLambda2", "meanLambda2"], ...]
     e.g.: [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
     """
-    # TODO: You should write the spectral band converter here!
-    return [["0.02", "0.56"], ["0.02", "0.58"], ["0.02", "0.60"], ["0.02", "0.62"]]
+
+  # TODO sensor spectral band data should not be hardcoded here
+
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.MSI.dat
+    # https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/radiometric
+    if VLAB.K_SENTINEL2 == sensor:
+      bands = [
+        ["0.02",        "0.443"],       # band  1
+        ["0.065",       "0.49"],        # band  2
+        ["0.035",       "0.56"],        # band  3
+        ["0.03",        "0.665"],       # band  4
+        ["0.015",       "0.705"],       # band  5
+        ["0.015",       "0.74"],        # band  6
+        ["0.02",        "0.783"],       # band  7
+        ["0.115",       "0.842"],       # band  8
+        ["0.02",        "0.945"],       # band  9
+        ["0.03",        "1.375"],       # band 10
+        ["0.09",        "1.61"],        # band 11
+        ["0.18",        "2.19"],        # band 12
+      ]
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.OLCI.dat
+    # https://sentinel.esa.int/web/sentinel/user-guides/sentinel-3-olci/resolutions/radiometric
+    elif VLAB.K_SENTINEL3 == sensor:
+      bands = [
+        ["0.015",       "0.4"],         # band Oa1
+        ["0.01",        "0.413"],       # band Oa2
+        ["0.01",        "0.49"],        # band Oa4
+        ["0.01",        "0.51"],        # band Oa5
+        ["0.01",        "0.56"],        # band Oa6
+        ["0.01",        "0.62"],        # band Oa7
+        ["0.01",        "0.665"],       # band Oa8
+        ["0.0075",      "0.681"],       # band Oa10
+        ["0.01",        "0.709"],       # band Oa11
+        ["0.0075",      "0.754"],       # band Oa12
+        ["0.0025",      "0.761"],       # band Oa13
+        ["0.015",       "0.779"],       # band Oa16
+        ["0.02",        "0.865"],       # band Oa17
+        ["0.01",        "0.885"],       # band Oa18
+        ["0.01",        "0.9"],         # band Oa19
+        ["0.04",        "1.02"],        # band Oa21
+      ]
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.MODIS.dat
+    # http://oceancolor.gsfc.nasa.gov/DOCS/RSR_tables.htmlhttp://oceancolor.gsfc.nasa.gov/DOCS/RSR_tables.html
+    elif VLAB.K_MODIS == sensor:
+      bands = [
+        ["0.047493",    "0.66"],        # Band 8  ?
+        ["0.038252",    "0.84"],        # Band 12 ?
+        ["0.010633",    "0.485"],       # Band 4  ? 
+        ["0.01975367",  "0.57"],        # band 7  ?
+        ["0.023356",    "1.24"],        # band 14 ?
+        ["0.027593",    "1.65"],        # band 15 ?
+        ["0.053079",    "2.22"],        # band 16 ?
+      ]
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.MERIS.dat
+    # http://earth.esa.int/pub/ESA_DOC/ENVISAT/MERIS/VT-P017-DOC-005-E-01-01_meris.faq.1_1.pdf
+    elif VLAB.K_MERIS == sensor:
+      bands = [
+        ["0.01",        "0.415799988"], # band  1
+        ["0.01",        "0.447600006"], # band  2
+        ["0.01",        "0.486600006"], # band  3
+        ["0.01",        "0.505700012"], # band  4
+        ["0.01",        "0.557599976"], # band  5
+        ["0.01",        "0.619599976"], # band  6
+        ["0.01",        "0.668799988"], # band  7
+        ["0.0075",      "0.679700012"], # band  8
+        ["0.01",        "0.709099976"], # band  9
+        ["0.0075",      "0.755000"],    # band 10
+        ["0.00375",     "0.762200012"], # band 11
+        ["0.015",       "0.776700012"], # band 12
+        ["0.02",        "0.867000"],    # band 13
+        ["0.01",        "0.885400024"], # band 14
+        ["0.01",        "0.9"],         # band 15
+      ]
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.LANDSAT.ETM.dat
+    # TODO: lambdaDeltas not found - just copied from OLI
+    elif VLAB.K_LANDSAT_ETM == sensor:
+      bands = [
+        ["0.01598",     "0.44"],        # band 1 Blue
+        ["0.05733",     "0.56"],        # band 2 Green
+        ["0.03747",     "0.66"],        # band 3 Red
+        ["0.02825",     "0.835"],       # band 4 NIR
+        ["0.08472",     "1.65"],        # band 5 SWIR1
+        ["0.18666",     "2.2"],         # band 8 SWIR2
+      ]
+    # https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/wb.LANDSAT.OLI.dat
+    # http://landsat.gsfc.nasa.gov/?p=5779
+    elif VLAB.K_LANDSAT_OLI == sensor:
+      bands = [
+        ["0.01598",     "0.44"],        # band  CA
+        ["0.06004",     "0.47"],        # band  Blue
+        ["0.05733",     "0.56"],        # band  Green
+        ["0.03747",     "0.655"],       # band  Red
+        ["0.02825",     "0.865"],       # band  NIR
+        ["0.08472",     "1.61"],        # band  SWIR1
+        ["0.18666",     "2.2"],         # band  SWIR2
+        ["0.17240",     "0.6"],         # band  Pan
+        ["0.02039",     "1.37"],        # band  Cirrus
+      ]
+    else:
+      VLAB.logger.info("getBandsFromGUI: unknown sensor=%s" % (sensor))
+      bands = [[]]
+
+    VLAB.logger.info("getBandsFromGUI: sensor=%s returning %s" % (sensor, bands))
+
+    return bands
   getBandsFromGUI = staticmethod(getBandsFromGUI)
   class path:
     def exists(path):
@@ -1879,10 +1981,17 @@ class DUMMY:
     if (pm != None):
       pm.beginTask("Running libradtran...", 10)
     VLAB.logger.info("running Radtran");
-    VLAB.doLibradtran(r)
+    # VLAB.doLibradtran(r)
+    VLAB.logger.info('%s: finished computing...' % me)
 
-    VLAB.logger.info("done");
-    VLAB.logger.info('%s: done...' % me)
+    # Copy to results directory
+    if (pm != None):
+      pm.beginTask("Copying results...", 10)
+    resdir = VLAB.fPath(DUMMY.SDIR, "../results/dummy/%s" % q[VLAB.P_OutputDirectory])
+    VLAB.mkDirPath(resdir)
+    VLAB.logger.info('%s: copy result %s -> %s' % (me, DUMMY.SDIR, resdir))
+    VLAB.copyDir(DUMMY.SDIR, resdir)
+    VLAB.logger.info('%s: Done...' % me)
 
 #### DUMMY end ###############################################################
 
@@ -2423,18 +2532,18 @@ def Dart_Bandes(simulationProperties):
 
 class Dart_dolibradtran:
 
-  def main(q):
+  def main(self, q):
     # generate arguments for doLibradtran
     r = {
       'CO2'      : q[VLAB.P_AtmosphereCO2],
       'H2O'      : q[VLAB.P_AtmosphereWater],
       'O3'       : q[VLAB.P_AtmosphereOzone],
-      'scene'    : q['obj'],
+      'scene'    : q[VLAB.P_3dScene],
       'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
-      'sensor'   : q['wb'],
+      'sensor'   : q[VLAB.P_Sensor],
       'rpv_file' : '%s/rami.TOA/rpv.rami.libradtran.dat.all' % LIBRAT.SDIR,
       'infile'   : '%s/%s/input/%s' % (DART.SDIR, q['simulationName'], 'UVSPEC-in.txt'),
-      'outfile'  : '%s/%s/output/%s' % (DART.SDIR, q['simulationName'], q['ipfile']),
+      'outfile'  : '%s/%s/output/%s' %(DART.SDIR, q['simulationName'], 'UVSPEC-out.txt'),
     }
     # 
     # TODO: loop over something to produce umu, phi ,phi0, sza, etc.
@@ -2687,7 +2796,10 @@ class DART:
       elif a == VLAB.P_IlluminationZenith:
         q['sz'] = args[a]
       elif a == VLAB.P_Bands:
-        q['bands'] = args[a]
+        # This would allow choosing particular bands
+        # q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
+        bands = VLAB.getBandsFromGUI(args[VLAB.P_Sensor])
+        q['bands'] = range(1,len(bands)+1)
       elif a == VLAB.P_ScenePixel:
         q['pixelSize'] = args[a]
       else:
@@ -2732,8 +2844,7 @@ class DART:
     VLAB.XMLEditNode(phase, "BrfProductsProperties", "luminanceProducts", "1")
     # In phase change the spectral bands
     if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
-      # TODO: You should addapt the getBandsFromGUI function to be consistent whith what you want
-      bands = VLAB.getBandsFromGUI(q['bands'])
+      bands = VLAB.getBandsFromGUI(q[VLAB.P_Sensor])
       VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
                                  ["deltaLambda", "meanLambda"],
                                  bands, spectralBands=True)
@@ -2904,7 +3015,17 @@ class DART:
 
     VLAB.logger.info('args is %s' % args)
     Dart_DartImages().writeDataCube( args )
-    VLAB.logger.info('%s: done...' % me)
+    VLAB.logger.info('%s: finished computing...' % me)
+
+    # Copy to results directory
+    srcdir = VLAB.path.join(DART.SDIR, q['simulationName'])
+    if VLAB.fileExists(srcdir):
+      # Copy to results directory
+      resdir = VLAB.fPath(DART.SDIR, "../../results/dart/%s/%s" % (args['OutputDirectory'], q['simulationName']))
+      VLAB.mkDirPath(resdir)
+      VLAB.logger.info('%s: copy result %s -> %s' % (me, srcdir, resdir))
+      VLAB.copyDir(srcdir, resdir)
+      VLAB.logger.info('%s: Done...' % me)
 
 #### DART end ################################################################
 
@@ -3224,7 +3345,7 @@ class Librat_dobrdf:
             VLAB.renameFile(LIBRAT.SDIR + "/" + hdrFile, grabme + '.hdr')
           if imgFile != None:
             VLAB.renameFile(LIBRAT.SDIR + "/" + imgFile, grabme + '.img')
-    VLAB.logger.info('done')
+    VLAB.logger.info('Done')
 
 #############################################################################
 
@@ -3236,9 +3357,9 @@ class Librat_dolibradtran:
       'CO2'      : q[VLAB.P_AtmosphereCO2],
       'H2O'      : q[VLAB.P_AtmosphereWater],
       'O3'       : q[VLAB.P_AtmosphereOzone],
-      'scene'    : q['obj'],
+      'scene'    : q[VLAB.P_3dScene],
       'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
-      'sensor'   : q['sensor'],
+      'sensor'   : q[VLAB.P_Sensor],
       'rpv_file' : VLAB.path.join(LIBRAT.SDIR, q['rpv'])
     }
 
@@ -4142,6 +4263,7 @@ class LIBRAT:
       elif a == 'OutputDirectory':
         q['opdir'] = args[a]
       elif a == '3dScene':
+        q['scene'] = VLAB.P_3dScene
         if args[a] == VLAB.K_RAMI:
           q['obj'] = 'HET01_DIS_UNI_NIR_20.obj'
           q['lat'] = 0
@@ -4158,7 +4280,10 @@ class LIBRAT:
           q['obj'] = 'UserDefined.obj'
           # What about q['lat'] and q['lon']?
       elif a == 'Bands':
-        q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
+        # This would allow choosing particular bands
+        # q['bands'] = [int(i) for i in tuple(args[a].split(", "))]
+        bands = VLAB.getBandsFromGUI(args[VLAB.P_Sensor])
+        q['bands'] = range(1,len(bands)+1)
       elif a == 'DHP_ImageFile':
         q['dhp'] = args[a] == 'Yes'
       elif a == 'ImageFile':
@@ -4236,7 +4361,17 @@ class LIBRAT:
       pm.beginTask("Libradtran...", 10)
     dolibradtran.main(q)
 
-    VLAB.logger.info('%s: Done...' % me)
+    VLAB.logger.info('%s: Finished computing...' % me)
+
+    # Copy to results directory
+    if VLAB.fileExists(fullobjpath): 
+      if (pm != None):
+        pm.beginTask("Copying results...", 10)
+      resdir = VLAB.fPath(LIBRAT.SDIR, "../results/librat/%s" % args['OutputDirectory'])
+      VLAB.mkDirPath(resdir)
+      VLAB.logger.info('%s: copy result %s -> %s' % (me, fullobjpath, resdir))
+      VLAB.copyDir(fullobjpath, resdir)
+      VLAB.logger.info('%s: Done...' % me)
 
 #### LIBRAT end ##############################################################
   

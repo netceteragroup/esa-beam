@@ -448,6 +448,11 @@ move 3DVegLabInstaller.jar "C:\\data\\Program Files (x86)\\beam-4.11\\bin"
 cd /d "C:\\data\\Program Files (x86)\\beam-4.11\\bin"
 ..\\jre\\bin\\java -jar 3DVegLabInstaller.jar
 </pre>
+     3. java must be in your path, paste this (once) to add it, close cmd window
+     <pre>
+setx PATH "%PATH%;C:\data\Program Files (x86)\\beam-4.11\\jre\\bin"
+rem the path does not change in this window, only new windows
+     </pre>
 
      <h3>Binary Installation (linux)</h3>
       <b>Two pre-install steps:</b><br>
@@ -460,6 +465,14 @@ mv 3DVegLabInstaller.jar ${HOME}/beam-4.11/bin
 cd ${HOME}/beam-4.11/bin
 ../jre/bin/java -jar 3DVegLabInstaller.jar
 </pre>
+     3. java must be in your path, paste this (once) to add it, close shell window
+    <pre>
+echo export PATH=\\\"\\\$PATH:\\\$HOME/beam-4.11/jre/bin\\\" >> \\\$HOME/.bash_profile
+# the path does not change in this shell, only new shells
+    </pre>
+
+     <h3>Running the toolkit</h3>
+     Once you have started BEAM (<b><tt>visat</tt></b>), click <b><tt>Tools/3D Vegetation Lab Processor...</tt></b>
 '''
 
 pages = (
