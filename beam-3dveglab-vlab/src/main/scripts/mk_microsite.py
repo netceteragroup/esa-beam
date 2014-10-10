@@ -467,7 +467,7 @@ cd ${HOME}/beam-4.11/bin
 </pre>
      3. java must be in your path, paste this (once) to add it, close shell window
     <pre>
-echo export PATH=\\\"\\\$PATH:\\\$HOME/beam-4.11/jre/bin\\\" >> \\\$HOME/.bash_profile
+echo export PATH=\\\"\\\$PATH:\\\$HOME/beam-4.11/jre/bin\\\" >> \$HOME/.bash_profile
 # the path does not change in this shell, only new shells
     </pre>
 
