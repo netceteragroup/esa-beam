@@ -32,7 +32,7 @@ cd /d "C:\data\Program Files (x86)\beam-4.11\bin"
 ..\jre\bin\java -jar 3DVegLabInstaller.jar
 ```
 
- 3. java.exe must be in your path, paste this (once) to add it, close cmd window
+ (3) java.exe must be in your path, paste this (once) to add it, close cmd window
 ```dos
 setx PATH "%PATH%;C:\data\Program Files (x86)\beam-4.11\jre\bin"
 rem the path does not change in this window, only new windows
@@ -52,7 +52,7 @@ cd ${HOME}/beam-4.11/bin
 ../jre/bin/java -jar 3DVegLabInstaller.jar
 ```
 
- 3. java must be in your path, paste this (once) to add it, close shell window
+ (3) java must be in your path, paste this (once) to add it, close shell window
 ```bash
 echo export PATH=\"\$PATH:\$HOME/beam-4.11/jre/bin\" >> \$HOME/.bash_profile
 # the path does not change in this shell, only new shells
