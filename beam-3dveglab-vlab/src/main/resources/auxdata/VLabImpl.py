@@ -2813,7 +2813,11 @@ class DART:
     # 1. b. Update the DART input files with parameters from GUI
     # In maket change the pixel size
     maket = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "maket.xml")
-    VLAB.XMLEditNode(maket, "CellDimensions", ["x", "z"], [q['pixelSize']]*2)
+    ## TODO: Fix it when the option will be avaiblable
+    if str(q['pixelSize']).isdigit():
+        VLAB.XMLEditNode(maket, "CellDimensions", ["x", "z"], [q['pixelSize']]*2)
+    else:
+        VLAB.logger.info("WARNING: Changing cell dimensions is currently not available")
     # In direction change the Sun viewving angle
     direction = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "directions.xml")
     VLAB.XMLEditNode(direction, "SunViewingAngles",
@@ -2850,7 +2854,8 @@ class DART:
                                  bands, spectralBands=True)
       # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
       coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
-      VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=False)
+      VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
+      VLAB.XMLEditNode(coeffDiff, "UnderstoryMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
     else:
       bands = [None]
       VLAB.logger.info("*********************************************************************************")
