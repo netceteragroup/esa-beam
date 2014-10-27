@@ -57,6 +57,9 @@ class VLAB:
   P_EXPRESSION       = '.expression'
   P_OUTPUT           = '.output'
 
+  # NOTE: Use a number of thread less or equal to the number of CPU/core you have on your computer
+  DARTThreadNumber   = 4
+
   # NOTE: Once released, random number generation should NOT be reproducible
   CONF_RND_REPRODUCE = True
 
@@ -2811,6 +2814,9 @@ class DART:
     VLAB.copyDir(VLAB.path.join(DART.SDIR, q['simulation']), VLAB.path.join(DART.SDIR, q['simulationName']))
 
     # 1. b. Update the DART input files with parameters from GUI
+    # In phase change the number of thread
+    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
+    VLAB.XMLEditNode(phase, "ExpertModeZone", "nbThreads", str(VLAB.DARTThreadNumber))
     # In maket change the pixel size
     maket = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "maket.xml")
     ## TODO: Fix it when the option will be avaiblable
@@ -2844,7 +2850,6 @@ class DART:
                     }
                    )
     # In phase force the radiance to be stored (could be not selected)
-    phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
     VLAB.XMLEditNode(phase, "BrfProductsProperties", "luminanceProducts", "1")
     # In phase change the spectral bands
     if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
