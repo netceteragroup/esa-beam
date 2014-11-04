@@ -2778,11 +2778,51 @@ class DART:
 
     q = {
       'rpvfile'    : 'angles.rpv.2.dat',
-      'simulation' : 'Unknown'
+      'simulation' : 'Unknown',
+
+      ## RPV inversion
+      'verbose':True,
+      'plot':True,
+      'show':False,
+      'three':True,
+      'paramfile':'result.brdf.dat.3params.dat',
+      'plotfile':'result.brdf.dat.3params',
+      'wbfile':'wb.full_spectrum.1nm.dat',
+      'wb':'wb.full_spectrum.1nm.dat',
     }
 
     # overwrite defaults
     for a in args:
+      if a == 'Sensor':
+        q['sensor'] = args[a]
+        if args[a] == VLAB.K_SENTINEL2:
+          q['wb'] = 'wb.MSI.dat'
+          q['wbfile'] = 'wb.MSI.dat'
+          #q['angfile'] = 'angles.MSI.dat'
+        elif args[a] == VLAB.K_SENTINEL3:
+          q['wb'] = 'wb.OLCI.dat'
+          q['wbfile'] = 'wb.OLCI.dat'
+          #q['angfile'] = 'angles.OLCI.dat'
+        elif args[a] == VLAB.K_MODIS:
+          q['wb'] = 'wb.MODIS.dat'
+          q['wbfile'] = 'wb.MODIS.dat'
+          #q['angfile'] = 'angles.MODIS.dat'
+        elif args[a] == VLAB.K_MERIS:
+          q['wb'] = 'wb.MERIS.dat'
+          q['wbfile'] = 'wb.MERIS.dat'
+          #q['angfile'] = 'angles.MERIS.dat'
+        elif args[a] == VLAB.K_LANDSAT_OLI:
+          q['wb'] = 'wb.LANDSAT.OLI.dat'
+          q['wbfile'] = 'wb.LANDSAT.OLI.dat'
+          #q['angfile'] = 'angles.LANDSAT.dat'
+        elif args[a] == VLAB.K_LANDSAT_ETM:
+          q['wb'] = 'wb.LANDSAT.ETM.dat'
+          q['wbfile'] = 'wb.LANDSAT.ETM.dat'
+          #q['angfile'] = 'angles.LANDSAT.dat'
+        else:
+          q['wb'] = 'wb.full_spectrum.1nm.dat'
+          q['wbfile'] = 'wb.full_spectrum.1nm.dat'
+          #q['angfile'] = 'angles.rami.dat
       if a == VLAB.P_3dScene:
         if args[a] == VLAB.K_RAMI:
           q['simulation'] = 'HET01_DIS_UNI_NIR_20'
@@ -2808,9 +2848,17 @@ class DART:
       else:
         q[a] = args[a]
 
+    # Setup new simulation folder name
+    q['simulationName'] = q['simulation'] + "_run"
+
+    # Setup RPV inversion parameters
+    q['dataf'] = 'result.%s.brdf.dat' % q['simulation']
+    q['paramfile'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
+    q['plotfile'] = 'result.%s.brdf.3params' % q['simulation']
+    q['outputFolder'] = VLAB.path.join(DART.SDIR, q['simulationName'])
+
     # 1. Create the DART scene
     # 1. a. Copy DART original input file to a new folder
-    q['simulationName'] = q['simulation'] + "_run"
     VLAB.copyDir(VLAB.path.join(DART.SDIR, q['simulation']), VLAB.path.join(DART.SDIR, q['simulationName']))
 
     # 1. b. Update the DART input files with parameters from GUI
@@ -2852,20 +2900,17 @@ class DART:
     # In phase force the radiance to be stored (could be not selected)
     VLAB.XMLEditNode(phase, "BrfProductsProperties", "luminanceProducts", "1")
     # In phase change the spectral bands
-    if not q['simulationName'].startswith("HET01_DIS_UNI_NIR_20"):
-      bands = VLAB.getBandsFromGUI(q[VLAB.P_Sensor])
-      VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
-                                 ["deltaLambda", "meanLambda"],
-                                 bands, spectralBands=True)
-      # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
-      coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
-      VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
-      VLAB.XMLEditNode(coeffDiff, "UnderstoryMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
-    else:
-      bands = [None]
-      VLAB.logger.info("*********************************************************************************")
-      VLAB.logger.info("* WARNING: RAMI scene cannot be multiband according to the RAMI scene definition. *")
-      VLAB.logger.info("*********************************************************************************")
+    bands = VLAB.getBandsFromGUI(q[VLAB.P_Sensor])
+    VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
+                               ["deltaLambda", "meanLambda"],
+                               bands, spectralBands=True)
+    # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
+    coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
+    VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
+    VLAB.XMLEditNode(coeffDiff, "UnderstoryMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
+
+    # Get number of band
+    nbBands = len(bands)
 
     # 2. a. Run DART direction module
     cmd = {
@@ -2902,7 +2947,7 @@ class DART:
 
     # 2. c. Edit simulation directions.xml file to set the number of direcions to 200
     VLAB.XMLEditNode(direction, "Directions", "numberOfPropagationDirections", "200")
- 
+
     # 2. d. Write sequence file
     seqparams = {'fileName'   : 'SunDirections.xml',
                  'simulation' : q['simulationName'],
@@ -2963,35 +3008,46 @@ class DART:
 
     # 4.a. Select the values of sz < 70 to get BANDX.angles.rpv.2.dat
     # for each spectral band in the DART simulation
-    rpvlist = None
+    brdfList = []
     rpvFiles = []
     seqDir = VLAB.path.join(DART.SDIR, q['simulationName'], "sequence")
-    for bandNumber in xrange(len(bands)):
-      rpvlist = []
-      for seqSubDir in VLAB.listdir(seqDir):
+    # Loop over all Sun direction
+    for seqSubDir in VLAB.listdir(seqDir):
+      brdfList = []
+      dirFile = VLAB.path.join(seqDir, seqSubDir, "input", "directions.xml")
+      sa = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingAzimuthAngle"))
+      sz = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingZenithAngle"))
+      selectedBRF = []
+      vzList, vaList = [], []
+      # Loop over each spectral band
+      for bandNumber in xrange(nbBands):
         dartBRF = VLAB.path.join(Dart_DARTSimulation(seqSubDir, seqDir).getIterMaxPath('BAND' + str(bandNumber)), "brf")
-        dirFile = VLAB.path.join(seqDir, seqSubDir, "input", "directions.xml")
-        sa = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingAzimuthAngle"))
-        sz = float(VLAB.XMLGetNodeAttributeValue(dirFile, "SunViewingAngles", "sunViewingZenithAngle"))
-        for row in VLAB.valuesfromfile(dartBRF):
-          (vz, va, brf)  = row
-          if (vz < 70.0):
-            # Convert DART output to librattran input
-            vz, va = self.dartSZA2libradtranSZA(vz, va)
-            rpvlist.append('%.2f\t%.2f\t%2f\t%2f\t%2f' % (sz, sa, vz, va, brf))
-      # write the libradtran input file
-      fname = VLAB.path.join(DART.SDIR,
-                             q['simulationName'],
-                             "BAND" + str(bandNumber) + "." + q['rpvfile'])
-      rpvFiles.append(fname)
-      fp = open(fname, "w")
-      fp.write("\n".join(rpvlist))
-      fp.close()
-    q['rpvFiles'] = rpvFiles
+        if bandNumber <= 0:
+            # Get vz, va and brf for band 0
+            vzList, vaList, selectedBRF = VLAB.valuesfromfile(dartBRF, transpose=True)
+            selectedBRF = [selectedBRF]
+        else:
+            # Get brf only for the other bands (>0) (same order in all bands in brf file)
+            selectedBRF.append(VLAB.valuesfromfile(dartBRF, transpose=True)[-1])
+      # Filter, convert and append the BRF values and viewing angles to the brdfList variable
+      for vz, va, brf in zip(vzList, vaList, zip(*selectedBRF)):
+        if vz < 70.0:
+          # Convert DART output to librattran input
+          vz, va = self.dartSZA2libradtranSZA(vz, va)
+          brf = [ "%.2f" % BRFval for BRFval in brf ]
+          brdfList.append( "%.2f\t%.2f\t%.2f\t%.2f\t" % (vz, va, sz, sa) + "\t".join(brf) )
+
+    # Write brdf in the result file
+    fp = open(VLAB.path.join(q['outputFolder'], q['dataf']), "w")
+    fp.write("\n".join(brdfList))
+    fp.close()
+
+    # 4.b. Run RPV inverter
+    rpv_invert = Librat_rpv_invert()
+    rpv_invert.main(q)
 
     # 4.b. Run libradtran
-    # FIXME: this needs to eventually use the same routine that librat uses
-    dolibradtran = Dart_dolibradtran()
+    dolibradtran = Librat_dolibradtran()
     dolibradtran.main(q)
 
     #
@@ -3767,8 +3823,14 @@ class Librat_rpv_invert:
       else:
         q[a] = args[a]
 
+    # Set output folder
+    if "outputFolder" in q.keys():
+      outputFolder = q['outputFolder']
+    else:
+      outputFolder = LIBRAT.SDIR
+
     wb   = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
-    data = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['dataf']),  transpose=True)
+    data = VLAB.valuesfromfile('%s/%s' % (outputFolder, q['dataf']),  transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
     if len(wb) != len(data) - 4:
@@ -3790,7 +3852,7 @@ class Librat_rpv_invert:
     if q['verbose']: VLAB.logger.info('%s: saving params to %s\n'%(sys.argv[0], opdat))
 
     # create the file if it doesn't exist
-    dfp = VLAB.openFileIfNotExists('%s/%s' % (LIBRAT.SDIR, opdat))
+    dfp = VLAB.openFileIfNotExists('%s/%s' % (outputFolder, opdat))
     if dfp != None:
       dfp.close()
 
@@ -3831,9 +3893,9 @@ class Librat_rpv_invert:
         opfp.write('%.1f %.8f %.8f %.8f %.8f\n' % (band, p_est[0], p_est[1], p_est[2], p_est[3]))
       if q['plot']:
         if q['plotfile']:
-          opplot = VLAB.path.join(LIBRAT.SDIR, q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png')
+          opplot = VLAB.path.join(outputFolder, q['plotfile'] + '.inv.wb.' + str(wbNum) + '.png')
         else:
-          opplot = VLAB.path.join(LIBRAT.SDIR, q['dataf'] + '.inv.wb.' + str(wbNum) + '.png')
+          opplot = VLAB.path.join(outputFolder, q['dataf'] + '.inv.wb.' + str(wbNum) + '.png')
 
         if q['verbose']: VLAB.logger.info('%s: plotting to %s\n' % (sys.argv[0], opplot))
 
