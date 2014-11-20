@@ -431,7 +431,7 @@ class VLAB:
         elem.setAttribute(attributName, value)
         node.appendChild(elem)
       else:
-        raise ValueError("Wrong parameter used: attributName and value should be both either a list of string or a string")
+        raise ValueError("Wrong parameter used: attributName and value should be either a list of string or a string")
       # Write new XML tree in fname
       transformer = TransformerFactory.newInstance().newTransformer()
       transformer.setOutputProperty(OutputKeys.INDENT, "yes")
