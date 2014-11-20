@@ -2904,6 +2904,11 @@ class DART:
     VLAB.XMLReplaceNodeContent(phase, "SpectralIntervals", "SpectralIntervalsProperties",
                                ["deltaLambda", "meanLambda"],
                                bands, spectralBands=True)
+    # In phase change add SpectralIrradianceValue for each spectral bands
+    VLAB.XMLReplaceNodeContent(phase, "SpectralIrradiance", "SpectralIrradianceValue",
+                               ["bandNumber", "irradiance"],
+                               [ [str(bandNumber), str(1000.0)] for bandNumber in xrange(len(bands)) ]
+                              )
     # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
     coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
     VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
