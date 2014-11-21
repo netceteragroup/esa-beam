@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)
-# 
+#
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 3 of the License, or (at your option)
@@ -9,10 +9,10 @@
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 # more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see http://www.gnu.org/licenses/
-# 
+#
 # @(#) $Id: $
 #
 # Authors: Mat Disney, Cyrill Schenkel, Fabian Schneider, Nicolas Lauret, Tristan Gregoire, Daniel Kueckenbrink, Joshy Cyriac, Marcel Kessler, Jason Brazile
@@ -20,7 +20,7 @@
 
 ##############################################################################
 # Two ways to run:
-# 
+#
 # 1. Embedded within BEAM's 3DVegLab processor (normal case)
 # 2. Stand-alone with a "fake beam" swig-based GUI
 #
@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (17 Oct 2014)'
+  VERSION_STRING     = '1.0 (21 Nov 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -57,11 +57,11 @@ class VLAB:
   P_EXPRESSION       = '.expression'
   P_OUTPUT           = '.output'
 
-  # NOTE: Use a number of thread less or equal to the number of CPU/core you have on your computer
-  DARTThreadNumber   = 4
-
   # NOTE: Once released, random number generation should NOT be reproducible
   CONF_RND_REPRODUCE = True
+
+  # NOTE: # of threads DART will use - should be <= your total CPU cores
+  CONF_DART_N_THREAD = 4
 
   JCB                = 'JComboBox'
   JTF                = 'JTextField'
@@ -91,7 +91,7 @@ class VLAB:
   K_URBAN            = 'Urban'
   K_TROPOSPHERIC     = 'Tropospheric'
 
-  DBG                = 'debug' 
+  DBG                = 'debug'
   INF                = 'info'
   ERR                = 'error'
 
@@ -319,6 +319,14 @@ class VLAB:
       # recursive copy of dnma to target
       shutil.copytree(dname, target)
   copyDir = staticmethod(copyDir)
+  def getAvailProcessors():
+    # most modern machines have >= 2 CPUs with hyperthreading
+    nAvailableProcessors = 4
+    if sys.platform.startswith('java'):
+      from java.lang import Runtime
+      nAvailableProcessors = Runtime.getRuntime().availableProcessors()
+    return nAvailableProcessors
+  getAvailProcessors = staticmethod(getAvailProcessors)
   def XMLEditNode(fname, nodeName, attributName, value, multiple=False):
     """ Edit a given node (nodeName) in a given XML file (fname)
     attributName and value could be either a list of string or a string
@@ -639,7 +647,7 @@ class VLAB:
       bands = [
         ["0.047493",    "0.66"],        # Band 8  ?
         ["0.038252",    "0.84"],        # Band 12 ?
-        ["0.010633",    "0.485"],       # Band 4  ? 
+        ["0.010633",    "0.485"],       # Band 4  ?
         ["0.01975367",  "0.57"],        # band 7  ?
         ["0.023356",    "1.24"],        # band 14 ?
         ["0.027593",    "1.65"],        # band 15 ?
@@ -1019,6 +1027,7 @@ class VLAB:
       exitCode = proc.wait()
       t1.join(); t2.join()
     VLAB.logger.info('exitCode=%d' % exitCode)
+    return exitCode
   doExec = staticmethod(doExec)
 
   def valuesfromfile(path, transpose=False):
@@ -1145,7 +1154,7 @@ class VLAB:
       from org.jfree.chart.plot import PlotOrientation
       from org.jfree.data.xy import XYSeries, XYSeriesCollection
       chart = ChartFactory.createScatterPlot(title, x_label, y_label, dataset,
-                                           PlotOrientation.VERTICAL, True, 
+                                           PlotOrientation.VERTICAL, True,
                                            True, False)
       plot = chart.getPlot()
       domain_axis = plot.getDomainAxis()
@@ -1320,26 +1329,25 @@ nstr               6
 zout               TOA
 output_user        lambda uu
 quiet
-""" % (q['solar_file'],
-      q['rpv_file'])
+""" % (q['solar_file'], q['rpv_file'])
 
     if 'aerosol' in q:
       sdata += "aerosol_default\n"
-      sdata += "aerosol_haze       %s\n" % (q['aerosol']) 
+      sdata += "aerosol_haze       %s\n" % (q['aerosol'])
     if 'O3' in q:
-      sdata += "dens_column        O3 %s\n" % (q['O3']) 
+      sdata += "dens_column        O3 %s\n" % (q['O3'])
     if 'CO2' in q:
-      sdata += "co2_mixing_ratio   %s\n" % (q['CO2']) 
+      sdata += "co2_mixing_ratio   %s\n" % (q['CO2'])
     if 'H2O' in q:
-      sdata += "h2o_mixing_ratio   %s\n" % (q['H2O']) 
+      sdata += "h2o_mixing_ratio   %s\n" % (q['H2O'])
     if 'umu' in q:
-      sdata += "umu                %s\n" % (q['umu']) 
+      sdata += "umu                %s\n" % (q['umu'])
     if 'phi' in q:
-      sdata += "phi                %s\n" % (q['phi']) 
+      sdata += "phi                %s\n" % (q['phi'])
     if 'latitude' in q:
-      sdata += "latitude           %s\n" % (q['latitude']) 
+      sdata += "latitude           %s\n" % (q['latitude'])
     if 'longitude' in q:
-      sdata += "longitude          %s\n" % (q['longitude']) 
+      sdata += "longitude          %s\n" % (q['longitude'])
     if 'time' in q:
       sdata += "time               %s\n" % (q['time'])
     if 'sza' in q:
@@ -1374,47 +1382,49 @@ quiet
     }
     }
     VLAB.logger.info('%s: spawning libradtran...' % VLAB.me())
-    VLAB.doExec(cmd)
+    exitCode = VLAB.doExec(cmd)
+    if exitCode != 0:
+      raise Exception("uvspec failed with return code=%d" % exitCode)
   doLibradtran = staticmethod(doLibradtran)
 
 
   ###########################################################################
-  # 
+  #
   # Minimize_* functions...
   #
   # Nelder-Mead simplex minimization of a nonlinear (multivariate) function.
-  # 
+  #
   # The programming interface is via the minimize() function; see below.
-  # 
+  #
   # This code has been adapted from the C-coded nelmin.c which was
   # adapted from the Fortran-coded nelmin.f which was, in turn, adapted
   # from the papers
-  # 
+  #
   #   J.A. Nelder and R. Mead (1965)
   #   A simplex method for function minimization.
   #   Computer Journal, Volume 7, pp 308-313.
-  # 
+  #
   #   R. O'Neill (1971)
   #   Algorithm AS47. Function minimization using a simplex algorithm.
   #   Applied Statistics, Volume 20, pp 338-345.
-  # 
+  #
   # and some examples are in
-  # 
+  #
   #   D.M. Olsson and L.S. Nelson (1975)
   #   The Nelder-Mead Simplex procedure for function minimization.
   #   Technometrics, Volume 17 No. 1, pp 45-51.
-  #    
+  #
   # For a fairly recent and popular incarnation of this minimizer,
   # see the amoeba function in the famous "Numerical Recipes" text.
-  # 
+  #
   # P. Jacobs
   # School of Engineering, The University of Queensland
   # 07-Jan-04
-  # 
+  #
   # Modifications by C. Schenkel
   # Netcetera
   # 31-Oct-13
-  # 
+  #
   ###########################################################################
   def Minimize_create_new_point(c1, p1, c2, p2):
     """
@@ -1429,7 +1439,7 @@ quiet
   def Minimize_take_a_step(smplx, Kreflect, Kextend, Kcontract):
     """
     Try to move away from the worst point in the simplex.
-  
+
     The new point will be inserted into the simplex (in place).
     """
     i_low = smplx.lowest()
@@ -1440,7 +1450,7 @@ quiet
     x_mid = smplx.centroid(i_high)
     f_mid = smplx.f(x_mid)
     smplx.nfe += 1
-  
+
     # First, try moving away from worst point by
     # reflection through centroid
     x_refl = VLAB.Minimize_create_new_point(1.0+Kreflect, x_mid, -Kreflect, x_high)
@@ -1483,13 +1493,13 @@ quiet
         smplx.replace_vertex(i_high, x_refl, f_refl)
     return
   Minimize_take_a_step = staticmethod(Minimize_take_a_step)
-  
+
   def Minimize_minimize(f, x, dx=None, tol=1.0e-6,
          maxfe=300, n_check=20, delta=0.001,
          Kreflect=1.0, Kextend=2.0, Kcontract=0.5, args=()):
     """
     Locate a minimum of the objective function, f.
-  
+
     Input:
     f   : user-specified function f(x)
     x   : list of N coordinates
@@ -1504,7 +1514,7 @@ quiet
     delta : magnitude of the perturbations for checking a local minimum
           and for the scale reduction when restarting
     Kreflect, Kextend, Kcontract: coefficients for locating the new vertex
-  
+
     Output:
     Returns a tuple consisting of
     [0] a list of coordinates for the best x location,
@@ -1519,7 +1529,7 @@ quiet
     if dx == None:
       dx = [0.1] * N
     smplx = Minimize_NMSimplex(x, dx, f, args)
-  
+
     while (not converged) and (smplx.nfe < maxfe):
       # Take some steps and then check for convergence.
       for i in range(n_check):
@@ -1539,11 +1549,10 @@ quiet
           # The function evaluations are all very close together
           # but we are not at a true minimum; rescale the simplex.
           smplx.rescale(delta)
-    
+
     return x_best, f_best, converged, smplx.nfe, smplx.nrestarts
   Minimize_minimize = staticmethod(Minimize_minimize)
-  
-  
+
   #
   # from here to "VLAB end" is used only for testing
   #
@@ -1653,40 +1662,40 @@ quiet
 
     # scenario 1
     params = {
-      VLAB.P_3dScene             : 'RAMI', 
-      VLAB.P_AtmosphereCO2       : '1.6', 
-      VLAB.P_ViewingAzimuth      : '0.0', 
-      VLAB.P_AtmosphereWater     : '0.0', 
-      VLAB.P_OutputPrefix        : 'RAMI_', 
-      VLAB.P_ViewingZenith       : '20.0', 
-      VLAB.P_AtmosphereAerosol   : 'Rural', 
-      VLAB.P_DHP_Zenith          : '20.0', 
-      VLAB.P_SceneYW             : '100', 
-      VLAB.P_DHP_3dScene         : 'RAMI', 
-      VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10', 
-      VLAB.P_OutputDirectory     : '', 
-      VLAB.P_AtmosphereOzone     : '300', 
-      VLAB.P_SceneLocFile        : '', 
-      VLAB.P_SceneYC             : '100', 
-      VLAB.P_DHP_OutputDirectory : '', 
-      VLAB.P_DHP_OutputPrefix    : 'RAMI00_', 
+      VLAB.P_3dScene             : 'RAMI',
+      VLAB.P_AtmosphereCO2       : '1.6',
+      VLAB.P_ViewingAzimuth      : '0.0',
+      VLAB.P_AtmosphereWater     : '0.0',
+      VLAB.P_OutputPrefix        : 'RAMI_',
+      VLAB.P_ViewingZenith       : '20.0',
+      VLAB.P_AtmosphereAerosol   : 'Rural',
+      VLAB.P_DHP_Zenith          : '20.0',
+      VLAB.P_SceneYW             : '100',
+      VLAB.P_DHP_3dScene         : 'RAMI',
+      VLAB.P_Bands               : '1, 2, 3, 4, 5, 6, 7, 8, 9, 10',
+      VLAB.P_OutputDirectory     : '',
+      VLAB.P_AtmosphereOzone     : '300',
+      VLAB.P_SceneLocFile        : '',
+      VLAB.P_SceneYC             : '100',
+      VLAB.P_DHP_OutputDirectory : '',
+      VLAB.P_DHP_OutputPrefix    : 'RAMI00_',
       VLAB.P_RTProcessor         : VLAB.K_DUMMY,
-      VLAB.P_SceneXW             : '50', 
-      VLAB.P_IlluminationAzimuth : '0.0', 
-      VLAB.P_Sensor              : 'MSI (Sentinel 2)', 
-      VLAB.P_AsciiFile           : 'Yes', 
-      VLAB.P_ImageFile           : 'Yes', 
-      VLAB.P_SceneXC             : '-50', 
-      VLAB.P_DHP_Y               : '0', 
-      VLAB.P_DHP_X               : '0', 
-      VLAB.P_DHP_ImageFile       : 'Yes', 
-      VLAB.P_DHP_AsciiFile       : 'Yes', 
-      VLAB.P_DHP_Resolution      : '100x100', 
-      VLAB.P_DHP_Azimuth         : '0.0', 
-      VLAB.P_IlluminationZenith  : '20.0', 
+      VLAB.P_SceneXW             : '50',
+      VLAB.P_IlluminationAzimuth : '0.0',
+      VLAB.P_Sensor              : 'MSI (Sentinel 2)',
+      VLAB.P_AsciiFile           : 'Yes',
+      VLAB.P_ImageFile           : 'Yes',
+      VLAB.P_SceneXC             : '-50',
+      VLAB.P_DHP_Y               : '0',
+      VLAB.P_DHP_X               : '0',
+      VLAB.P_DHP_ImageFile       : 'Yes',
+      VLAB.P_DHP_AsciiFile       : 'Yes',
+      VLAB.P_DHP_Resolution      : '100x100',
+      VLAB.P_DHP_Azimuth         : '0.0',
+      VLAB.P_IlluminationZenith  : '20.0',
       VLAB.P_DHP_RTProcessor     : VLAB.K_DUMMY,
-      VLAB.P_DHP_Height          : '0', 
-      VLAB.P_DHP_Orientation     : '0', 
+      VLAB.P_DHP_Height          : '0',
+      VLAB.P_DHP_Orientation     : '0',
       VLAB.P_ScenePixel          : '8'
     }
     self.fakeDoProcessing(params)
@@ -1748,7 +1757,7 @@ class Minimize_NMSimplex:
       self.nfe += 1
     self.nrestarts += 1
     return
-  
+
   def get_vertex(self, i):
     return list(self.vertex_list[i])
 
@@ -1816,7 +1825,7 @@ class Minimize_NMSimplex:
     for j in range(self.N):
       xmid[j] /= self.N
     return xmid
-  
+
   def contract_about_one_point(self, i_con):
     """
     Contract the simplex about the vertex i_con.
@@ -1965,20 +1974,20 @@ class DUMMY:
     for wb in [443, 490, 560, 665, 705, 740, 783, 842, 945, 1375, 1610, 2190]:
       fp.write("%s.0 %s %s %s\n" % (wb,"0.00000000","1.17285487","0.17957034"))
     fp.close()
-      
+
     # arguments for doLibradtran
     r = {
       'CO2'      : q[VLAB.P_AtmosphereCO2],
       'H2O'      : q[VLAB.P_AtmosphereWater],
       'O3'       : q[VLAB.P_AtmosphereOzone],
       'scene'    : q[VLAB.P_3dScene],
-      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol],
       'sensor'   : q[VLAB.P_Sensor],
       'rpv_file' : '%s/%s' % (DUMMY.SDIR, "rpv_file.in"),
       'infile'   : '%s/%s' % (DUMMY.SDIR, 'UVSPEC-in.txt'),
       'outfile'  : '%s/%s' % (DUMMY.SDIR, 'UVSPEC-out.txt'),
     }
-    # 
+    #
     # TODO: loop over something to produce umu, phi ,phi0, sza, etc.
     #
     if (pm != None):
@@ -2026,38 +2035,38 @@ Dart_DataUnit = Dart_enum(BRF_TAPP=0, RADIANCE=1)
 Dart_DataLevel = Dart_enum(BOA=0, SENSOR=1, TOA=2, ATMOSPHERE_ONLY=3)
 Dart_SpectralBandMode = Dart_enum(VISIBLE=0, VISIBLE_AND_THERMAL=1, THERMAL=2)
 
-class Dart_DARTEnv : 
+class Dart_DARTEnv :
   simulationsDirectory = 'simulations'
-  
+
   inputDirectory = 'input'
   outputDirectory = 'output'
   sequenceDirectory = 'sequence'
-  
+
   libPhaseDirectory = 'lib_phase'
   bandRootDirectory = 'BAND'
-  
+
   brfDirectory = 'BRF'
   tappDirectory = 'Tapp'
   radianceDirectory = 'Radiance'
-  
+
   toaDirectory = 'TOA'
   radiativeBudgetDirectory = 'RADIATIVE_BUDGET'
-  
+
   iterRootDirectory = 'ITER'
   couplDirectory = 'COUPL'
   sensorDirectory = 'SENSOR'
-  
+
   #imageDirectoy = VLAB.path.join('IMAGES_DART', 'Non_Projected_Image')
   imageDirectoy = 'IMAGES_DART'
   orthoProjectedImageDirectory = 'IMAGE_PROJETEE'
   nonProjectedImageDirectory = 'Non_Projected_Image'
-  
+
   brfFile = 'brf'
   radianceFile = 'radiance'
   radianceAtmoFile = 'AtmosphereRadiance'
   tappFile = 'tapp'
   radiativeBudgetFile = 'RadiativeBudget'
-  
+
   propertiesFile = 'simulation.properties.txt'
 
 # Class SpectralBand
@@ -2067,13 +2076,13 @@ class Dart_SpectralBand:
     self.lambdaMin = 0.
     self.lambdaMax = 0.
     self.mode = Dart_SpectralBandMode.VISIBLE
-  
+
   def __str__(self):
     return 'Dart_SpectralBand(' + str(self.index) + ': [' + str(self.lambdaMin) + '; ' + str(self.lambdaMax) + ']; ' + str(self.mode) + ')'
-  
+
   def getCentralWaveLength(self):
     return (self.lambdaMax + self.lambdaMin) / 2.
-  
+
   def getBandWidth(self):
     return (self.lambdaMax - self.lambdaMin)
 
@@ -2085,10 +2094,10 @@ class Dart_Direction :
     self.solidAngle = solidAngle
     self.angularSector = angularSector
     self.index = index
-  
+
   def __str__(self):
     return 'Dart_Direction(' + str(self.theta) + ', ' + str(self.phi) + ')'
-  
+
   def equal(self, dir2) :
     return abs(self.theta - dir2.theta) < 0.001 and abs(self.phi - dir2.phi) < 0.001
 
@@ -2096,22 +2105,22 @@ class Dart_Direction :
 class Dart_BRF :
   def __init__(self) :
     self.valeursParDirections = []
-  
+
   def __str__(self):
     string = '<BDAverage'
     for (direction, moyenne) in self.valeursParDirections :
       string += '\n' + str(direction) + ' : ' + str(moyenne)
     string += '>'
     return string
-  
+
   def addValeurDansDirection (self, direction, valeur) :
     self.valeursParDirections.append((direction, valeur))
-  
+
   def getValueForDirection(self, directionRecherchee) :
     for (directionCourante, valeurCourante) in self.valeursParDirections :
       if (directionCourante.equal(directionRecherchee)) :
         return valeurCourante
-  
+
   def getValue(self, indiceDirection) :
     return self.valeursParDirections[indiceDirection]
 
@@ -2120,10 +2129,10 @@ class Dart_BRF :
 class Dart_Images :
   def __init__(self) :
     self.matrice2DparDirections = []
-  
+
   def addMatriceDansDirection (self, direction, matrice) :
     self.matrice2DparDirections.append((direction, matrice))
-  
+
   def getMatrice2D(self, directionRecherchee) :
     for (directionCourante, matriceCourante) in self.matrice2DparDirections :
       if (directionCourante.equal(directionRecherchee)) :
@@ -2134,13 +2143,13 @@ class Dart_Images :
 class Dart_BilanRadiatif :
   def __init__(self) :
     self.matriceParType = []
-  
+
   def getTypeBilan(self) :
     typeBilans = []
     for (typeBilanCourant, matriceCourante) in self.matriceParType :
       typeBilans.append(typeBilanCourant)
     return typeBilans
-  
+
   def contientTypeBilan(self, typeBilan) :
     for (typeBilanCourant, matriceCourante) in self.matriceParType :
       if typeBilanCourant == typeBilan :
@@ -2157,7 +2166,7 @@ def Dart_getModeFromString(modeString):
 
 def Dart_getNumMaxIteration(path) :
   dirList = [f for f in VLAB.listdir(path) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(path, f))) and f.startswith(Dart_DARTEnv.iterRootDirectory) and f != Dart_DARTEnv.iterRootDirectory + 'X']
-  
+
   maxIter = -1
   for rep in dirList :
     numIter = int(rep.split(Dart_DARTEnv.iterRootDirectory)[1])
@@ -2196,13 +2205,13 @@ class Dart_DARTSimulation :
   def __init__(self, name, rootSimulations) :
     self.name = name
     self.rootSimulationsDirectory = rootSimulations
-  
+
   def __str__(self):
     return self.name
-  
+
   def getAbsolutePath(self) :
     return VLAB.path.join(self.rootSimulationsDirectory.getAbsolutePath(), self.name)
-  
+
   def isValid(self) :
     if self.name != '' and VLAB.path.exists(self.getAbsolutePath()) :
       dirList=[f for f in VLAB.listdir(self.getAbsolutePath()) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(self.getAbsolutePath(), f)))]
@@ -2212,11 +2221,11 @@ class Dart_DARTSimulation :
         if (directory == Dart_DARTEnv.inputDirectory) or (directory == Dart_DARTEnv.outputDirectory) or (directory == Dart_DARTEnv.sequenceDirectory) :
           return True
     return False
-  
+
   def getProperties(self):
     return Dart_readProperties(VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.outputDirectory, Dart_DARTEnv.propertiesFile))
-  
-  def getSpectralBands(self):   
+
+  def getSpectralBands(self):
     properties = self.getProperties()
     nbSpectralBand = int(properties['phase.nbSpectralBands'])
     bandes = []
@@ -2228,19 +2237,19 @@ class Dart_DARTSimulation :
       bande.mode = Dart_getModeFromString(properties['dart.band' + str(numBand) + '.mode'])
       bandes.append(bande)
     return bandes
-  
+
   def getSceneGeolocation(self) :
     properties = self.getProperties()
     return (float(properties['dart.maket.latitude']), float(properties['dart.maket.longitude']))
-  
-  def getDiscretizedDirection(self):    
+
+  def getDiscretizedDirection(self):
     properties = self.getProperties()
     nbDD = int(properties['direction.numberOfDirections'])
     discretizedDirections = []
     for i in range(nbDD) :
       discretizedDirections.append(Dart_Direction(float(properties['direction.direction' + str(i) +'.thetaCenter']), float(properties['direction.direction' + str(i) +'.phiCenter']), solidAngle = float(properties['direction.direction' + str(i) +'.omega']), angularSector = int(properties['direction.direction' + str(i) +'.angularSector']), index = i))
     return discretizedDirections
-  
+
   def getUserDirections(self) :
     properties = self.getProperties()
     nbUD = int(properties['direction.nbOfAdditionalSpots'])
@@ -2249,7 +2258,7 @@ class Dart_DARTSimulation :
       additionalSpotIndex = int(properties['direction.additionalSpot' + str(i) + '.directionIndex'])
       userDirections.append(Dart_Direction(float(properties['direction.direction' + str(additionalSpotIndex) +'.thetaCenter']), float(properties['direction.direction' + str(additionalSpotIndex) +'.phiCenter']), index = additionalSpotIndex))
     return userDirections
-  
+
   def listNomsSequences(self) :
     sequencePath = VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.sequenceDirectory)
     listNom = []
@@ -2261,18 +2270,18 @@ class Dart_DARTSimulation :
           listNom.append(nomSequence)
     listNom.sort()
     return listNom
-  
+
   def listSequences(self, nom) :
     sequencePath = VLAB.path.join(self.getAbsolutePath(), Dart_DARTEnv.sequenceDirectory)
     listSequence = [f for f in VLAB.listdir(sequencePath) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(sequencePath, f))) and f.startswith(nom + '_')]
-    
+
     listSequence.sort(lambda a, b: cmp(int(a[len(nom)+1:]),int(b[len(nom)+1:])))
     listSimuSequence = [Dart_DARTSimulation(VLAB.path.join(self.name, Dart_DARTEnv.sequenceDirectory, s), self.rootSimulationsDirectory) for s in listSequence]
     return listSimuSequence
-  
+
   def getSequence(self, nomSequence, numeroSequence) :
     return Dart_DARTSimulation(VLAB.path.join(self.name, Dart_DARTEnv.sequenceDirectory, nomSequence + '_' + str(numeroSequence)), self.rootSimulationsDirectory);
-  
+
   def getSubdirectory(self, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last') :
     simulationPath = self.getAbsolutePath()
     bandPath = VLAB.path.join(simulationPath, Dart_DARTEnv.outputDirectory, Dart_DARTEnv.bandRootDirectory + str(spectralBand))
@@ -2317,9 +2326,9 @@ class Dart_DARTSimulation :
         brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.sensorDirectory) # SENSOR
       else :
         brfPath = VLAB.path.join(bandPath, Dart_DARTEnv.toaDirectory) # TOA
-    
+
     return brfPath
-  
+
   def getAveragePerDirection(self, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last') :
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
     brf = Dart_BRF()
@@ -2335,7 +2344,7 @@ class Dart_DARTSimulation :
         if (not VLAB.path.exists(tmpPath)) :
           tmpPath = VLAB.path.join(brfPath, Dart_DARTEnv.tappFile)
         brfPath = tmpPath
-      
+
       if (VLAB.path.exists(brfPath) and VLAB.path.isfile(brfPath)) :
         # lecture du fichier et remplissage du conteneur
         fichierBRF = open(brfPath, "r")
@@ -2345,7 +2354,7 @@ class Dart_DARTSimulation :
           brf.addValeurDansDirection(Dart_Direction(float(split[0]), float(split[1])), float(split[2]))
         fichierBRF.close()
     return brf
-  
+
   def getImageNameInDirection(self, direction):
     properties = self.getProperties()
     imageNumber = properties['dart.products.images.number']
@@ -2360,7 +2369,7 @@ class Dart_DARTSimulation :
       else:
         imageIndex = imageIndex + 1
     return imageName
-  
+
   def getImageMinMaxInDirection(self, direction, spectralBand = 0, dataType = Dart_DataUnit.BRF_TAPP, level = Dart_DataLevel.BOA, iteration = 'last', projectionPlane=Dart_ProjectionPlane.SENSOR_PLANE) :
     brfPath = self.getSubdirectory(spectralBand, dataType, level, iteration)
     minImage = None
@@ -2440,18 +2449,18 @@ class Dart_DARTSimulation :
         iters.remove('X')
       iters = [ int(i) for i in iters ]
       return VLAB.path.join(iterFolder, "ITER" + str(max(iters)))
-        
+
 
 class Dart_DARTRootSimulationDirectory :
   def __init__(self) :
     pass
-  
+
   def samefile(self, path1, path2) :
     return VLAB.path.normcase(VLAB.path.normpath(path1)) == VLAB.path.normcase(VLAB.path.normpath(path2))
-  
+
   def getAbsolutePath(self) :
     return VLAB.path.join(DART.SDIR)#, Dart_DARTEnv.simulationsDirectory)
-  
+
   def getSimulationsList(self) :
     rootSimulationPath = self.getAbsolutePath()
     # Liste de tous les fichier/dossier non cache du repertoire
@@ -2461,15 +2470,15 @@ class Dart_DARTRootSimulationDirectory :
     for directory in dirList:
       self.listSimulationsInPath(listSimulations, directory)
     return listSimulations
-  
+
   def listSimulationsInPath(self, listSimulations, path) :
     rootPath = path
     if not VLAB.path.isabs(path):
       rootPath = VLAB.path.join(self.getAbsolutePath(), path)
     dirList=[f for f in VLAB.listdir(rootPath) if (f[0] != '.') and (VLAB.path.isdir(VLAB.path.join(rootPath, f)))]
     dirList.sort()
-    
-    isSimulation = False    
+
+    isSimulation = False
     for directory in dirList:
       # On test si le dossier contient des dossiers output, input et/ou sequence
       # On relance la methode recursivement sur les eventuels autres dossiers (hors input, output et sequence)
@@ -2479,12 +2488,12 @@ class Dart_DARTRootSimulationDirectory :
         isSimulation = True
     if isSimulation :
       self.addSimulation(listSimulations, path)
-  
+
   def addSimulation(self, listSimulations, path):
     simulation = self.getSimulation(path)
     if simulation.isValid() :
       listSimulations.append(simulation)
-  
+
   def getSimulation(self, name) :
     rootSimulationPath = self.getAbsolutePath()
     rootPath = name
@@ -2509,13 +2518,13 @@ class Dart_DARTRootSimulationDirectory :
 class Dart_DARTDao :
   def __init__(self) :
     pass
-  
+
   def getRootSimulationDirectory(self) :
     return Dart_DARTRootSimulationDirectory()
-    
+
   def getSimulationsList(self) :
     return self.getRootSimulationDirectory().getSimulationsList()
-  
+
   def getSimulation(self, name) :
     return self.getRootSimulationDirectory().getSimulation(name)
 
@@ -2542,13 +2551,13 @@ class Dart_dolibradtran:
       'H2O'      : q[VLAB.P_AtmosphereWater],
       'O3'       : q[VLAB.P_AtmosphereOzone],
       'scene'    : q[VLAB.P_3dScene],
-      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol],
       'sensor'   : q[VLAB.P_Sensor],
       'rpv_file' : '%s/rami.TOA/rpv.rami.libradtran.dat.all' % LIBRAT.SDIR,
       'infile'   : '%s/%s/input/%s' % (DART.SDIR, q['simulationName'], 'UVSPEC-in.txt'),
       'outfile'  : '%s/%s/output/%s' %(DART.SDIR, q['simulationName'], 'UVSPEC-out.txt'),
     }
-    # 
+    #
     # TODO: loop over something to produce umu, phi ,phi0, sza, etc.
     #
     VLAB.doLibradtran(r)
@@ -2590,20 +2599,20 @@ class Dart_DartImages :
 
     imagesList = []
     spectralBandsList = []
-    
+
     if args['di_isSeq']:
       sequencesList = simulation.listSequences( args['di_sequence'] )
-      
+
       for sequence in sequencesList:
         # Recover the number of Spectral Band
         spectralBands = sequence.getSpectralBands()
-    
+
         # Recover the Directions
         if args['ii_isUsrDir']:
           directions = sequence.getUserDirections()
         else:
           directions = simulation.getDiscretizedDirection()
-  
+
         # Recover the images in the defined direction for each spectral band
         for band in spectralBands:
           VLAB.logger.info('spectralBand: %s' % (band))
@@ -2627,14 +2636,15 @@ class Dart_DartImages :
     VLAB.logger.info('imagesList has %d entries' % len(imagesList))
     VLAB.logger.info('spectralBandsList has %d entries' % len(spectralBandsList))
     return imagesList, spectralBandsList
-  
+
   def writeDataCube( self, args ) :
-    
+
     imagesList, spectralBandsList = self.getImagesBandsAsList( args )
-    
+
     # write BSQ binary file
     if (len(args['OutputDirectory']) == 0):
       args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
+    VLAB.mkDirPath(args['OutputDirectory'])
     fname = '%s/%s%s.bsq' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output bsq %s' % (fname))
     fout = open( fname, 'wb')
@@ -2668,6 +2678,7 @@ class Dart_DartImages :
     # write ENVI header file
     if (len(args['OutputDirectory']) == 0):
       args['OutputDirectory'] = '%s/%s/' % (DART.SDIR, args['di_simName'])
+    VLAB.mkDirPath(args['OutputDirectory'])
     fname = '%s/%s%s.hdr' % (args['OutputDirectory'], args['OutputPrefix'], args['di_outfname'])
     VLAB.logger.info('writing output hdr %s' % (fname))
     fout = open( fname, 'w')
@@ -2793,6 +2804,8 @@ class DART:
 
     # overwrite defaults
     for a in args:
+      # ensure arguments get passed on
+      q[a] = args[a]
       if a == 'Sensor':
         q['sensor'] = args[a]
         if args[a] == VLAB.K_SENTINEL2:
@@ -2864,7 +2877,12 @@ class DART:
     # 1. b. Update the DART input files with parameters from GUI
     # In phase change the number of thread
     phase = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "phase.xml")
-    VLAB.XMLEditNode(phase, "ExpertModeZone", "nbThreads", str(VLAB.DARTThreadNumber))
+    # We do not yet trust self reporting of CPUs
+    if False:
+      VLAB.XMLEditNode(phase, "ExpertModeZone", "nbThreads", str(VLAB.getAvailProcessors()))
+    else:
+      VLAB.XMLEditNode(phase, "ExpertModeZone", "nbThreads", str(VLAB.CONF_DART_N_THREAD))
+
     # In maket change the pixel size
     maket = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "maket.xml")
     ## TODO: Fix it when the option will be avaiblable
@@ -2939,7 +2957,9 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
+    exitCode = VLAB.doExec(cmd)
+    if exitCode != 0:
+      raise Exception("dart-directions failed with return code=%d" % exitCode)
 
     # 2. b. Get the first two cols (sz, sa) where sz < 70 deg - use as sequence
     zlist = []; alist = []
@@ -2985,7 +3005,9 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
+    exitCode = VLAB.doExec(cmd)
+    if exitCode != 0:
+      raise Exception("dart-full failed with return code=%d" % exitCode)
 
     # 3. b. Run the sun directions sequence with number of directions=200
     cmd = {
@@ -3009,7 +3031,9 @@ class DART:
        }
     }
     VLAB.logger.info('command: %s' % cmd)
-    VLAB.doExec(cmd)
+    exitCode = VLAB.doExec(cmd)
+    if exitCode != 0:
+      raise Exception("dart-sequence failed with return code=%d" % exitCode)
 
     # 4.a. Select the values of sz < 70 to get BANDX.angles.rpv.2.dat
     # for each spectral band in the DART simulation
@@ -3251,7 +3275,7 @@ class Librat_dobrdf:
    (args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
     args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
     gdata = replaced.replace("\x81", "%")
-    gdata += 'VLAB.doExec(cmd)\n'
+    gdata += 'return VLAB.doExec(cmd)\n'
     try:
       fp = open(gFilePath, 'w')
       fp.write(gdata)
@@ -3404,7 +3428,7 @@ class Librat_dobrdf:
           self._writeGrabFile(grabme, nq)
           execfile(grabme)
 
-          # move resulting .hdr and result.image 
+          # move resulting .hdr and result.image
           hdrFile = None
           imgFile = None
           for f in VLAB.listdir(LIBRAT.SDIR):
@@ -3429,7 +3453,7 @@ class Librat_dolibradtran:
       'H2O'      : q[VLAB.P_AtmosphereWater],
       'O3'       : q[VLAB.P_AtmosphereOzone],
       'scene'    : q[VLAB.P_3dScene],
-      'aerosol'  : q[VLAB.P_AtmosphereAerosol], 
+      'aerosol'  : q[VLAB.P_AtmosphereAerosol],
       'sensor'   : q[VLAB.P_Sensor],
       'rpv_file' : VLAB.path.join(LIBRAT.SDIR, q['rpv'])
     }
@@ -3507,7 +3531,7 @@ class Librat_dolibradtran:
           return ' '.join(map(str, val))
         except TypeError:
           return str(val)
-        
+
       r['umu'] = valueorlisttostring(umu)
       r['phi'] = valueorlisttostring(vaa)
 
@@ -3537,7 +3561,7 @@ class Librat_dolibradtran:
       # write header line i.e. vz va sz sa wb_min -> wb_max
       plotfilefp.write('# vz va sz sa %e %e %e\n' % (min(wb), max(wb), wbstep))
       # plotfilefp.flush()
-	
+
       for f in [f for f in VLAB.listdir('%s/%s' % (LIBRAT.SDIR, q['opdir'])) if f.startswith('op.')]:
         vzz = f.split('_')[-4]
         vaa = f.split('_')[-3]
@@ -4010,9 +4034,11 @@ class LIBRAT:
         'BPMS'  : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_windows'
      }}
     }
-    VLAB.doExec(cmd)
+    exitCode = VLAB.doExec(cmd)
+    if exitCode != 0:
+      raise Exception("librat-start failed with return code=%d" % exitCode)
 
-    # 
+    #
     # see https://github.com/netceteragroup/esa-beam/blob/master/beam-3dveglab-vlab/src/main/scenes/librat_scenes/libradtran.README
     #
     drivers      = Librat_drivers()
@@ -4070,9 +4096,9 @@ class LIBRAT:
            'wb' : 'wb.full_spectrum.1nm.dat',
         'ideal' : (80., 80.),
          'look' : (0., 0., 0.),
-          'rpp' : 4, 
+          'rpp' : 4,
       'npixels' : 10000,
-         'boom' : 786000, 
+         'boom' : 786000,
        'angles' : 'angle.rpv.cosDOM.dat',
         'opdir' : 'dart.rpv.rami'
     }
@@ -4106,7 +4132,7 @@ class LIBRAT:
     # RAMI
     args = {
          'brdf' : True,
-       'angles' : 'angles.rpv.2.dat', 
+       'angles' : 'angles.rpv.2.dat',
        'wbfile' : 'wb.MSI.dat',
          'root' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj',
         'bands' : (4, 7),
@@ -4116,7 +4142,7 @@ class LIBRAT:
 
     # LAEGEREN
     args = {
-         'brdf' : True, 
+         'brdf' : True,
        'angles' : 'angles.rpv.2.dat',
        'wbfile' : 'wb.MSI.dat',
          'root' : 'rpv.laegeren/result.laegeren.obj.lai.1',
@@ -4201,7 +4227,7 @@ class LIBRAT:
     args = {
          'v' : True,
     'angles' : 'angle.rpv.cosDOM.dat',
-    'wbfile' : 'wb.full_spectrum.1nm.dat', 
+    'wbfile' : 'wb.full_spectrum.1nm.dat',
      'opdir' : 'dart.rami.TOA',
        'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
       'plot' : 'dart.rami.TOA/rpv.rami.libradtran.dat.all'
@@ -4213,7 +4239,7 @@ class LIBRAT:
     'angles' : 'angle.rpv.cosDOM.dat',
     'wbfile' : 'wb.full_spectrum.1nm.dat',
      'opdir' : 'dart.laegeren.TOA',
-       'rpv' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat', 
+       'rpv' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
       'plot' : 'dart.laegeren.TOA/rpv.laegeren.libradtran.dat.all'
     }
     # dolibradtran.main(args)
@@ -4230,11 +4256,11 @@ class LIBRAT:
     # dolibradtran.main(args)
 
     args = {
-          'v': True, 
+          'v': True,
      'opdir' : 'laegeren.TOA.date',
        'rpv' : 'rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat.3params.dat',
       'plot' : 'laegeren.TOA.date/rpv.laegeren.libradtran.dat.all',
-       'lat' : 50, 
+       'lat' : 50,
        'lon' : 0,
       'time' : '2013 06 01 12 00 00'
     }
@@ -4269,7 +4295,7 @@ class LIBRAT:
     q = {
        'angles' : 'angle.rpv.cosDOM.dat',
         'bands' : (250, 450),
-         'boom' : 786000, 
+         'boom' : 786000,
          'brdf' : True,
         'dataf' : 'dart.rpv.laegeren/result.laegeren.obj.lai.1.brdf.dat',
           'dhp' : True,
@@ -4277,7 +4303,7 @@ class LIBRAT:
          'hips' : False,
         'image' : True,
         'ideal' : (300., 300.),
-          'lat' : 50, 
+          'lat' : 50,
           'lon' : 0,
          'look' : (150., 150., 710.),
      'lookFile' : 'dhp.locations.ondem.dat',
@@ -4292,7 +4318,7 @@ class LIBRAT:
          'plot' : 'rami.TOA/rpv.rami.libradtran.dat.all',
        'random' : True,
          'root' : 'rpv.rami/result.HET01_DIS_UNI_NIR_20.obj',
-          'rpp' : 1, 
+          'rpp' : 1,
           'rpv' : 'dart.rpv.rami/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat',
           'rpv' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat.3params.dat' ,
 'samplingPattern' : 'circular',
@@ -4400,7 +4426,7 @@ class LIBRAT:
       fullobjpath = '%s/%s' % (VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
     else:
       fullobjpath = '%s/%s' % (VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/librat_scenes'), args['OutputDirectory'])
-    
+
     VLAB.logger.info ('%s: ensuring "%s" exists' %(me, fullobjpath))
     if not VLAB.path.exists(fullobjpath):
       VLAB.mkDirPath(fullobjpath)
@@ -4441,7 +4467,7 @@ class LIBRAT:
     VLAB.logger.info('%s: Finished computing...' % me)
 
     # Copy to results directory
-    if VLAB.fileExists(fullobjpath): 
+    if VLAB.fileExists(fullobjpath):
       if (pm != None):
         pm.beginTask("Copying results...", 10)
       resdir = VLAB.fPath(LIBRAT.SDIR, "../results/librat/%s" % args['OutputDirectory'])
@@ -4451,7 +4477,7 @@ class LIBRAT:
       VLAB.logger.info('%s: Done...' % me)
 
 #### LIBRAT end ##############################################################
-  
+
 #### MAIN DISPATCH ####################################################
 
 if not sys.platform.startswith('java'):
@@ -4543,30 +4569,30 @@ else:
     ##
     class VLabImpl(IVLabProcessor):
       """Implements the BEAM Processor interface"""
-  
+
       def __init__(self):
         me=self.__class__.__name__ +'::'+VLAB.me()
         VLAB.logger.info('%s: constructor completed...' % me)
-  
+
       def getName(self):
         return VLAB.PROCESSOR_NAME
-  
+
       def getSymbolicName(self):
         return VLAB.PROCESSOR_SNAME
-  
+
       def getVersion(self):
         return VLAB.VERSION_STRING
-  
+
       def getCopyrightInformation(self):
         return VLAB.COPYRIGHT_INFO
-  
+
       def getUITitle(self):
         return VLAB.UI_TITLE
-  
+
       def _getP(self, r, k):
         me=self.__class__.__name__ +'::'+VLAB.me()
         return r.getParameter(k).getValueAsText()
-  
+
       def process(self, pm, req):
         VLAB.logger.info('inside process...')
         me=self.__class__.__name__ +'::'+VLAB.me()
@@ -4575,15 +4601,15 @@ else:
         #VLAB.log("Parameter list:")
         #for i in range(req.getNumParameters()):
         #  VLAB.log(req.getParameterAt(i).getName() + " = " + req.getParameterAt(i).getValueAsText())
-  
+
         VLAB.logger.info('%s: %s' % (me, ProcessorConstants.LOG_MSG_START_REQUEST))
         pm.beginTask('Running %s...' % VLAB.PROCESSOR_NAME, 10)
         VLAB.logger.info('%s: after pm.beginTask' % me)
-  
+
         # ensure at least 1 second to ensure progress popup feedback
         time.sleep(1)
         VLAB.logger.info('%s: after sleep' % me)
-  
+
         processor = self._getP(req, VLAB.P_RTProcessor)
         VLAB.logger.info('%s: processor is <%s>' % (me, processor))
         if processor == VLAB.K_DART:
@@ -4594,7 +4620,7 @@ else:
           rtProcessor = DUMMY()
         else:
           raise RuntimeError('unknown processor: <%s>' % processor)
-  
+
         pm.beginTask("Computing top of canopy BRF...", 10)
         params = {}
         for i in VLAB.plst:
@@ -4607,21 +4633,21 @@ else:
 
         VLAB.logger.info('%s : %s' % (me, ProcessorConstants.LOG_MSG_FINISHED_REQUEST))
         pm.done()
-  
+
     ##
     ## BEAM-defined UI Implementation
     ##
     class VLabUiImpl(IVLabProcessorUi):
       """Implements the BEAM ProcessorUI interface"""
       def __init__(self):
-        self._reqElemFac     = VLabRequestElementFactory() 
+        self._reqElemFac     = VLabRequestElementFactory()
         self._defaultFactory = DefaultRequestElementFactory.getInstance()
         self._requestFile    = File('')
-        self.pmap            = {} 
-  
+        self.pmap            = {}
+
         me=self.__class__.__name__ +'::'+VLAB.me()
         VLAB.logger.info('%s: constructor completed...' % me)
-  
+
       def getGuiComponent(self):
         self._paramOutputProduct = self._reqElemFac.createDefaultOutputProductParameter()
         v = 2; h = 2;
@@ -4674,7 +4700,7 @@ else:
         guiComponent.add(swing.JLabel(''), awt.BorderLayout.CENTER)
         VLabUi.setWindowSize(800, 800)
         return guiComponent
-  
+
       def setRequests(self, requests):
         if (not requests.isEmpty()):
           for i in range(requests.size()):
@@ -4689,7 +4715,7 @@ else:
               # update parameters
               for nm in VLAB.plst:
                 (self.pmap[nm]).setValue(request.getParameter(nm).getValue())
-  
+
     #          prefixParam = request.getParameter(ProcessorConstants.LOG_PREFIX_PARAM_NAME)
     #          if (prefixParam != None):
     #            self._logPrefixParameter.setValue(prefixParam.getValue(), None)
@@ -4699,10 +4725,10 @@ else:
               break;
         else:
           self.setDefaultRequests()
-  
+
       def setDefaultRequests(self):
         self.setDefaultRequest()
-  
+
       def getRequests(self):
         requests = Vector()
         request = Request()
@@ -4714,7 +4740,7 @@ else:
           request.addParameter(self._reqElemFac.createParameter(nm, (self.pmap[nm]).getValueAsText()))
         requests.add(request)
         return requests
-  
+
       def setDefaultRequest(self):
         self._requestFile = None
         outputProductFile = self._paramOutputProduct.getValue()
@@ -4724,7 +4750,7 @@ else:
         else:
           self._paramOutputProduct.setDefaultValue()
         (self.pmap[VLAB.P_3dScene]).setDefaultValue()
-  
+
     ##
     ## BEAM-defined mangement of processing parameters (aka request element)
     ##
@@ -4735,10 +4761,10 @@ else:
         self.pMap = {}
         me=self.__class__.__name__ +'::'+VLAB.me()
         VLAB.logger.info('%s : constructor completed...' % me)
-        
+
       def getInstance(self):
         return VLabRequestElementFactory()
-  
+
       def createParameter(self, name, value):
         Guardian.assertNotNullOrEmpty("name", name)
         try:
@@ -4749,13 +4775,13 @@ else:
           VLAB.logger.info(e.getMessage)
           raise RequestElementFactoryException(e.getMessage())
         return param
-        
+
       def createDefaultInputProductParameter(self):
         return self._defaultFactory.createDefaultInputProductParameter()
-       
+
       def createDefaultLogPatternParameter(self, prefix):
         return self._defaultFactory.createDefaultLogPatternParameter(prefix)
-        
+
       def createDefaultOutputProductParameter(self):
         defaultOutputProductParameter = self._defaultFactory.createDefaultOutputProductParameter()
         properties = defaultOutputProductParameter.getProperties()
@@ -4764,31 +4790,31 @@ else:
           properties.setDefaultValue(File(defaultValue, VLAB.D_PRODNAME))
         defaultOutputProductParameter.setDefaultValue()
         return defaultOutputProductParameter
-        
+
       def createInputProductRef(self, fileN, fileFmt, typeId):
         try:
           return self._defaultFactory.createInputProductRef(fileN, fileFmt, typeId)
         except RequestElementFactoryException, e:
           raise RequestElementFactoryException(e.getMessage())
-        
+
       def createLogToOutputParameter(self, value):
         try:
           return self._defaultFactory.createLogToOutputParameter(value)
         except ParamValidateException, e:
           raise ParamValidateException(e.getMessage())
-                
+
       def createOutputProductRef(self, fileN, fileFmt, typeId):
         try:
           return self._defaultFactory.createOutputProductRef(fileN, fileFmt, typeId)
         except RequestElementFactoryException, e:
           raise RequestElementFactoryException(e.getMessage())
-        
+
       def createParamWithDefaultValueSet(self, paramName):
         paramProps = self.getParamInfo(paramName)
         param = Parameter(paramName, paramProps.createCopy())
         param.setDefaultValue()
         return param
-      
+
       def getParamInfo(self, parameterName):
         paramProps = self.pMap[parameterName]
         if (paramProps == None):
@@ -4798,10 +4824,10 @@ else:
             VLAB.logger.info('to be implemented!!!')
           elif (parameterName.endsWith(VLAB.P_OUTPUT)):
             VLAB.logger.info('to be implemented!!!')
-  
+
         if (paramProps == None):
           raise IllegalArgumentException("Invalid parameter name '" + parameterName + "'.")
         return paramProps
-  
+
       def createStringParamProperties(self):
         return self._defaultFactory.createStringParamProperties()
