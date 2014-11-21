@@ -410,7 +410,8 @@ class VLAB:
       if node.getLength() > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+        VLAB.logger.info("Warning: didn't find '%s' in file '%s' - skipping replacement" % (parent, fname))
+        return
       else:
         node = node.item(0)
       # Remove content node
