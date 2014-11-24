@@ -410,8 +410,7 @@ class VLAB:
       if node.getLength() > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif node.getLength() == 0:
-        VLAB.logger.info("Warning: didn't find '%s' in file '%s' - skipping replacement" % (parent, fname))
-        return
+        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
       else:
         node = node.item(0)
       # Remove content node
@@ -2924,10 +2923,11 @@ class DART:
                                ["deltaLambda", "meanLambda"],
                                bands, spectralBands=True)
     # In phase change add SpectralIrradianceValue for each spectral bands
-    VLAB.XMLReplaceNodeContent(phase, "SpectralIrradiance", "SpectralIrradianceValue",
-                               ["bandNumber", "irradiance"],
-                               [ [str(bandNumber), str(1000.0)] for bandNumber in xrange(len(bands)) ]
-                              )
+    if q['simulation'] == "HET01_DIS_UNI_NIR_20":
+        VLAB.XMLReplaceNodeContent(phase, "SpectralIrradiance", "SpectralIrradianceValue",
+                                   ["bandNumber", "irradiance"],
+                                   [ [str(bandNumber), str(1000.0)] for bandNumber in xrange(len(bands)) ]
+                                  )
     # In coeff_diff change multiplicativeFactorForLUT to allways be equal to "0"
     coeffDiff = VLAB.path.join(DART.SDIR, q['simulationName'], "input", "coeff_diff.xml")
     VLAB.XMLEditNode(coeffDiff, "LambertianMulti", "useMultiplicativeFactorForLUT", "0", multiple=True)
