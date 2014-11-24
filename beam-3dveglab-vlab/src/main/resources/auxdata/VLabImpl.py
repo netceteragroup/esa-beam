@@ -2869,6 +2869,7 @@ class DART:
     q['paramfile'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
     q['plotfile'] = 'result.%s.brdf.3params' % q['simulation']
     q['outputFolder'] = VLAB.path.join(DART.SDIR, q['simulationName'])
+    q['rpv'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
 
     # 1. Create the DART scene
     # 1. a. Copy DART original input file to a new folder
