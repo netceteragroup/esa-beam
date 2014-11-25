@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (21 Nov 2014)'
+  VERSION_STRING     = '1.0 (25 Nov 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -344,7 +344,7 @@ class VLAB:
       node = tree.getElementsByTagName(nodeName)
       # Check if we get only one node (as expected)
       if node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (nodeName, fname))
       elif node.getLength() == 1:
         nodes = [node.item(0)]
       else:
@@ -376,7 +376,7 @@ class VLAB:
       nodes = tree.findall(".//*../%s" % nodeName)
       # Check if we get only one node (as expected)
       if len(nodes) == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (nodeName, fname))
       elif len(nodes) > 1 and not multiple:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
       for node in nodes:
@@ -410,7 +410,7 @@ class VLAB:
       if node.getLength() > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (parent, fname))
       else:
         node = node.item(0)
       # Remove content node
@@ -457,7 +457,7 @@ class VLAB:
       if len(node) > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif len(node) == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (parent, fname))
       else:
         node = node[0]
       # Remove content of node
@@ -505,7 +505,7 @@ class VLAB:
       if node.getLength() > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (parent, fname))
       else:
         node = node.item(0)
       # Create all the new nodes
@@ -535,7 +535,7 @@ class VLAB:
       if len(node) > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (parent, fname))
       elif len(node) == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (parent, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (parent, fname))
       else:
         node = node[0]
       # Create all the new nodes
@@ -566,7 +566,7 @@ class VLAB:
       if node.getLength() > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
       elif node.getLength() == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (nodeName, fname))
       else:
         node = node.item(0)
       # Check if that node has attributName
@@ -585,7 +585,7 @@ class VLAB:
       if len(node) > 1:
         raise IOError("Get multiple nodes for '%s' in file '%s'" % (nodeName, fname))
       elif len(node) == 0:
-        raise IOError("Cannot found '%s' in file '%s'" % (nodeName, fname))
+        raise IOError("Cannot find '%s' in file '%s'" % (nodeName, fname))
       else:
         node = node[0]
       # Check if that node has an attributName
