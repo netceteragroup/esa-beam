@@ -2869,6 +2869,7 @@ class DART:
     q['paramfile'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
     q['plotfile'] = 'result.%s.brdf.3params' % q['simulation']
     q['outputFolder'] = VLAB.path.join(DART.SDIR, q['simulationName'])
+    q['opdir']        = VLAB.path.join(DART.SDIR, q['simulationName'])
     q['rpv'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
 
     # 1. Create the DART scene
@@ -3277,7 +3278,8 @@ class Librat_dobrdf:
    (args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log', \
     args['sorder'], args['wbfile'], args['objfile'], gFilePath+'.inp', gFilePath+'.out.log', gFilePath+'.err.log')
     gdata = replaced.replace("\x81", "%")
-    gdata += 'return VLAB.doExec(cmd)\n'
+    gdata += 'global grabme_retval\n'
+    gdata += 'grabme_retval = VLAB.doExec(cmd)\n'
     try:
       fp = open(gFilePath, 'w')
       fp.write(gdata)
@@ -3428,7 +3430,12 @@ class Librat_dobrdf:
             'wbfile'   : q['wbfile']
           }
           self._writeGrabFile(grabme, nq)
-          execfile(grabme)
+          global grabme_retval
+          grabme_retval = 0
+          globdict = globals()
+          execfile(grabme, globdict)
+          if grabme_retval != 0:
+            raise Exception("grabme failed with return code=%d" % grabme_retval)
 
           # move resulting .hdr and result.image
           hdrFile = None
