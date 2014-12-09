@@ -2800,6 +2800,7 @@ class DART:
       'plotfile':'result.brdf.dat.3params',
       'wbfile':'wb.full_spectrum.1nm.dat',
       'wb':'wb.full_spectrum.1nm.dat',
+      'v':True
     }
 
     # overwrite defaults
@@ -2810,32 +2811,32 @@ class DART:
         q['sensor'] = args[a]
         if args[a] == VLAB.K_SENTINEL2:
           q['wb'] = 'wb.MSI.dat'
-          q['wbfile'] = 'wb.MSI.dat'
-          #q['angfile'] = 'angles.MSI.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.MSI.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.MSI.dat')
         elif args[a] == VLAB.K_SENTINEL3:
           q['wb'] = 'wb.OLCI.dat'
-          q['wbfile'] = 'wb.OLCI.dat'
-          #q['angfile'] = 'angles.OLCI.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.OLCI.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.OLCI.dat')
         elif args[a] == VLAB.K_MODIS:
           q['wb'] = 'wb.MODIS.dat'
-          q['wbfile'] = 'wb.MODIS.dat'
-          #q['angfile'] = 'angles.MODIS.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.MODIS.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.MODIS.dat')
         elif args[a] == VLAB.K_MERIS:
           q['wb'] = 'wb.MERIS.dat'
-          q['wbfile'] = 'wb.MERIS.dat'
-          #q['angfile'] = 'angles.MERIS.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.MERIS.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.MERIS.dat')
         elif args[a] == VLAB.K_LANDSAT_OLI:
           q['wb'] = 'wb.LANDSAT.OLI.dat'
-          q['wbfile'] = 'wb.LANDSAT.OLI.dat'
-          #q['angfile'] = 'angles.LANDSAT.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.LANDSAT.OLI.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.LANDSAT.dat')
         elif args[a] == VLAB.K_LANDSAT_ETM:
           q['wb'] = 'wb.LANDSAT.ETM.dat'
-          q['wbfile'] = 'wb.LANDSAT.ETM.dat'
-          #q['angfile'] = 'angles.LANDSAT.dat'
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.LANDSAT.ETM.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.LANDSAT.dat')
         else:
           q['wb'] = 'wb.full_spectrum.1nm.dat'
-          q['wbfile'] = 'wb.full_spectrum.1nm.dat'
-          #q['angfile'] = 'angles.rami.dat
+          q['wbfile'] = "%s/%s" % (LIBRAT.SDIR, 'wb.full_spectrum.1nm.dat')
+          q['angfile'] = "%s/%s" % (LIBRAT.SDIR, 'angles.rami.dat')
       if a == VLAB.P_3dScene:
         if args[a] == VLAB.K_RAMI:
           q['simulation'] = 'HET01_DIS_UNI_NIR_20'
@@ -2871,6 +2872,18 @@ class DART:
     q['outputFolder'] = VLAB.path.join(DART.SDIR, q['simulationName'])
     q['opdir']        = VLAB.path.join(DART.SDIR, q['simulationName'])
     q['rpv'] = 'result.%s.brdf.dat.3params.dat' % q['simulation']
+
+    ## LibRadtran parameters
+    q['infile'] = "%s/%s" % (q['outputFolder'], "libradtran_in.dat")
+    q['outfile'] = "%s/%s" % (q['outputFolder'], "libradtran_out.dat")
+    q['rpv_file'] = "%s/%s" % (q['outputFolder'], q['paramfile'])
+    q['CO2'] = args[VLAB.P_AtmosphereCO2]
+    q['H2O'] = args[VLAB.P_AtmosphereWater]
+    q['O3'] = args[VLAB.P_AtmosphereOzone]
+    q['scene'] = args[VLAB.P_3dScene]
+    q['aerosol'] = args[VLAB.P_AtmosphereAerosol]
+    q['sensor'] = args[VLAB.P_Sensor]
+
 
     # 1. Create the DART scene
     # 1. a. Copy DART original input file to a new folder
@@ -3079,8 +3092,7 @@ class DART:
     rpv_invert.main(q)
 
     # 4.b. Run libradtran
-    dolibradtran = Librat_dolibradtran()
-    dolibradtran.main(q)
+    VLAB.doLibradtran(q)
 
     #
     # collect result into a consolidated data cube
