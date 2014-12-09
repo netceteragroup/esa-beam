@@ -3878,8 +3878,9 @@ class Librat_rpv_invert:
       outputFolder = q['outputFolder']
     else:
       outputFolder = LIBRAT.SDIR
+      q['wbfile'] = "%s/%s" % (outputFolder, q['wbfile'])
 
-    wb   = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['wbfile']), transpose=True)[1]
+    wb   = VLAB.valuesfromfile(q['wbfile'], transpose=True)[1]
     data = VLAB.valuesfromfile('%s/%s' % (outputFolder, q['dataf']),  transpose=True)
 
     # check shape of 2 data files i.e. that there are same no. of wbs on each line of datafile ( + 4 angles)
@@ -3907,7 +3908,7 @@ class Librat_rpv_invert:
       dfp.close()
 
     # open the previously created file
-    opfp = open('%s/%s' % (LIBRAT.SDIR,  opdat), 'w')
+    opfp = open('%s/%s' % (outputFolder,  opdat), 'w')
 
     if q['three']:
       opfp.write('# wb rho0 k bigtet\n')
