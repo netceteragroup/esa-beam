@@ -1,5 +1,5 @@
-*** librat/configure	2013-03-15 12:34:28.000000000 +0100
---- librat-mingw/configure	2013-03-17 00:08:23.018642520 +0100
+*** librat/configure.orig	2013-05-03 10:57:52.000000000 +0200
+--- librat/configure	2014-12-10 17:47:45.886618092 +0100
 ***************
 *** 25,30 ****
 --- 25,32 ----
@@ -137,16 +137,16 @@
 + ########
 + # patches introduced to compile win32 binaries
 + ########
++ echo "patching ..."
++ cd "$BPMS"/..
++ foreach p (librat-patches/librat-patch-*.patch)
++   patch -p 1 < $p
++ end
 + if ( ($domingw32 == 1) || ($domingw64 == 1) ) then
-+   echo "patching ..."
-+   cd "$BPMS"/..
-+   foreach p (librat-patches/librat-patch-*.patch)
-+     patch -p 1 < $p
-+   end
 +   cp -p librat-patches/librat-testMe.bat "$BPMS"/src/start/testMe.bat
-+   # "start" is reserved on win32 - rename src to reduce makefile churn
-+   mv "$BPMS"/src/start/start.c "$BPMS"/src/start/ratstart.c
 + endif
++ # "start" is reserved (on win32) - rename src to reduce makefile churn
++ mv "$BPMS"/src/start/start.c "$BPMS"/src/start/ratstart.c
 + 
   ########
   # compile

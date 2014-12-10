@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (3 Dec 2014)'
+  VERSION_STRING     = '1.0 (10 Dec 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -957,15 +957,20 @@ class VLAB:
     osName = VLAB.osName()
     if osName.startswith('Windows'):
       cmd=cmdrec['windows']
+      exe = VLAB.expandEnv(cmd['exe'])
       cmdLine = ['cmd', '/c']
+      cmdstr = '"'
+      cmdstr += ' "' + exe + '" '
+      for i in cmd['cmdline']:
+        cmdstr += ' "' + (VLAB.expandEnv(i)) + '" '
+      cmdstr += '"'
+      cmdLine.append(cmdstr)
     else:
       cmd=cmdrec['linux']
-    exe = VLAB.expandEnv(cmd['exe'])
-    if not (VLAB.fileExists(exe) or osName.startswith('Windows')):
-      raise RuntimeError('Cannot find exe "%s"' % exe)
-    cmdLine.append(exe)
-    for i in cmd['cmdline']:
-      cmdLine.append(VLAB.expandEnv(i))
+      exe = VLAB.expandEnv(cmd['exe'])
+      cmdLine.append(exe)
+      for i in cmd['cmdline']:
+        cmdLine.append(VLAB.expandEnv(i))
 
     VLAB.logger.info('cmdLine is [%s]' % cmdLine)
     if sys.platform.startswith('java'):
@@ -3245,10 +3250,11 @@ class Librat_dobrdf:
 
   def _writeInputFile(self, inpFile, lightFile, camFile):
     idata = '14' \
-   + ' ' \
+   + ' "' \
    + VLAB.getFullPath(camFile) \
-   + ' ' \
-   + VLAB.getFullPath(lightFile)
+   + '" "' \
+   + VLAB.getFullPath(lightFile) \
+   + '"'
     fp = open(inpFile, 'w')
     try:
       fp.write(idata)
@@ -3263,7 +3269,7 @@ class Librat_dobrdf:
     gdata = """cmd = {
   'linux' : {
     'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_scenes',
-    'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+    'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/ratstart',
     'cmdline' : ['-RATv', '-m', '%s', '-RATsensor_wavebands', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s', '$HOME/.beam/beam-vlab/auxdata/librat_scenes/%s' ],
     'stdin'   : '%s',
     'stdout'  : '%s',
@@ -4032,7 +4038,7 @@ class LIBRAT:
     cmd = {
     'linux' : {
       'cwd'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start',
-      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/start',
+      'exe'     : '$HOME/.beam/beam-vlab/auxdata/librat_lin64/src/start/ratstart',
       'cmdline' : [
         '-sensor_wavebands', 'wavebands.dat', '-m', '100',
         '-sun_position', '0', '0', '10', 'test.obj'],

@@ -69,7 +69,7 @@ The toolbox comprises three radiative transfer models, two for the computation o
 
 <h5>Model Selection</h5>
 <p>
-In this section, the user can select the 3d scene to be simulated (either Laegeren or Tharandt) and the RT model to be used for the forward simulation of BRF values based on the selected 3d scene. Choices are librat and DART.
+In this section, the user can select the 3d scene to be simulated (either RAMI or) and the RT model to be used for the forward simulation of BRF values based on the selected 3d scene. Choices are librat and DART. A "dummy" processor is available for testing the technical installation.
 </p>
 <h5>Spectral Characteristics</h5>
 <p>
@@ -88,17 +88,17 @@ Defines the solar illumination characteristics of the sensor relative to the 3d 
 
 <h5>Scene Parameters</h5>
 <p>
-Defines the pixel size, center coordinates (XC, YC) and spatial extent (XW, YW). The spatial extent is provided in pixel units.
+In future, this may allow defining the pixel size, center coordinates (XC, YC) and spatial extent (XW, YW). The spatial extent is provided in pixel units.
 </p>
 
 <h5>Atmospheric Parameters</h5>
 <p>
-This section provides the inputs for the atmospheric modeling component, libradtran. The day of year can be specified as Julian day, together with the location of the scene in global coordinates (lat/lon). Please note that the location will be prescribed from the selected scenes. Additionally, values for CO2 mixing ratio, water vapor and ozone column can be provided, together with a choice of typical aerosol profiles.
+This section provides the inputs for the atmospheric modeling component, libradtran. Please note that the location will be prescribed from the selected scenes. Additionally, values for CO2 mixing ratio, water vapor and ozone column can be provided, together with a choice of typical aerosol profiles.
 </p>
 
 <h5>Output Parameters</h5>
 <p>
-The image and BRF output of the RTM models will be written to a specific directory (Result Directory) using a specific file prefix (Result file prefix). The choice of image and BRF (ASCII) output is also offered.
+The image and BRF output of the RTM models will be written to a specific directory (Result Directory) using a specific file prefix (Result file prefix).
 </p>
 
 <h4>DHP Simulation</h4>
@@ -110,7 +110,7 @@ The 3d scene and the RT model can be selected here. The current version of the p
 
 <h5>DHP Location</h5>
 <p>
-The location of the virtual DHP photograph. Locations are relative to the center location of the 3d scenes and are provided in meters. 
+The location of the virtual DHP photograph. Locations are relative to the center location of the 3d scenes and are provided in meters.
 </p>
 
 <h5>DHP Properties</h5>

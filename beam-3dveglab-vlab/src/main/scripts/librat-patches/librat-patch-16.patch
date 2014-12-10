@@ -1,33 +1,104 @@
-diff -c -r librat/bpms/src/lib/rat/start.c librat-mingw32/bpms/src/lib/rat/start.c
-*** librat/bpms/src/lib/rat/start.c	2011-07-19 16:20:50.000000000 +0200
---- librat-mingw32/bpms/src/lib/rat/start.c	2012-01-07 23:43:15.313726203 +0100
-***************
-*** 517,530 ****
---- 517,533 ----
-  
-  void userSignals(){
-  	/* always call RATsignalInterrupt */
-+ #ifndef WIN32
-  	signal(SIGUSR1,RATsignalInterrupt);
-  	signal(SIGUSR2,RATsignalInterrupt);
-  	signal(SIGSTOP,RATsignalInterrupt);
-+ #endif
-          signal(SIGSEGV,RATsignalInterrupt);
-  }
-  
-  void RATuserInterrupt(RATobj *ratObj,int sig){
-  	switch(sig){
-+ #ifndef WIN32
-  		case SIGUSR1:
-  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
-  			break;
-***************
-*** 535,540 ****
---- 538,544 ----
-  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
-  			exit(1);
-  			break;
-+ #endif
-  		case SIGSEGV:
-  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n(try switching it off and on again ;-) )\n",sig,RATgetPID());
-  			exit(1);
+--- librat/bpms/src/lib/rat/start.c.orig	2014-12-10 17:12:05.302973827 +0100
++++ librat/bpms/src/lib/rat/start.c	2014-12-10 17:15:51.648060067 +0100
+@@ -59,6 +59,60 @@
+ }
+ 
+ /*
++ * parse a filename from the string "in" writing it in string "out" which
++ *   has at most "max" characters. "saveptr" is where in string "in" you
++ *   left off.
++ *
++ *   If "in" is NULL, "saveptr" is used as "in".
++ */
++void
++RATparseFname(char *in, char *out, int max, char **saveptr) {
++	int len = 0;
++	enum {START, IN_QUOTED_TOKEN, IN_TOKEN, ACCEPT} state;
++	state = START;
++
++	if (in == NULL) { in = *saveptr; }
++	while (state != ACCEPT) {
++		/* printf("{state=%d} [%c]\n", state, in[0]); */
++		switch (in[0]) {
++			case '"':
++				switch (state) {
++					case START:
++						state = IN_QUOTED_TOKEN;
++						break;
++					case IN_QUOTED_TOKEN:
++					case IN_TOKEN:
++						state = ACCEPT;
++						break;
++				}
++				break;
++			case ' ':
++				switch (state) {
++					case IN_QUOTED_TOKEN:
++						out[len++] = in[0];
++						if (len == max) { state = ACCEPT; }
++						break;
++					case IN_TOKEN:
++						state = ACCEPT;
++						break;
++				}
++				break;
++			case '\0':
++			case '\n':
++				state = ACCEPT;
++				break;
++			default:
++				if (state == START) { state = IN_TOKEN; }
++				out[len++] = in[0];
++				if (len == max) { state = ACCEPT; }
++				break;
++		}
++		in++;
++	}
++	*saveptr = in;
++}
++
++/*
+ ########################
+  */
+ 
+@@ -378,9 +432,12 @@
+                                         {
+                                                 RATdevice *ratCamera=NULL;
+                                                 RATdevice *ratLight=NULL;
+-						char camerafile[1024],lightfile[1024];
++						char camAndLight[8192],camerafile[4096],lightfile[4096];
++						char *saveptr = NULL;
+ 
+-						fscanf(stdin,"%s %s",camerafile,lightfile);
++						fgets(camAndLight, sizeof(camAndLight),  stdin);
++						RATparseFname(camAndLight, camerafile, sizeof(camerafile), &saveptr);
++						RATparseFname(NULL,         lightfile, sizeof(lightfile),  &saveptr);
+                                                 ratCamera=RATreadCameraFile(camerafile,ratObj);
+                                                 ratLight=RATreadCameraFile(lightfile,ratObj);
+ 
+@@ -517,14 +574,17 @@
+ 
+ void userSignals(){
+ 	/* always call RATsignalInterrupt */
++#ifndef WIN32
+ 	signal(SIGUSR1,RATsignalInterrupt);
+ 	signal(SIGUSR2,RATsignalInterrupt);
+ 	signal(SIGSTOP,RATsignalInterrupt);
++#endif
+         signal(SIGSEGV,RATsignalInterrupt);
+ }
+ 
+ void RATuserInterrupt(RATobj *ratObj,int sig){
+ 	switch(sig){
++#ifndef WIN32
+ 		case SIGUSR1:
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+ 			break;
+@@ -535,6 +595,7 @@
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+ 			exit(1);
+ 			break;
++#endif
+ 		case SIGSEGV:
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n(try switching it off and on again ;-) )\n",sig,RATgetPID());
+ 			exit(1);

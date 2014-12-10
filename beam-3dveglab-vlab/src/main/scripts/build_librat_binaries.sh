@@ -10,6 +10,7 @@ LINNAME=librat_${VERSION}_linux64-`date +%Y%m%d`
 
 set -e
 
+sudo yum -y install csh
 sudo yum -y install gcc
 sudo yum -y install mingw32-gcc
 sudo yum -y install mingw64-gcc
@@ -36,27 +37,20 @@ if test ! -f ./bpms/src/start/ratstart.exe ; then
 fi
 mv bpms ${W32NAME}
 zip -r ${W32NAME} ${W32NAME}
-rm -f configure
 
 # problem with getpid() - fix it later
 if false; then
-# get official configure again
-wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
-# apply Netcetera windows top level patch, then run configure
-patch -b < librat-patches/librat-configure.patch
 BPMS=`pwd`/bpms csh -x -f ./configure -mingw64 2>&1 | tee build-win64.log
 if test ! -f ./bpms/src/start/ratstart.exe ; then
   echo FAILED && exit -1
 fi
 mv bpms ${W64NAME}
 zip -r ${W64NAME} ${W64NAME}
-rm -f configure
 fi
 
-# get official configure again
-wget http://www2.geog.ucl.ac.uk/~plewis/librat/configure
+# now build for linux
 BPMS=`pwd`/bpms csh -x -f ./configure 2>&1 | tee build-linux64.log
-if test ! -f ./bpms/src/start/start ; then
+if test ! -f ./bpms/src/start/ratstart ; then
   echo FAILED && exit -1
 fi
 mv bpms ${LINNAME}
