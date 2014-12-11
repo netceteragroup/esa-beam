@@ -964,7 +964,11 @@ class VLAB:
       if exe != None:
         cmdstr += ' "' + VLAB.expandEnv(exe) + '" '
       for i in cmd['cmdline']:
-        cmdstr += ' "' + (VLAB.expandEnv(i)) + '" '
+        expanded = VLAB.expandEnv(i)
+        if " " in expanded:
+          cmdstr += ' "' + expanded + '" '
+        else:
+          cmdstr += ' '  + expanded + ' '
       cmdstr += '"'
       cmdLine.append(cmdstr)
     else:
