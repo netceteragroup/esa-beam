@@ -25,7 +25,7 @@
   BIN = ../../bin
   LEWIS_LIB = "${BPMS}/src"
   
-! LIBS = -limage_${ARCH} -lmatrix_${ARCH} -lalloc_${ARCH} -lvect_${ARCH} -lerr_${ARCH} -lhipl_${ARCH} -lrand_${ARCH} -lrat_${ARCH} 
+! LIBS = -limage_${ARCH} -lmatrix_${ARCH} -lalloc_${ARCH} -lvect_${ARCH} -lerr_${ARCH} -lhipl_${ARCH} -lrand_${ARCH} -lrat_${ARCH}  -lm
   LIBRARY = ${LEWIS_LIB}
   CFLAGS += -I../lib/rat -L${LEWIS_LIB}/lib -DDOUBLEDEF  -DMATCHK -D${ARCH} -D_NO_NAG
   
