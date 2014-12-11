@@ -1,25 +1,28 @@
 --- librat/bpms/src/start/start.c.orig	2012-05-22 15:20:26.000000000 +0200
 +++ librat/bpms/src/start/start.c	2014-12-11 11:46:23.354971850 +0100
-@@ -59,6 +59,60 @@
+@@ -59,6 +59,67 @@
  }
  
  /*
 + * parse a filename from the string "in" writing it in string "out" which
-+ *   has at most "max" characters. "saveptr" is where in string "in" you
-+ *   left off.
++ *	 has at most "max" characters. "saveptr" is where in string "in" you
++ *	 left off.
 + *
-+ *   If "in" is NULL, "saveptr" is used as "in".
++ *	 If "in" is NULL, "saveptr" is used as "in".
++ *
 + */
 +void
-+RATparseFname(char *in, char *out, int max, char **saveptr) {
++parse_fname(char *in, char *out, int max, char **saveptr) {
 +	int len = 0;
 +	enum {START, IN_QUOTED_TOKEN, IN_TOKEN, ACCEPT} state;
 +	state = START;
 +
++	/* ensure "out" will be null terminated */
++	memset(out, '\0', max);
 +	if (in == NULL) { in = *saveptr; }
-+	while (state != ACCEPT) {
-+		/* printf("{state=%d} [%c]\n", state, in[0]); */
-+		switch (in[0]) {
++	while ((state != ACCEPT) && (*in != '\0')) {
++		/* printf("{state=%d} [%c]\n", state, *in); */
++		switch (*in) {
 +			case '"':
 +				switch (state) {
 +					case START:
@@ -27,17 +30,21 @@
 +						break;
 +					case IN_QUOTED_TOKEN:
 +					case IN_TOKEN:
++					case ACCEPT:
 +						state = ACCEPT;
 +						break;
 +				}
 +				break;
 +			case ' ':
 +				switch (state) {
++					case START:
++						break;
 +					case IN_QUOTED_TOKEN:
-+						out[len++] = in[0];
-+						if (len == max) { state = ACCEPT; }
++						if (len < max-1) { out[len] = *in; }
++						len++;
 +						break;
 +					case IN_TOKEN:
++					case ACCEPT:
 +						state = ACCEPT;
 +						break;
 +				}
@@ -48,8 +55,8 @@
 +				break;
 +			default:
 +				if (state == START) { state = IN_TOKEN; }
-+				out[len++] = in[0];
-+				if (len == max) { state = ACCEPT; }
++				if (len < max-1)    { out[len] = *in; }
++				len++;
 +				break;
 +		}
 +		in++;
@@ -61,7 +68,7 @@
  ########################
   */
  
-@@ -378,9 +432,12 @@
+@@ -378,9 +439,12 @@
                                          {
                                                  RATdevice *ratCamera=NULL;
                                                  RATdevice *ratLight=NULL;
@@ -76,7 +83,7 @@
                                                  ratCamera=RATreadCameraFile(camerafile,ratObj);
                                                  ratLight=RATreadCameraFile(lightfile,ratObj);
  
-@@ -517,14 +574,17 @@
+@@ -517,14 +581,17 @@
  
  void userSignals(){
  	/* always call RATsignalInterrupt */
@@ -94,7 +101,7 @@
  		case SIGUSR1:
  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
  			break;
-@@ -535,6 +595,7 @@
+@@ -535,6 +602,7 @@
  			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
  			exit(1);
  			break;
