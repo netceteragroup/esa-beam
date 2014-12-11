@@ -12,7 +12,7 @@
 + *
 + */
 +void
-+parse_fname(char *in, char *out, int max, char **saveptr) {
++RATparseFname(char *in, char *out, int max, char **saveptr) {
 +	int len = 0;
 +	enum {START, IN_QUOTED_TOKEN, IN_TOKEN, ACCEPT} state;
 +	state = START;
