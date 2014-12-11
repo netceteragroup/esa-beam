@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (10 Dec 2014)'
+  VERSION_STRING     = '1.0 (11 Dec 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -957,10 +957,12 @@ class VLAB:
     osName = VLAB.osName()
     if osName.startswith('Windows'):
       cmd=cmdrec['windows']
-      exe = VLAB.expandEnv(cmd['exe'])
+      exe = cmd['exe']
       cmdLine = ['cmd', '/c']
       cmdstr = '"'
-      cmdstr += ' "' + exe + '" '
+      # None means it is .bat command
+      if exe != None:
+        cmdstr += ' "' + VLAB.expandEnv(exe) + '" '
       for i in cmd['cmdline']:
         cmdstr += ' "' + (VLAB.expandEnv(i)) + '" '
       cmdstr += '"'
@@ -2969,8 +2971,8 @@ class DART:
         },
       'windows'   : {
         'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-directions.bat', q['simulationName']],
+        'exe'     : None,
+        'cmdline' : ['%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-directions.bat', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -3017,8 +3019,8 @@ class DART:
         },
       'windows'   : {
         'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
+        'exe'     : None,
+        'cmdline' : ['%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-full.bat', q['simulationName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
@@ -3043,8 +3045,8 @@ class DART:
         },
       'windows'   : {
         'cwd'     : '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows',
-        'exe'     : 'cmd.exe',
-        'cmdline' : ['/c', '%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-sequence.bat', q['simulationName'], seqparams['fileName']],
+        'exe'     : None,
+        'cmdline' : ['%HOMEDRIVE%%HOMEPATH%/.beam/beam-vlab/auxdata/dart_win32/tools/windows/dart-sequence.bat', q['simulationName'], seqparams['fileName']],
         'stdin'   : None,
         'stdout'  : None,
         'stderr'  : None,
