@@ -57,12 +57,12 @@ Since nearly everything is implemented in that single python file, we were able 
 2. Stand-alone with a "fake beam" swing-based GUI
 ```bash
 # for linux
-${HOME}/beam-4.11/jre/bin/java -jar ${HOME}/beam-4.11/lib/jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar:${HOME}/beam-4.11/lib/lbfgsb_wrapper-1.1.3.jar ${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py
+"${HOME}/beam-4.11/jre/bin/java" -jar "${HOME}/beam-4.11/lib/jython-2.5.2.jar" -Dvlab.fakebeam=1 -Dpython.path="${HOME}/beam-4.11/lib/jcommon-1.0.16.jar:${HOME}/beam-4.11/lib/jfreechart-1.0.13.jar:${HOME}/beam-4.11/lib/lbfgsb_wrapper-1.1.3.jar" "${HOME}/.beam/beam-vlab/auxdata/VLabImpl.py"
 ```
 ```dos
 rem for windows
 set BEAMDIR="C:\data\Program Files (x86)\beam-4.11"
-%BEAMDIR%\jre\bin\java -jar %BEAMDIR%\lib\jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=%BEAMDIR%\lib\jcommon-1.0.16.jar;%BEAMDIR%\lib\jfreechart-1.0.13.jar;%BEAMDIR%\lib\lbfgsb_wrapper-1.1.3.jar %HOMEDRIVE%%HOMEPATH%\.beam\beam-vlab\auxdata\VLabImpl.py
+%BEAMDIR%\jre\bin\java -jar %BEAMDIR%\lib\jython-2.5.2.jar -Dvlab.fakebeam=1 -Dpython.path=%BEAMDIR%\lib\jcommon-1.0.16.jar;%BEAMDIR%\lib\jfreechart-1.0.13.jar;%BEAMDIR%\lib\lbfgsb_wrapper-1.1.3.jar "%HOMEDRIVE%%HOMEPATH%\.beam\beam-vlab\auxdata\VLabImpl.py"
 ```
 
 A third alternative is a "headless" standalone mode, which is the same

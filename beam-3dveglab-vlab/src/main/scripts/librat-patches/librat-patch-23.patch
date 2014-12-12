@@ -1,0 +1,13 @@
+--- librat/bpms/src/lib/rat/sensor_rsr.c.orig	2013-05-03 19:37:28.000000000 +0200
++++ librat/bpms/src/lib/rat/sensor_rsr.c	2014-12-12 16:29:51.767818795 +0100
+@@ -54,7 +54,9 @@
+ 		        sensor_wavebands->sensor_rsr[i].rsr[1][0]=0.0;
+ 			sensor_wavebands->sensor_rsr[i].no_of_samples=1;
+ 			i++;
+-			sensor_wavebands->sensor_rsr[i].no_of_samples=0;
++			if (i < no_of_wavebands) {
++				sensor_wavebands->sensor_rsr[i].no_of_samples=0;
++			}
+ 		}else{
+ 			fprintf(stderr,"read_spectral_file:\tread error at line %d in spectral file %s\n\t\t(%%d %%f) expected\n",i,filename[0]);
+ 			exit(-1);

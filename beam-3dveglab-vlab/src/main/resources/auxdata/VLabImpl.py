@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (11 Dec 2014)'
+  VERSION_STRING     = '1.0 (12 Dec 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -1326,9 +1326,14 @@ used."""
       q['wavelength'] = '450 2300'
 
     if VLAB.osName().startswith('Windows'):
-      q['solar_file'] = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.dat')
+      sfile = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.dat')
     else:
-      q['solar_file'] = VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat')
+      sfile =  VLAB.expandEnv('$HOME/.beam/beam-vlab/auxdata/libRadtran_lin64/data/solar_flux/NewGuey2003.dat')
+
+    if " " in sfile:
+      q['solar_file'] = '"' + sfile + '"'
+    else:
+      q['solar_file'] = sfile
 
     sdata = """
 solar_file         %s
@@ -3144,8 +3149,9 @@ class DART:
       # Copy to results directory
       resdir = VLAB.fPath(DART.SDIR, "../../results/dart/%s/%s" % (args['OutputDirectory'], q['simulationName']))
       VLAB.mkDirPath(resdir)
-      VLAB.logger.info('%s: copy result %s -> %s' % (me, srcdir, resdir))
-      VLAB.copyDir(srcdir, resdir)
+      VLAB.logger.info('%s: skipping copy of result %s -> %s' % (me, srcdir, resdir))
+      #too much data, too much time
+      #VLAB.copyDir(srcdir, resdir)
       VLAB.logger.info('%s: Done...' % me)
 
 #### DART end ################################################################
@@ -4506,8 +4512,9 @@ class LIBRAT:
         pm.beginTask("Copying results...", 10)
       resdir = VLAB.fPath(LIBRAT.SDIR, "../results/librat/%s" % args['OutputDirectory'])
       VLAB.mkDirPath(resdir)
-      VLAB.logger.info('%s: copy result %s -> %s' % (me, fullobjpath, resdir))
-      VLAB.copyDir(fullobjpath, resdir)
+      VLAB.logger.info('%s: skipping copy of result %s -> %s' % (me, fullobjpath, resdir))
+      #too much data, too much time
+      #VLAB.copyDir(fullobjpath, resdir)
       VLAB.logger.info('%s: Done...' % me)
 
 #### LIBRAT end ##############################################################

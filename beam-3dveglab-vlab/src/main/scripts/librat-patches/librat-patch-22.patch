@@ -1,5 +1,5 @@
---- librat/bpms/src/lib/image/envilib.c.orig	2013-10-01 10:18:24.878351376 +0200
-+++ librat-mingw32/bpms/src/lib/image/envilib.c	2013-10-01 10:20:41.241954018 +0200
+--- librat/bpms/src/lib/image/envilib.c.orig	2013-03-14 16:58:37.000000000 +0100
++++ librat/bpms/src/lib/image/envilib.c	2014-12-12 16:20:24.377575614 +0100
 @@ -7,6 +7,46 @@
  #include "hiplib.h"
  #include <stdlib.h>
@@ -71,3 +71,22 @@
                tmp = strchr(my_string1,'\r');if(tmp != NULL)*tmp = '\0';
                tmp = strchr(my_string1,'\n');if(tmp != NULL)*tmp = '\0';
                if(bytes_read == 0){
+@@ -131,7 +179,8 @@
+   return(out);
+ }
+ 
+-int writeEnviHeader(GenericImage *ImagePtr,char *filename){
++int writeEnviHeader(GenericImage *ImagePtr) {
++  char *filename;
+   char *reste,*headerName=NULL,*dummy;
+   FILE *f;
+   int l;
+@@ -150,7 +199,7 @@
+     fprintf(stderr,"error with unspecified image file\n");
+     exit(0);
+   }
+-  if (!filename || strlen(filename) == 0) filename = ImagePtr->imageName;
++  filename = ImagePtr->imageName;
+ 
+   if(filename)ImagePtr->imageNameH=NULL;
+   if(!(ImagePtr->imageNameH)){
