@@ -1,0 +1,111 @@
+--- librat/bpms/src/start/start.c.orig	2012-05-22 15:20:26.000000000 +0200
++++ librat/bpms/src/start/start.c	2014-12-11 14:50:54.297837174 +0100
+@@ -59,6 +59,67 @@
+ }
+ 
+ /*
++ * parse a filename from the string "in" writing it in string "out" which
++ *	 has at most "max" characters. "saveptr" is where in string "in" you
++ *	 left off.
++ *
++ *	 If "in" is NULL, "saveptr" is used as "in".
++ *
++ */
++void
++RATparseFname(char *in, char *out, int max, char **saveptr) {
++	int len = 0;
++	enum {START, IN_QUOTED_TOKEN, IN_TOKEN, ACCEPT} state;
++	state = START;
++
++	/* ensure "out" will be null terminated */
++	memset(out, '\0', max);
++	if (in == NULL) { in = *saveptr; }
++	while ((state != ACCEPT) && (*in != '\0')) {
++		/* printf("{state=%d} [%c]\n", state, *in); */
++		switch (*in) {
++			case '"':
++				switch (state) {
++					case START:
++						state = IN_QUOTED_TOKEN;
++						break;
++					case IN_QUOTED_TOKEN:
++					case IN_TOKEN:
++					case ACCEPT:
++						state = ACCEPT;
++						break;
++				}
++				break;
++			case ' ':
++				switch (state) {
++					case START:
++						break;
++					case IN_QUOTED_TOKEN:
++						if (len < max-1) { out[len] = *in; }
++						len++;
++						break;
++					case IN_TOKEN:
++					case ACCEPT:
++						state = ACCEPT;
++						break;
++				}
++				break;
++			case '\0':
++			case '\n':
++				state = ACCEPT;
++				break;
++			default:
++				if (state == START) { state = IN_TOKEN; }
++				if (len < max-1)    { out[len] = *in; }
++				len++;
++				break;
++		}
++		in++;
++	}
++	*saveptr = in;
++}
++
++/*
+ ########################
+  */
+ 
+@@ -378,9 +439,12 @@
+                                         {
+                                                 RATdevice *ratCamera=NULL;
+                                                 RATdevice *ratLight=NULL;
+-						char camerafile[1024],lightfile[1024];
++						char camAndLight[8192],camerafile[4096],lightfile[4096];
++						char *saveptr = NULL;
+ 
+-						fscanf(stdin,"%s %s",camerafile,lightfile);
++						fgets(camAndLight, sizeof(camAndLight),  stdin);
++						RATparseFname(camAndLight, camerafile, sizeof(camerafile), &saveptr);
++						RATparseFname(NULL,         lightfile, sizeof(lightfile),  &saveptr);
+                                                 ratCamera=RATreadCameraFile(camerafile,ratObj);
+                                                 ratLight=RATreadCameraFile(lightfile,ratObj);
+ 
+@@ -517,14 +581,17 @@
+ 
+ void userSignals(){
+ 	/* always call RATsignalInterrupt */
++#ifndef WIN32
+ 	signal(SIGUSR1,RATsignalInterrupt);
+ 	signal(SIGUSR2,RATsignalInterrupt);
+ 	signal(SIGSTOP,RATsignalInterrupt);
++#endif
+         signal(SIGSEGV,RATsignalInterrupt);
+ }
+ 
+ void RATuserInterrupt(RATobj *ratObj,int sig){
+ 	switch(sig){
++#ifndef WIN32
+ 		case SIGUSR1:
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+ 			break;
+@@ -535,6 +602,7 @@
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n",sig,RATgetPID());
+ 			exit(1);
+ 			break;
++#endif
+ 		case SIGSEGV:
+ 			fprintf(stderr,"rat:\tsignal interrupt %d for process %d\n(try switching it off and on again ;-) )\n",sig,RATgetPID());
+ 			exit(1);
