@@ -1,0 +1,47 @@
+--- librat/bpms/src/lib/rat/files.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/files.c	2014-12-17 17:28:18.273080336 +0100
+@@ -7,7 +7,7 @@
+ 	char	msg[2000];
+ 	void	error1();
+ 	
+-	if((out=fopen(filename,"r"))==NULL){
++	if((out=fopen(filename,"rb"))==NULL){
+ 		sprintf(msg,"open_file_for_read:\tfailed to open file %s",filename);
+ 		error1(msg);
+ 	}
+@@ -59,7 +59,7 @@
+ int     fatal;
+ {
+         FILE    *out;
+-  if((out=fopen(*filename,"r"))==NULL){
++  if((out=fopen(*filename,"rb"))==NULL){
+      if(fatal==1)error2("openFileForRead: error opening file",*filename);
+      return(NULL);
+   }
+@@ -87,7 +87,7 @@
+ 		if((environment[0]=='/' && environment[strlen(environment)-1]!='/') || (strcmp(environment,".")==0 || strcmp(environment,"..")==0))
+ 			strcat(environment,"/");
+ 		strcat(environment,*filename);
+-		if((out=fopen(environment,"r"))!=NULL){
++		if((out=fopen(environment,"rb"))!=NULL){
+ 			found=TRUE;
+ 			free(*filename);*filename=NULL;
+ 			if(!(*filename=(char *)calloc(strlen(environment)+1,sizeof(char))))
+@@ -99,7 +99,7 @@
+ 		}
+ 	}
+ 	
+-	if(!found && (out=fopen(*filename,"r"))==NULL){
++	if(!found && (out=fopen(*filename,"rb"))==NULL){
+ 		if(fatal)
+ 			error2("open_file:\tfailed to open file:",*filename);
+ 		else return((FILE *)-1);
+@@ -112,7 +112,7 @@
+ char	*filename,*env;
+ int	fatal;
+ {
+-	return(openFileForAny(filename,env,fatal,"w"));
++	return(openFileForAny(filename,env,fatal,"wb"));
+ }
+ 
+ /*

@@ -1,0 +1,15 @@
+--- librat/bpms/src/lib/hips/makefile.orig	2009-09-11 11:03:21.000000000 +0200
++++ librat/bpms/src/lib/hips/makefile	2014-12-17 16:57:26.599651811 +0100
+@@ -18,9 +18,9 @@
+ 		${MAKE} libhipl reseq hipstats linear stripheader bs hips2pbm install
+ 
+ libhipl:	${OBJ}/libhipl.o
+-		ar rcv ${LIBRARY}/libhipl_${ARCH}.a ${OBJ}/libhipl.o
+-		ranlib ${LIBRARY}/libhipl_${ARCH}.a
+-		$(DYN) -o ${LIBRARY}/libhipl_${ARCH}.so ${OBJ}/libhipl.o
++		$(AR) rcv ${LIBRARY}/libhipl_${ARCH}.a ${OBJ}/libhipl.o
++		$(RANLIB) ${LIBRARY}/libhipl_${ARCH}.a
++#		$(DYN) -o ${LIBRARY}/libhipl_${ARCH}.so ${OBJ}/libhipl.o
+ 
+ install:	reseq hipstats linear stripheader bs hips2pbm
+ 		mv ${OBJ}/reseq ${OBJ}/hipstats ${OBJ}/linear ${OBJ}/stripheader ${OBJ}/bs ${OBJ}/hips2pbm ../../../bin/${ARCH}

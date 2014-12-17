@@ -1,0 +1,11 @@
+--- librat/bpms/src/lib/rat/prat_wavefront_read.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/prat_wavefront_read.c	2014-12-17 17:25:07.440635213 +0100
+@@ -2860,7 +2860,7 @@
+ 				FILE *fp2=NULL;
+ 				if(sscanf(liner,"%s",filename)==1){
+ 					fp2=fp;
+-					if(!(fp=(FILE *)fopen(filename,"r"))){
++					if(!(fp=(FILE *)fopen(filename,"rb"))){
+ 						fprintf(stderr,"error opening included object file %s\n",filename);
+ 						exit(1);
+ 					}

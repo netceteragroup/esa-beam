@@ -1,0 +1,20 @@
+--- librat/bpms/src/lib/hips/stripheader.c.orig	2006-09-22 15:36:56.000000000 +0200
++++ librat/bpms/src/lib/hips/stripheader.c	2014-12-17 17:15:25.528129862 +0100
+@@ -16,7 +16,7 @@
+ 	char *pic;
+ 
+ 	if(argc>=2){	/* ip filename */
+-		if(!(fpIn=(FILE *)fopen(argv[1],"r")))
++		if(!(fpIn=(FILE *)fopen(argv[1],"rb")))
+ 			perr("error opening input file",argv[1]);
+ 		if(argc==3){	/* op filename */
+ 			opFilename=argv[2];
+@@ -33,7 +33,7 @@
+ 			}else
+ 				opFilename=NULL;
+ 		}
+-		if(opFilename)if(!(fpOut=(FILE *)fopen(opFilename,"w")))
++		if(opFilename)if(!(fpOut=(FILE *)fopen(opFilename,"wb")))
+ 			perr("error opening output file",opFilename);
+ 	}
+ 	fp_fread_header(fpIn,&hd);

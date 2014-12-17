@@ -1,0 +1,20 @@
+--- librat/bpms/src/lib/image/makefile.orig	2013-03-11 15:30:14.000000000 +0100
++++ librat/bpms/src/lib/image/makefile	2014-12-17 16:57:26.608651973 +0100
+@@ -5,13 +5,13 @@
+ LIBRARY = ${BPMS}/src/lib
+ DYN2 = 
+ 
+-CFLAGS += -I. -DMMAP  -DVERBOSE -DDOUBLEDEF -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
++CFLAGS += -I. -DVERBOSE -DDOUBLEDEF -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+ 
+ all:	${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/envilib.o ${OBJ}/imagelib.o
+ 	mkdir -p ${OBJ}
+-	ar rcv ${LIBRARY}/libimage_${ARCH}.a ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/envilib.o ${OBJ}/imagelib.o
+-	$(DYN) -o ${LIBRARY}/libimage_${ARCH}.so ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/envilib.o ${OBJ}/imagelib.o ${DYN2}
+-	ranlib ${LIBRARY}/libimage_${ARCH}.a
++	$(AR) rcv ${LIBRARY}/libimage_${ARCH}.a ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/envilib.o ${OBJ}/imagelib.o
++#	$(DYN) -o ${LIBRARY}/libimage_${ARCH}.so ${OBJ}/filelib.o ${OBJ}/hiplib.o ${OBJ}/envilib.o ${OBJ}/imagelib.o ${DYN2}
++	$(RANLIB) ${LIBRARY}/libimage_${ARCH}.a
+ 
+ ${OBJ}/%.o:	%.c
+ 		mkdir -p ${OBJ}

@@ -1,0 +1,15 @@
+--- librat/bpms/src/lib/err/makefile.orig	2009-09-11 11:02:35.000000000 +0200
++++ librat/bpms/src/lib/err/makefile	2014-12-17 16:57:26.585651558 +0100
+@@ -21,9 +21,9 @@
+ liberr:		makefile ${OBJ}/error.o
+ 		@echo ""
+ 		@echo "archiving error library"
+-		ar rcv ${LIBRARY}/liberr_${ARCH}.a ${OBJ}/error.o 
+-		ranlib ${LIBRARY}/liberr_${ARCH}.a
+-		$(DYN) -o ${LIBRARY}/liberr_${ARCH}.so ${OBJ}/error.o
++		$(AR) rcv ${LIBRARY}/liberr_${ARCH}.a ${OBJ}/error.o 
++		$(RANLIB) ${LIBRARY}/liberr_${ARCH}.a
++#		$(DYN) -o ${LIBRARY}/liberr_${ARCH}.so ${OBJ}/error.o
+ 
+ # object building
+ 

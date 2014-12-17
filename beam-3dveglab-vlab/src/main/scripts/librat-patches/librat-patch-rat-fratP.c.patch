@@ -1,0 +1,47 @@
+--- librat/bpms/src/lib/rat/fratP.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/fratP.c	2014-12-17 17:33:47.013015127 +0100
+@@ -51,7 +51,7 @@
+   }
+ 
+   if(!d->fp){ 
+-    if((d->fp=(FILE *)fopen(d->name,"w"))==NULL){
++    if((d->fp=(FILE *)fopen(d->name,"wb"))==NULL){
+       fprintf(stderr,"error opening histogram file %s\n",d->name);
+       exit(1);
+     }
+@@ -134,7 +134,7 @@
+ 		fprintf(stderr,"error opening density file %s\n",obj->datafilename);
+ 		exit(1);
+ 		}	
+-		obj->datafp=fdopen(fd,"w");
++		obj->datafp=fdopen(fd,"wb");
+ 	*/
+        }
+        {
+@@ -146,7 +146,7 @@
+ 	lseek(fd,0,SEEK_SET);
+ 	offset=lseek(fd,0,SEEK_END);
+ 	close(fd);*/
+-	obj->datafp=(FILE *)fopen(obj->datafilename,"w");
++	obj->datafp=(FILE *)fopen(obj->datafilename,"wb");
+ 	fp_fwrite_header(obj->datafp,hd);
+ 	/* get offset */
+ 	fwrite(obj->nd,sizeof(float),obj->nsamps[0]*obj->nsamps[1]*obj->nsamps[2],obj->datafp);
+@@ -1392,7 +1392,7 @@
+   if(!filename[nobj]){
+     filename[nobj]=(char *)c_allocate(strlen(ratObj->ratObj->rawfilename)+1024);
+     sprintf(filename[nobj],"%s.obj",ratObj->ratObj->rawfilename);
+-    if(!(fp[nobj]=(FILE *)fopen(filename[nobj],"w+"))){
++    if(!(fp[nobj]=(FILE *)fopen(filename[nobj],"w+b"))){
+       fprintf(stderr,"error opening wavefront file %s for writing\n",filename[nobj]);
+       exit(1);
+     } 
+@@ -2299,7 +2299,7 @@
+       if(strcpy(illumination->direct_file,filename)==0)error1("parser:\terror in specifying -direct option");
+       flagbag->direct_flag=1;
+       if(!expand_filename(&(illumination->direct_file),"DIRECT_ILLUMINATION",FALSE))error2("drat:\terror opening direct irradaince file",illumination->direct_file);
+-      if((fp=fopen(illumination->direct_file,"r+"))==NULL)error2("parser:\terror in specifying -direct option - cannot open file",illumination->direct_file);
++      if((fp=fopen(illumination->direct_file,"r+b"))==NULL)error2("parser:\terror in specifying -direct option - cannot open file",illumination->direct_file);
+       *no_of_sun_wavelength_samples=0;
+       while( (fgets(buffer,1024-1,fp))!=NULL){
+         if((sscanf(buffer,"%lf %lf",&fdum,&fdum2))==2){

@@ -1,0 +1,20 @@
+--- librat/bpms/src/lib/image/filelib.c.orig	2008-01-22 23:27:40.000000000 +0100
++++ librat/bpms/src/lib/image/filelib.c	2014-12-17 17:32:30.964642215 +0100
+@@ -86,7 +86,7 @@
+ 
+         switch(inputFlag){
+                 case TRUE:
+-                strcpy(flag,"r");
++                strcpy(flag,"rb");
+                 if(strcmp(fileName,"-")==0){
+                         stream=stdin;
+                         return(stream);
+@@ -94,7 +94,7 @@
+                 break;
+                 case FALSE:
+               	default:
+-    		strcpy(flag,"w");
++    		strcpy(flag,"wb");
+                 if(!fileName || strcmp(fileName,"-")==0){
+                         stream=stdout;
+                         return(stream);

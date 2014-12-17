@@ -1,5 +1,5 @@
 --- librat/bpms/src/lib/rat/sensor_rsr.c.orig	2013-05-03 19:37:28.000000000 +0200
-+++ librat/bpms/src/lib/rat/sensor_rsr.c	2014-12-12 16:29:51.767818795 +0100
++++ librat/bpms/src/lib/rat/sensor_rsr.c	2014-12-17 16:57:26.695653544 +0100
 @@ -54,7 +54,9 @@
  		        sensor_wavebands->sensor_rsr[i].rsr[1][0]=0.0;
  			sensor_wavebands->sensor_rsr[i].no_of_samples=1;

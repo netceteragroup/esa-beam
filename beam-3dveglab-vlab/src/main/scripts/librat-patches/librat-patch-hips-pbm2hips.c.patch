@@ -1,0 +1,19 @@
+--- librat/bpms/src/lib/hips/pbm2hips.c.orig	2006-09-22 15:36:56.000000000 +0200
++++ librat/bpms/src/lib/hips/pbm2hips.c	2014-12-17 17:15:41.744422618 +0100
+@@ -41,14 +41,14 @@
+                 }
+         }
+ 	if(strcmp(in_file,"-")){
+-		if(!(in_fd=fopen(in_file,"r"))){
++		if(!(in_fd=fopen(in_file,"rb"))){
+ 			fprintf(stderr,"Couldn't open file %s\n",in_file);
+ 			exit(1);
+ 		}
+ 	}else in_fd=stdin;
+ 	
+ 	if(strcmp(out_file,"-")){
+-		if(!(out_fd=fopen(out_file,"w"))){
++		if(!(out_fd=fopen(out_file,"wb"))){
+ 			fprintf(stderr,"Couldn't open file %s\n",in_file);
+ 			exit(1);
+ 		}

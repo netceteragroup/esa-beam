@@ -1,0 +1,15 @@
+--- librat/bpms/src/lib/r250c/makefile.orig	2009-09-11 11:03:37.000000000 +0200
++++ librat/bpms/src/lib/r250c/makefile	2014-12-17 16:57:26.622652226 +0100
+@@ -22,9 +22,9 @@
+ 
+ librand:        makefile ${OBJ}/r250.o ${OBJ}/randlcg.o
+ 				@echo "^Gmaking random interface library"
+-				ar rcv ${LIBRARY}/librand_${ARCH}.a ${OBJ}/r250.o ${OBJ}/randlcg.o
+-				ranlib ${LIBRARY}/librand_${ARCH}.a
+-				$(DYN) -o ${LIBRARY}/librand_${ARCH}.so ${OBJ}/r250.o ${OBJ}/randlcg.o
++				$(AR) rcv ${LIBRARY}/librand_${ARCH}.a ${OBJ}/r250.o ${OBJ}/randlcg.o
++				$(RANLIB) ${LIBRARY}/librand_${ARCH}.a
++#				$(DYN) -o ${LIBRARY}/librand_${ARCH}.so ${OBJ}/r250.o ${OBJ}/randlcg.o
+ 
+ test:
+ 				make r250

@@ -1,0 +1,15 @@
+--- librat/bpms/src/lib/matrix/makefile.orig	2009-09-11 11:03:30.000000000 +0200
++++ librat/bpms/src/lib/matrix/makefile	2014-12-17 16:57:26.613652064 +0100
+@@ -16,9 +16,9 @@
+ 	mv matrix ${HOME}/bin/${ARCH}
+ 
+ libmatrix:	${OBJ}/matrix.o
+-	ar rcv ${LIBRARY}/libmatrix_${ARCH}.a ${OBJ}/matrix.o
+-	ranlib ${LIBRARY}/libmatrix_${ARCH}.a
+-	$(DYN) -o ${LIBRARY}/libmatrix_${ARCH}.so ${OBJ}/matrix.o
++	$(AR) rcv ${LIBRARY}/libmatrix_${ARCH}.a ${OBJ}/matrix.o
++	$(RANLIB) ${LIBRARY}/libmatrix_${ARCH}.a
++#	$(DYN) -o ${LIBRARY}/libmatrix_${ARCH}.so ${OBJ}/matrix.o
+ 
+ ${OBJ}/%.o:	%.c
+ 	mkdir -p ${OBJ}

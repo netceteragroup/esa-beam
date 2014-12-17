@@ -1,0 +1,15 @@
+--- librat/bpms/src/lib/alloc/makefile.orig	2009-09-11 11:02:28.000000000 +0200
++++ librat/bpms/src/lib/alloc/makefile	2014-12-17 16:57:26.580651468 +0100
+@@ -22,9 +22,9 @@
+ liballoc:		makefile ${OBJ}/allocate.o
+ 		@echo ""
+ 		@echo "archiving memory allocation library"
+-		ar rcv ${LIBRARY}/liballoc_${ARCH}.a ${OBJ}/allocate.o 
+-		ranlib ${LIBRARY}/liballoc_${ARCH}.a
+-		$(DYN) -o ${LIBRARY}/liballoc_${ARCH}.so ${OBJ}/allocate.o
++		$(AR) rcv ${LIBRARY}/liballoc_${ARCH}.a ${OBJ}/allocate.o 
++		$(RANLIB) ${LIBRARY}/liballoc_${ARCH}.a
++#		$(DYN) -o ${LIBRARY}/liballoc_${ARCH}.so ${OBJ}/allocate.o
+ 
+ # object building
+ 

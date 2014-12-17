@@ -1,5 +1,5 @@
 --- librat/bpms/src/lib/image/envilib.c.orig	2013-03-14 16:58:37.000000000 +0100
-+++ librat/bpms/src/lib/image/envilib.c	2014-12-12 16:20:24.377575614 +0100
++++ librat/bpms/src/lib/image/envilib.c	2014-12-17 17:31:19.715355945 +0100
 @@ -7,6 +7,46 @@
  #include "hiplib.h"
  #include <stdlib.h>
@@ -90,3 +90,37 @@
  
    if(filename)ImagePtr->imageNameH=NULL;
    if(!(ImagePtr->imageNameH)){
+@@ -159,7 +208,7 @@
+   if(ImagePtr->streamH){
+     close(ImagePtr->streamH);
+   }
+-  if(!(ImagePtr->streamH = fopen(ImagePtr->imageNameH,"w"))){
++  if(!(ImagePtr->streamH = fopen(ImagePtr->imageNameH,"wb"))){
+     fprintf(stderr,"error opening image header file %s for writing\n",ImagePtr->imageNameH);
+     exit(0);
+   }
+@@ -191,13 +240,13 @@
+   dummy[0] = '\0';
+   l = strlen(filename);
+ 
+-  if (! (f = fopen(filename,"r"))){
++  if (! (f = fopen(filename,"rb"))){
+     char *filename2;
+ 
+     filename2 = calloc((size_t)(l+1+4),sizeof(char));
+     strcpy(filename2,filename);
+     filename2=strcat2(filename2,".img");
+-    if (! (f = fopen(filename2,"r"))){
++    if (! (f = fopen(filename2,"rb"))){
+       fprintf(stderr,"error opening image file %s or %s for reading\n",filename,filename2);
+       exit(0);
+     }else{
+@@ -211,7 +260,7 @@
+   ImagePtr->openFlag = TRUE;
+ 
+   headerName = enviTidyImagename(filename);
+-  if (! (f = fopen(headerName,"r"))){
++  if (! (f = fopen(headerName,"rb"))){
+     fprintf(stderr,"error opening header file %s for reading\n",headerName);
+     exit(0);
+   }

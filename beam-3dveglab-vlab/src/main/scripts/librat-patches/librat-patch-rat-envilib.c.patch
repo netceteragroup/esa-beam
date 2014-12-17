@@ -1,0 +1,81 @@
+--- librat/bpms/src/lib/rat/envilib.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/envilib.c	2014-12-17 17:17:09.466006267 +0100
+@@ -6,6 +6,46 @@
+ #include "hipl_format.h"
+ #include "hiplib.h"
+ 
++#ifdef __MINGW32__
++/* This code is public domain -- Will Hartung 4/9/09 */
++size_t getline(char **lineptr, size_t *n, FILE *stream) {
++  char *bufptr = NULL; 
++  char *p = bufptr;
++  size_t size;
++  int c;
++
++  if (lineptr == NULL) { return -1; } 
++  if (stream == NULL)  { return -1; }
++  if (n == NULL)       { return -1; }
++  bufptr = *lineptr;
++  size = *n;
++  c = fgetc(stream);
++  if (c == EOF)        { return -1; }
++  if (bufptr == NULL) { 
++    bufptr = malloc(128);
++    if (bufptr == NULL) { return -1; }
++    size = 128;
++  } 
++  p = bufptr;
++  while(c != EOF) { 
++    if ((p - bufptr) > (size - 1)) {
++      size = size + 128;
++      bufptr = realloc(bufptr, size);
++      if (bufptr == NULL) { return -1; }
++    }
++    *p++ = c;
++    if (c == '\n') { break; }
++    c = fgetc(stream);
++  } 
++
++  *p++ = '\0';
++  *lineptr = bufptr;
++  *n = size;
++
++  return p - bufptr - 1;
++}
++#endif
++
+ char *getField(char *field,char *data){
+   /* assume data contains all of the text we might need
+   ** and we want to return a string array of the fields
+@@ -142,7 +182,7 @@
+   if(ImagePtr->streamH){
+     close(ImagePtr->streamH);
+   }
+-  if(!(ImagePtr->streamH = fopen(ImagePtr->imageNameH,"w"))){
++  if(!(ImagePtr->streamH = fopen(ImagePtr->imageNameH,"wb"))){
+     fprintf(stderr,"error opening image header file %s for writing\n",ImagePtr->imageNameH);
+     exit(0);
+   }
+@@ -172,11 +212,11 @@
+   dummy[0] = '\0';
+   l = strlen(filename);
+ 
+-  if (! (f = fopen(filename,"r"))){
++  if (! (f = fopen(filename,"rb"))){
+     char filename2[l+1+4];
+     strcpy(filename2,filename);
+     strcat(filename2,".img");
+-    if (! (f = fopen(filename2,"r"))){
++    if (! (f = fopen(filename2,"rb"))){
+       fprintf(stderr,"error opening image file %s or %s for reading\n",filename,filename2);
+       exit(0);
+     }else{
+@@ -190,7 +230,7 @@
+   ImagePtr->openFlag = TRUE;
+ 
+   headerName = enviTidyImagename(filename);
+-  if (! (f = fopen(headerName,"r"))){
++  if (! (f = fopen(headerName,"rb"))){
+     fprintf(stderr,"error opening header file %s for reading\n",headerName);
+     exit(0);
+   }

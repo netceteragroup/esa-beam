@@ -1,0 +1,155 @@
+--- librat/bpms/src/lib/rat/ratFront.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/ratFront.c	2014-12-17 17:33:27.021654220 +0100
+@@ -25,6 +25,9 @@
+ #define strsep(a,b) Strsep(a,b)
+ #endif
+ 
++#ifdef WIN32
++#define strsep(a,b) Strsep(a,b)
++#endif
+ 
+ 
+ /* private functions */
+@@ -720,7 +723,7 @@
+   char buffer[MAX_STRING_LENGTH];
+   char **ap,*Str,*strings[1024];
+ 
+-  if(!(fp=(FILE *)fopen(filename,"r"))){
++  if(!(fp=(FILE *)fopen(filename,"rb"))){
+     fprintf(stderr,"error opening spectra file %s\n",filename);
+     exit(0);
+   }
+@@ -1006,7 +1009,7 @@
+     oToken[0]='\0';
+     Str=&str[0];
+     i++;
+-    if((ind=index(Str,'#'))!=NULL)*ind='\0';
++    if((ind=strchr(Str,'#'))!=NULL)*ind='\0';
+     /* check for blank string */
+     isBlank=1;
+     for(i=0;i<strlen(Str);i++){
+@@ -1033,9 +1036,9 @@
+           while(Str2 && strlen(Str2)>0){
+             while(Str2[0]==' ' || Str2[0] == '\t')Str2++;
+             /* find enclosed quotes */
+-            if(Str2[0] == '"' && (ind1=index(Str2,'"')) != NULL){
++            if(Str2[0] == '"' && (ind1=strchr(Str2,'"')) != NULL){
+               ind1++;
+-              if((ind2=index(ind1,'"')) != NULL){
++              if((ind2=strchr(ind1,'"')) != NULL){
+                 k=strlen(ind1)-strlen(ind2);
+                 ind1[k]='\0';
+                 strcpy(&fields[n][0],ind1);
+@@ -1048,7 +1051,7 @@
+ 	      return(n);
+             }else{
+ 	      /* return rest of string or up to , or # */
+-	      if((ind1 = index(Str2,',')) != NULL || (ind1 = index(Str2,'#')) != NULL){
++	      if((ind1 = strchr(Str2,',')) != NULL || (ind1 = strchr(Str2,'#')) != NULL){
+ 		k = strlen(Str2)-strlen(ind1);
+ 		ind1++;
+ 		Str2[k] = '\0';
+@@ -1092,7 +1095,7 @@
+ 
+ RATdevice  *RATreadCameraFile(char *file,RATobj *rat){
+   RATdevice *ratCamera=NULL;
+-  double zoom=0.,cameraLocation[3] = {0,0,0},lookAt[3];
++  double zoom=0.,cameraLocation[3] = {0,0,0},lookAt[3] = {0,0,0};
+   double focalLength = 0,zenith=0.0,azimuth=0.,twist=0.,angles[3];
+   double imagingPlaneDimensions[2] = {-1,-1};
+   int nPixels = -1,rpp=1,dolookat=0,nRows=-1,nCols=-1,cameralocationset=0;
+@@ -1117,7 +1120,7 @@
+     file = nofile;
+     fp = stdin;	
+   }else{
+-    if(!(fp=(FILE *)fopen(file,"r"))){
++    if(!(fp=(FILE *)fopen(file,"rb"))){
+       fprintf(stderr,"RATreadCameraFile: error opening file %s\n",file);
+       exit(1);
+     }
+@@ -1307,7 +1310,7 @@
+ 	if(ratCamera->resultIntegralFp)fclose(ratCamera->resultIntegralFp);
+ 	ratCamera->resultIntegralFilename=v_allocate(strlen(fields[0])+1,sizeof(char));
+ 	strcpy(ratCamera->resultIntegralFilename,fields[0]);
+-	if(!(ratCamera->resultIntegralFp=(FILE *)fopen(ratCamera->resultIntegralFilename,"w"))){
++	if(!(ratCamera->resultIntegralFp=(FILE *)fopen(ratCamera->resultIntegralFilename,"wb"))){
+ 	  fprintf(stderr,"error at field result.integral: cannot open file %s for writing\n",fields[0]);
+ 	  exit(1);
+ 	} 
+@@ -1578,7 +1581,7 @@
+ 	int i=0;
+ 	char buffer[MAX_STRING_LENGTH];
+ 	
+-	if(!(fp=fopen(ratCamera->pulseIPFile,"r"))){
++	if(!(fp=fopen(ratCamera->pulseIPFile,"rb"))){
+ 	  fprintf(stderr,"RATreadCameraFile: error opening input pulse file (pulseIPFile) %s\n",ratCamera->pulseIPFile);
+ 	  exit(1);
+ 	}
+@@ -1612,7 +1615,7 @@
+ 	FILE *fp;
+ 	int i=0;
+ 	
+-	if(!(fp=fopen(ratCamera->pulseOPFile,"w"))){
++	if(!(fp=fopen(ratCamera->pulseOPFile,"wb"))){
+ 	  fprintf(stderr,"RATreadCameraFile: error opening output pulse file (pulseOPFile) %s\n",ratCamera->pulseOPFile);
+ 	  exit(1);
+ 	}
+@@ -1782,7 +1785,7 @@
+     outputfile = camera->order->rootfilename;
+     filename = (char *)v_allocate(strlen(outputfile)+strlen(".material")+1,sizeof(char));
+     sprintf(filename,"%s.material",outputfile);
+-    if(!(fp=(FILE *)fopen(filename,"w"))){
++    if(!(fp=(FILE *)fopen(filename,"wb"))){
+       fprintf(stderr,"error opening material output file %s\n",outputfile);
+       exit(1);
+     }
+@@ -1855,7 +1858,7 @@
+   out->binStep=binStep;
+   out->binStart=binStart;
+   out->resultIntegralFilename=resultIntegralFilename;
+-  if(!(out->resultIntegralFp=(FILE *)fopen(resultIntegralFilename,"w"))){
++  if(!(out->resultIntegralFp=(FILE *)fopen(resultIntegralFilename,"wb"))){
+     fprintf(stderr,"error opening file %s for write\n",resultIntegralFilename);
+     exit(0);
+   }
+@@ -1887,7 +1890,7 @@
+     double sum=0,n;
+ 
+     sprintf(filename,"%s.material",outputfile);
+-    if(!(fp=(FILE *)fopen(outputfile,"w"))){
++    if(!(fp=(FILE *)fopen(outputfile,"wb"))){
+       fprintf(stderr,"error opening material output file %s\n",outputfile);
+       exit(1);
+     }
+@@ -1947,11 +1950,11 @@
+         N=1;
+   }
+   if(N==2)
+-  if(!(camera->resultIntegralFpDiffuse=(FILE *)fopen(filename,"w"))){
++  if(!(camera->resultIntegralFpDiffuse=(FILE *)fopen(filename,"wb"))){
+     fprintf(stderr,"error opening file %s for write\n",filename);
+     exit(0);
+   }
+-  if(!(camera->resultIntegralFp=(FILE *)fopen(filename2,"w"))){
++  if(!(camera->resultIntegralFp=(FILE *)fopen(filename2,"wb"))){
+     fprintf(stderr,"error opening file %s for write\n",filename2);
+     exit(0);
+   }
+@@ -2155,7 +2158,7 @@
+   sprintf(order->filename[0],"%s.direct",order->rootfilename);
+   sprintf(order->filename[1],"%s.tmpuse",order->rootfilename);
+   for(j=0;j<2;j++){
+-   if(!(order->fp[j]=(FILE *)fopen(order->filename[j],"r"))){
++   if(!(order->fp[j]=(FILE *)fopen(order->filename[j],"rb"))){
+     fprintf(stderr,"error opening file %s\n",order->filename[j]);
+     exit(1);
+    }
+@@ -2199,7 +2202,7 @@
+     sprintf(order->filename[0],"%s.direct",order->rootfilename);
+     sprintf(order->filename[1],"%s.tmpuse",order->rootfilename);
+     for(j=0;j<2;j++){
+-     if(!(order->fp[j]=(FILE *)fopen(order->filename[j],"w"))){
++     if(!(order->fp[j]=(FILE *)fopen(order->filename[j],"wb"))){
+       fprintf(stderr,"error opening file %s\n",order->filename[j]);
+       exit(1);
+      }

@@ -1,0 +1,12 @@
+--- librat/bpms/src/lib/rat/images.c.orig	2013-05-03 19:37:27.000000000 +0200
++++ librat/bpms/src/lib/rat/images.c	2014-12-17 16:57:26.631652388 +0100
+@@ -234,7 +234,9 @@
+ 	if(!restart_flag){
+         	if((fd=open(imagename,O_CREAT|O_RDWR)) == -1)
+ 			error2("cannot open ",imagename);
++#ifndef WIN32
+ 		chmod(imagename,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
++#endif
+         	fwrite_header(fd,head);	/* write header (no update) */
+       		rows = head->rows;
+        		cols = head->cols;

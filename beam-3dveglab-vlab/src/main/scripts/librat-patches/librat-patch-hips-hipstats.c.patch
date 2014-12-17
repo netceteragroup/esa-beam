@@ -1,0 +1,49 @@
+--- librat/bpms/src/lib/hips/hipstats.c.orig	2009-04-15 18:56:13.000000000 +0200
++++ librat/bpms/src/lib/hips/hipstats.c	2014-12-17 17:15:03.208726928 +0100
+@@ -4,9 +4,7 @@
+ #include <math.h>
+ #include <limits.h>
+ #include "hipl_format.h"
+-#ifndef MAXFLOAT 
+-#include <values.h>
+-#endif
++#include <float.h>
+ /* O/P to stdout rather than stderr changed by Lewis July 22 1999 */
+ #ifndef _stderr_
+ #define OPCHANNEL stdout
+@@ -126,7 +124,7 @@
+ 	}
+     
+ 	if(strcmp(in_file,"-")){
+-	  if(!(in_fp=fopen(in_file,"r"))){
++	  if(!(in_fp=fopen(in_file,"rb"))){
+ 	    fprintf(stderr,"Couldn't open file %s\n",in_file);
+ 	    exit(1);
+ 	  }
+@@ -249,7 +247,7 @@
+ {
+   register i=0,j=0,n=0;
+   double mean=0., sd=0., tot=0., sqrTot=0., pixVal=0.;
+-  double min=MAXFLOAT, max=-MAXFLOAT;
++  double min=FLT_MAX, max=-FLT_MAX;
+ 
+   for(i=0;i<h->rows;i++){
+     for(j=0;j<h->cols;j++){
+@@ -380,7 +378,7 @@
+ {
+   register i=0,j=0,n=0;
+   float mean=0., sd=0., tot=0., sqrTot=0., pixVal=0.;
+-  float min=MAXFLOAT, max=-MAXFLOAT;
++  float min=FLT_MAX, max=-FLT_MAX;
+   
+   
+   for(i=0;i<h->rows;i++){
+@@ -424,7 +422,7 @@
+   register i=0,j=0,l=0,n=0;
+   int nLines=0;
+   double mean=0., sd=0., tot=0., sqrTot=0., pixVal=0.;
+-  double min=MAXFLOAT, max=-MAXFLOAT;
++  double min=FLT_MAX, max=-FLT_MAX;
+   unsigned char *line=NULL, *liney=NULL;
+   static int num=0;
+ 

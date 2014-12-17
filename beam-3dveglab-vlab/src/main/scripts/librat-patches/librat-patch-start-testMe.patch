@@ -1,0 +1,11 @@
+--- librat/bpms/src/start/testMe.orig	2009-09-22 11:05:30.000000000 +0200
++++ librat/bpms/src/start/testMe	2014-12-17 16:57:26.680653273 +0100
+@@ -32,7 +32,7 @@
+ endif
+ set path = ($BPMS/bin/$arch $BPMS/bin/csh $path)
+ 
+-start < starttest.ip -sensor_wavebands wavebands.dat -m 100 -sun_position 0 0 10 test.obj >& testMe.this.op
++ratstart < starttest.ip -sensor_wavebands wavebands.dat -m 100 -sun_position 0 0 10 test.obj >& testMe.this.op
+ 
+ echo "this result"
+ echo "==========="

@@ -1,0 +1,24 @@
+--- librat/bpms/src/lib/rat/prat.h.orig	2013-05-03 18:57:03.000000000 +0200
++++ librat/bpms/src/lib/rat/prat.h	2014-12-17 16:57:26.640652551 +0100
+@@ -23,13 +23,21 @@
+ #define SEEK_CUR        1       /* Set file pointer to current plus "offset" */
+ #define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
+ #endif
++#ifndef WIN32
+ #include <sys/socket.h>
++#endif
+ #include <sys/time.h>
++#ifndef WIN32
+ #include <sys/mman.h>
++#endif
+ #include <sys/file.h>
++#ifndef WIN32
+ #include <sys/uio.h>
++#endif
+ #include <sys/stat.h>
++#ifndef WIN32
+ #include <netdb.h>
++#endif
+ #include <signal.h>
+ #include <time.h>
+ #include <sys/time.h>

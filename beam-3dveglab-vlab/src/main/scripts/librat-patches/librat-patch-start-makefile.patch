@@ -1,0 +1,35 @@
+--- librat/bpms/src/start/makefile.orig	2010-04-09 12:04:23.000000000 +0200
++++ librat/bpms/src/start/makefile	2014-12-17 16:57:26.658652876 +0100
+@@ -10,19 +10,21 @@
+ BIN = ../../bin
+ LEWIS_LIB = "${BPMS}/src"
+ 
+-LIBS = -limage_${ARCH} -lmatrix_${ARCH} -lalloc_${ARCH} -lvect_${ARCH} -lerr_${ARCH} -lhipl_${ARCH} -lrand_${ARCH} -lrat_${ARCH}  -lm -lc 
++LIBS = -limage_${ARCH} -lmatrix_${ARCH} -lalloc_${ARCH} -lvect_${ARCH} -lerr_${ARCH} -lhipl_${ARCH} -lrand_${ARCH} -lrat_${ARCH}  -lm
+ LIBRARY = ${LEWIS_LIB}
+ CFLAGS += -I../lib/rat -L${LEWIS_LIB}/lib -DDOUBLEDEF  -DMATCHK -D${ARCH} -D_NO_NAG
+ 
+ #CFLAGS += -O
+ 
+-THIS = start
++THIS = ratstart
+ 
+ #	build executables
+ 
+ THIS:		
+ 		make clean ${THIS} install
+ 
++${THIS}.exe: ${THIS}
++	mv ${THIS} ${THIS}.exe
+ 
+ # conical tree test
+ HET01_DIS_ERE:		${THIS}
+@@ -37,7 +39,7 @@
+ # object building
+ 
+ .c.o:			makefile $<
+-			$(CC) -I../lib/rat -I/usr/5include -D${ARCH} ${CFLAGS} -I${LIBRARY}/lib -o $@ -c $< 
++			$(CC) -c -I../lib/rat -I/usr/5include -D${ARCH} ${CFLAGS} -I${LIBRARY}/lib -o $@ $< 
+ 
+ .f.o:			makefile $<
+ 			${FORTRAN} ${FFLAGS} -I${LIBRARY}/lib -c $< 

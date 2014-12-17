@@ -1,0 +1,29 @@
+--- librat/bpms/src/lib/image/imagelib.c.orig	2013-03-14 18:50:41.000000000 +0100
++++ librat/bpms/src/lib/image/imagelib.c	2014-12-17 16:57:26.604651901 +0100
+@@ -3,12 +3,15 @@
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#ifdef MMAP
+ #include <sys/mman.h>
++#endif
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #define IMAGEFORMATS_H_BETTER
+ #include "image_formats.h"
+ #include <errno.h>
++#include <float.h>
+ 
+ extern int errno;
+ int dontReWrite = 0;
+@@ -629,8 +632,8 @@
+ 			exit(0);
+ 		}
+ 		for (frame = 0; frame < MAXFRAMES; frame++) {
+-			ImagePtr->stats->min[frame] = HUGE;
+-			ImagePtr->stats->max[frame] = -HUGE;
++			ImagePtr->stats->min[frame] = FLT_MAX;
++			ImagePtr->stats->max[frame] = -FLT_MAX;
+ 		}
+ 	}
+ 	/* set defaults for compulsory fields */

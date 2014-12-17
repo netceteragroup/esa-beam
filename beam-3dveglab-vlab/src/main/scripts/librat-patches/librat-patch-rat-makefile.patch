@@ -1,0 +1,28 @@
+--- librat/bpms/src/lib/rat/makefile.orig	2013-05-02 17:41:06.000000000 +0200
++++ librat/bpms/src/lib/rat/makefile	2014-12-17 16:57:26.635652461 +0100
+@@ -25,7 +25,7 @@
+ # make sure program barfs if NaN & doesn't remain tolerant
+ #CFLAGS +=  -L.. -DDOUBLEDEF -DMATCHK -D${ARCH} -D_NO_NAG
+ #CC = gcc  -Wall -ansi -pedantic
+-CFLAGS += -L.. -DDOUBLEDEF -DMMAP  -DMATCHK -D${ARCH} -D_NO_NAG
++CFLAGS += -L.. -DDOUBLEDEF -DMATCHK -D${ARCH} -D_NO_NAG
+ 
+ 
+ NAG = -lfor -lc
+@@ -50,11 +50,11 @@
+ 
+ librat:		makefile ${OBJ}/fratP.o $(USRHIPL) $(PRATOBJ) $(USEFUL) $(WAVEFRONT) ${FORTRANSTUFF} ${OBJ}/matherr.o 
+ 		make ${OBJ}/start.o
+-		ar rcv ${LIBRARY}/librat_${ARCH}.a ${OBJ}/fratP.o $(USRHIPL) $(PRATOBJ) $(USEFUL) $(WAVEFRONT) ${FORTRANSTUFF} ${OBJ}/matherr.o
+-		ranlib ${LIBRARY}/librat_${ARCH}.a 
+-		ar rcv libstart_${ARCH}.a ${OBJ}/start.o
+-		ranlib libstart_${ARCH}.a
+-		$(DYN) -o ${LIBRARY}/librat_${ARCH}.so ${OBJ}/fratP.o $(USRHIPL) $(PRATOBJ) $(USEFUL) $(WAVEFRONT) ${FORTRANSTUFF} ${OBJ}/matherr.o ${DYN2}
++		$(AR) rcv ${LIBRARY}/librat_${ARCH}.a ${OBJ}/fratP.o $(USRHIPL) $(PRATOBJ) $(USEFUL) $(WAVEFRONT) ${FORTRANSTUFF} ${OBJ}/matherr.o
++		$(RANLIB) ${LIBRARY}/librat_${ARCH}.a 
++		$(AR) rcv libstart_${ARCH}.a ${OBJ}/start.o
++		$(RANLIB) libstart_${ARCH}.a
++#		$(DYN) -o ${LIBRARY}/librat_${ARCH}.so ${OBJ}/fratP.o $(USRHIPL) $(PRATOBJ) $(USEFUL) $(WAVEFRONT) ${FORTRANSTUFF} ${OBJ}/matherr.o ${DYN2}
+ # object building
+ 
+ #${OBJ}/rpv.o:	rpv.f
