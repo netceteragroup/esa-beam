@@ -75,6 +75,7 @@ build_for_linux() {
     patch -b -p0 < $f
   done
   (cd test && make)
+  cd ..
 }
 
 build_for_windows() {
@@ -119,6 +120,7 @@ build_for_windows() {
     patch -b -p0 < $f
   done
   (cd test && make)
+  cd ..
 }
 
 download_code_and_patches
