@@ -1,0 +1,49 @@
+--- ./libsrc_c/miecalc.c.orig	2014-09-01 14:47:53.607746776 +0200
++++ ./libsrc_c/miecalc.c	2014-12-29 16:45:30.781443071 +0100
+@@ -450,7 +450,7 @@
+   int Nt=0;
+   FILE *outfile=NULL;
+ 
+-  if ((outfile = fopen("phase.dat", "w"))==NULL) {
++  if ((outfile = fopen("phase.dat", "wb"))==NULL) {
+     fprintf (stderr, "Error opening phase.dat for writing\n");
+     return -1;
+   }
+@@ -1179,7 +1179,9 @@
+   /*******************************************************************/
+ 
+   if (!quiet) {
++#if HAVE_LIBNETCDF
+     fprintf (stderr, "*** Cannot open netCDF file %s, using\n", cdf_filename);
++#endif
+     fprintf (stderr, "*** ASCII file %s instead.\n", filename);
+     fprintf (stderr, "*** It is recommended to use the netCDF format because access is much faster.\n");
+   }
+@@ -1238,7 +1240,7 @@
+   }
+   else {
+     
+-    if ((file = fopen (filename, "r")) == NULL) {
++    if ((file = fopen (filename, "rb")) == NULL) {
+       fprintf (stderr, "Error opening %s for reading\n", filename);
+       return -1;
+     }
+@@ -1443,7 +1445,9 @@
+ #endif
+ 
+   if (!quiet) {
++#if HAVE_LIBNETCDF
+     fprintf (stderr, "*** Cannot open netCDF file %s, using\n", cdf_filename);
++#endif
+     fprintf (stderr, "*** ASCII file %s instead.\n", filename);
+     fprintf (stderr, "*** It is recommended to use the netCDF format because access is much faster.\n");
+   }
+@@ -1464,7 +1468,7 @@
+   }
+   else {
+ 
+-    if ((f = fopen (filename, "r")) == NULL) {
++    if ((f = fopen (filename, "rb")) == NULL) {
+       fprintf (stderr, "Error opening %s for reading\n", filename);
+       return -1;
+     }

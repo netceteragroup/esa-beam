@@ -1,0 +1,20 @@
+--- ./src/uvspec.c.orig	2014-09-01 14:47:47.795493489 +0200
++++ ./src/uvspec.c	2014-12-29 16:45:30.794443305 +0100
+@@ -846,7 +846,7 @@
+ 
+   /* Check if slit_function file exists */
+   if (Input.convolve) {
+-    if ((f = fopen(Input.filename[FN_SLITFUNCTION], "r")) == NULL) {
++    if ((f = fopen(Input.filename[FN_SLITFUNCTION], "rb")) == NULL) {
+       fprintf (stderr, "Error, cannot read slit function file %s\n", Input.filename[FN_SLITFUNCTION]);
+       status--;
+     }
+@@ -859,7 +859,7 @@
+ #if HAVE_LIBNETCDF
+ #else
+   if (Input.ck_scheme == CK_KATO || Input.ck_scheme == CK_KATO2 || Input.ck_scheme == CK_KATO2_96 || 
+-      Input.ck_scheme == CK_GENERIC || Input.ck_scheme == CK_REPTRAN) {
++      Input.ck_scheme == CK_FILE || Input.ck_scheme == CK_REPTRAN) {
+     fprintf (stderr, "***********************************************************************\n");
+     fprintf (stderr, "* Error, you have built uvspec without libnetcdf and hence may not    *\n");
+     fprintf (stderr, "* use the 'mol_abs_param kato' or 'mol_abs_param reptran' options.    *\n");

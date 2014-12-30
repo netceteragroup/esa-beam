@@ -1,0 +1,12 @@
+--- doc/optical_properties.tex.orig	2014-12-30 10:45:26.289794853 +0100
++++ doc/optical_properties.tex	2014-12-30 10:47:35.625120967 +0100
+@@ -39,7 +39,8 @@
+ the parameter name, followed by one or more parameter values. The 
+ parameter name and the parameter values are seperated by white space.
+ 
+-Filenames are entered without any surrounding single or double quotes.
++Filenames are usually entered without any surrounding single or double quotes.
++However, if a filename contains spaces, it can be surrounded with double quotes.
+ 
+ Comments are introduced by a \code{\#}. Blank lines are ignored.
+ 

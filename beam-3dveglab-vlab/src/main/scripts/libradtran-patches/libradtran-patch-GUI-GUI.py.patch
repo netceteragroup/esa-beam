@@ -1,0 +1,38 @@
+--- ./GUI/GUI.py.orig	2014-09-01 14:47:47.291471516 +0200
++++ ./GUI/GUI.py	2014-12-29 16:45:30.780443053 +0100
+@@ -911,7 +911,7 @@
+             img.SaveFile(os.path.join(example_dir, "thumb.jpg"),
+                          wx.BITMAP_TYPE_JPEG)
+             # Save the text
+-            f = open(os.path.join(example_dir, "info.txt"), "w")
++            f = open(os.path.join(example_dir, "info.txt"), "wb")
+             f.write("Title: %s\n" % title)
+             f.write(description)
+             f.close()
+@@ -928,7 +928,7 @@
+         try:
+             print "Saving input file to '%s'." % (fname)
+             print repr(data)
+-            f = open(fname, "w")
++            f = open(fname, "wb")
+             f.write("\n".join(data).strip())
+ 	    f.write("\n")
+             f.close()
+@@ -961,7 +961,7 @@
+             img.SaveFile(os.path.join(example_dir, "thumb.jpg"),
+                          wx.BITMAP_TYPE_JPEG)
+             # Save the text
+-            f = open(os.path.join(example_dir, "info.txt"), "w")
++            f = open(os.path.join(example_dir, "info.txt"), "wb")
+             f.write("Title: %s\n" % title)
+             f.write(description)
+             f.close()
+@@ -974,7 +974,7 @@
+ 
+     def ReadFile(self, path, includes=[]):
+         try:
+-            f = open(path, "r")
++            f = open(path, "rb")
+             data = f.readlines()
+             f.close()
+         except IOError:

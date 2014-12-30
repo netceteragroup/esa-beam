@@ -1,0 +1,74 @@
+--- ./src/uvspec_lex.l.orig	2014-09-05 10:45:54.278090884 +0200
++++ ./src/uvspec_lex.l	2014-12-29 16:45:30.806443520 +0100
+@@ -1862,7 +1862,7 @@
+ 
+         include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
+ 
+-        yyin = fopen(yytext, "r");
++        yyin = fopen(yytext, "rb");
+ 
+         if (!yyin) {
+             fprintf (stderr, "Error including %s\n", yytext);
+@@ -5879,7 +5879,7 @@
+   /***********************/
+ 
+   if (strlen(infilename)>0)
+-    yyin = fopen (infilename, "r");
++    yyin = fopen (infilename, "rb");
+ 
+   yylex();
+ 
+@@ -6660,7 +6660,7 @@
+ 
+   /* try to attach default path for solar_flux file, if file does not exit */
+   if (strlen(Input.filename[FN_EXTRATERRESTRIAL]) > 0) {
+-    if ((f = fopen(Input.filename[FN_EXTRATERRESTRIAL], "r")) == NULL) {
++    if ((f = fopen(Input.filename[FN_EXTRATERRESTRIAL], "rb")) == NULL) {
+ 
+       /* file does not exit, try to add an default path */
+       if (strlen(Input.filename[FN_PATH])>0)
+@@ -6671,7 +6671,7 @@
+       strcat (tmp_filename, Input.filename[FN_EXTRATERRESTRIAL]);
+ 
+       /* try to open file with default path */
+-      if ((f = fopen(tmp_filename, "r")) == NULL) {
++      if ((f = fopen(tmp_filename, "rb")) == NULL) {
+         /* (default path + file) does not exits, also */
+         /* final check if the solar spectrum is needed is done in */
+         /* setup_extraterrestrial() (in extraterrestrial.c) */
+@@ -7969,7 +7969,7 @@
+ 
+   if (Input.rte.mc.readrandomseed) {
+     /* read random seed for debugging purposes */
+-    if ((randomseedfile = fopen(randomseedfilename, "r")) != NULL) {
++    if ((randomseedfile = fopen(randomseedfilename, "rb")) != NULL) {
+       fscanf(randomseedfile,"%d",&rseed);
+       (void) fclose (randomseedfile);
+     }
+@@ -7982,7 +7982,7 @@
+   }
+ 
+   /* store random seed for debugging purposes */
+-  if ((randomseedfile = fopen(randomseedfilename, "w")) != NULL) {
++  if ((randomseedfile = fopen(randomseedfilename, "wb")) != NULL) {
+ 
+     /* tmpnam generates nonexistent filename, but by the time the file is opened this may no longer be true */
+     /* mkstemp should fix this, but does not work properly. instead, I create the file as quickly as possible */
+@@ -8062,7 +8062,7 @@
+           /*If OUTPUT_FORMAT_ASCII is used with a filename then open this file so that the output*/
+           /*goes there instead of stdout*/
+           if (strlen(Input.filename[FN_OUTFILE]) != 0) {
+-                  f = fopen (Input.filename[FN_OUTFILE], "w");
++                  f = fopen (Input.filename[FN_OUTFILE], "wb");
+           }
+           else{
+                   f = stdout;
+@@ -8072,7 +8072,7 @@
+           f = stdout;
+   }
+ #else
+-  FILE *f = fopen (outfilename, "w");
++  FILE *f = fopen (outfilename, "wb");
+ #endif
+ 
+ 

@@ -1,0 +1,11 @@
+--- ./src/mie_lex.l.orig	2014-09-01 14:47:47.787493141 +0200
++++ ./src/mie_lex.l	2014-12-29 16:45:30.791443251 +0100
+@@ -752,7 +752,7 @@
+ 
+   /* Read the input file */
+   if (strlen(infilename)>0)
+-     yyin = fopen (infilename, "r");
++     yyin = fopen (infilename, "rb");
+   yylex();
+ 
+   if (strlen(infilename)>0)

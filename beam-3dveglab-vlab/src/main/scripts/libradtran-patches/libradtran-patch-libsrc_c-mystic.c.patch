@@ -1,0 +1,335 @@
+--- ./libsrc_c/mystic.c.orig	2014-09-01 14:47:53.415738409 +0200
++++ ./libsrc_c/mystic.c	2014-12-29 16:45:30.784443125 +0100
+@@ -1916,7 +1916,7 @@
+ {
+   FILE *file;
+ 
+-  file = fopen(filename,"r");
++  file = fopen(filename,"rb");
+   if (file!=NULL) {
+     fclose(file);
+ 
+@@ -1953,7 +1953,7 @@
+ {
+   FILE *file;
+ 
+-  file = fopen("progress","r");
++  file = fopen("progress","rb");
+   if (file!=NULL) {
+     fclose(file);
+     fprintf(stderr,
+@@ -2002,7 +2002,7 @@
+ 
+   /* read randomstatusfile if asked for */
+   if (*readrandomstatus && photoncounter==1) {
+-    if ( ( randomstatusfile = fopen(randomstatusfilename, "r")) != NULL) {
++    if ( ( randomstatusfile = fopen(randomstatusfilename, "rb")) != NULL) {
+       status = gsl_rng_fread (randomstatusfile, uvspecrng);
+       if (status)
+ 	return err_out ("Error %d returned by gsl_rng_fread()\n", status);
+@@ -2017,7 +2017,7 @@
+ #ifdef WRITERANDOMSTATUS
+   /* write status every 10 photons, starting with photon 1 */
+   if (photoncounter % 10 == 1 && !(*readrandomstatus)) {
+-    if ( ( randomstatusfile = fopen(randomstatusfilename, "w")) != NULL) {
++    if ( ( randomstatusfile = fopen(randomstatusfilename, "wb")) != NULL) {
+       status = gsl_rng_fwrite (randomstatusfile, uvspecrng);
+       if (status)
+ 	return err_out ("Error %d returned by gsl_rng_fwrite()\n", status);
+@@ -11118,7 +11118,7 @@
+ 
+   
+   if (sample->boxairmass){
+-    if ((airmassfile = fopen (airmassfilename, "w")) == NULL) {
++    if ((airmassfile = fopen (airmassfilename, "wb")) == NULL) {
+       perror(NULL);
+       fprintf (stderr, "errno = %d\n", errno);
+       fprintf (stderr, "Error opening %s for writing\n", airmassfilename);
+@@ -11132,7 +11132,7 @@
+       
+       /* open histogram file */
+       if (!sample->LidarLocEst) {
+-	if ((histfile = fopen (histfilename, "w")) == NULL) {
++	if ((histfile = fopen (histfilename, "wb")) == NULL) {
+ 	  perror(NULL);
+ 	  fprintf (stderr, "errno = %d\n", errno);
+ 	  fprintf (stderr, "Error opening %s for writing\n", histfilename);
+@@ -11141,7 +11141,7 @@
+ 
+ 	/* open radiance histogram file */
+ 	if (sample->Nd>0)
+-	  if ((histradfile = fopen (histradfilename, "w")) == NULL) {
++	  if ((histradfile = fopen (histradfilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", histradfilename);
+@@ -11150,7 +11150,7 @@
+ 
+ 	/* open radiance/pathlength histogram file */
+ 	if (sample->Nr>0 && sample->Nt>0 && sample->Nd>0)
+-	  if ((histrplfile = fopen (histrplfilename, "w")) == NULL) {
++	  if ((histrplfile = fopen (histrplfilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", histrplfilename);
+@@ -11162,7 +11162,7 @@
+ 	/* open local estimate histogram file */
+ 	if ( !write_output_as_netcdf ) { /* ascii file */
+ 	  for (ip=0; ip<sample->nstokes; ip++) {
+-	    if ((histlocfile[ip] = fopen (histlocfilename[ip], "w")) == NULL) {
++	    if ((histlocfile[ip] = fopen (histlocfilename[ip], "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", histlocfilename[ip]);
+@@ -11175,7 +11175,7 @@
+ 		     sample->LLE_Nt, atmos->Nz,
+ 		     sample->LLE_No, sample->LLE_Na, sample->LLE_polarisation);
+ 	    if (sample->LLE_Nt > 0) {
+-	      if ((histl_tfile[ip] = fopen (histl_tfilename[ip], "w")) == NULL) {
++	      if ((histl_tfile[ip] = fopen (histl_tfilename[ip], "wb")) == NULL) {
+ 		perror(NULL);
+ 		fprintf (stderr, "errno = %d\n", errno);
+ 		fprintf (stderr, "Error opening %s for writing\n", histl_tfilename[ip]);
+@@ -11190,7 +11190,7 @@
+ 	    }
+ 	  }
+ 	  if (sample->LLE_jacobian) {
+-	    if ((histj_tfile = fopen (histj_tfilename, "w")) == NULL) {
++	    if ((histj_tfile = fopen (histj_tfilename, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", histj_tfilename);
+@@ -11213,7 +11213,7 @@
+       if (write_files) {
+         /* open histogram file */
+ 	if (!sample->LidarLocEst) {
+-	  if ((histfile2 = fopen (histfilename2, "w")) == NULL) {
++	  if ((histfile2 = fopen (histfilename2, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", histfilename2);
+@@ -11222,7 +11222,7 @@
+         
+ 	  /* open radiance histogram file */
+ 	  if (sample->Nd>0)
+-	    if ((histradfile2 = fopen (histradfilename2, "w")) == NULL) {
++	    if ((histradfile2 = fopen (histradfilename2, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", histradfilename2);
+@@ -11231,7 +11231,7 @@
+       
+ 	  /* open radiance/pathlength histogram file */
+ 	  if (sample->Nr>0 && sample->Nt>0 && sample->Nd>0)
+-	    if ((histrplfile2 = fopen (histrplfilename2, "w")) == NULL) {
++	    if ((histrplfile2 = fopen (histrplfilename2, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", histrplfilename2);
+@@ -11243,7 +11243,7 @@
+ 	  /* open local estimate histogram file */
+ 	  if ( !write_output_as_netcdf ) { /* ascii file */
+ 	    for (ip=0; ip<sample->nstokes; ip++) {
+-	      if ((histlocfile2[ip] = fopen (histlocfilename2[ip], "w")) == NULL) {
++	      if ((histlocfile2[ip] = fopen (histlocfilename2[ip], "wb")) == NULL) {
+ 		perror(NULL);
+ 		fprintf (stderr, "errno = %d\n", errno);
+ 		fprintf (stderr, "Error opening %s for writing\n", histlocfilename2[ip]);
+@@ -11256,7 +11256,7 @@
+ 		       sample->LLE_Nt, atmos->Nz,
+ 		       sample->LLE_No, sample->LLE_Na, sample->LLE_polarisation);
+ 	      if (sample->LLE_Nt > 0) {
+-		if ((histl_tfile2[ip] = fopen (histl_tfilename2[ip], "w")) == NULL) {
++		if ((histl_tfile2[ip] = fopen (histl_tfilename2[ip], "wb")) == NULL) {
+ 		  perror(NULL);
+ 		  fprintf (stderr, "errno = %d\n", errno);
+ 		  fprintf (stderr, "Error opening %s for writing\n", histl_tfilename2[ip]);
+@@ -11271,7 +11271,7 @@
+ 	      }
+ 	    }
+ 	    if (sample->LLE_jacobian) {
+-	      if ((histj_tfile2 = fopen (histj_tfilename2, "w")) == NULL) {
++	      if ((histj_tfile2 = fopen (histj_tfilename2, "wb")) == NULL) {
+ 		perror(NULL);
+ 		fprintf (stderr, "errno = %d\n", errno);
+ 		fprintf (stderr, "Error opening %s for writing\n", histj_tfilename2);
+@@ -11970,7 +11970,7 @@
+       }  /* is */
+ 	
+       if (sample->ncirc) {
+-	if ((circradfile = fopen (circradfilename, "w")) == NULL) {
++	if ((circradfile = fopen (circradfilename, "wb")) == NULL) {
+ 	  perror(NULL);
+ 	  fprintf (stderr, "errno = %d\n", errno);
+ 	  fprintf (stderr, "Error opening %s for writing\n", circradfilename);
+@@ -11990,7 +11990,7 @@
+ 	sprintf (backfilename2, "%s%s%s", basename, sample->backward_altstr, bacext2);
+ 	sprintf (picturefilename, "%s%s%s", basename, sample->backward_altstr, picext);
+ 
+-	if ((backfile = fopen (backfilename, "w")) == NULL) {
++	if ((backfile = fopen (backfilename, "wb")) == NULL) {
+ 	  perror(NULL);
+ 	  fprintf (stderr, "errno = %d\n", errno);
+ 	  fprintf (stderr, "Error opening %s for writing\n", backfilename);
+@@ -11998,7 +11998,7 @@
+ 	}
+         
+ 	if (sample->std)
+-	  if ((backfile2 = fopen (backfilename2, "w")) == NULL) {
++	  if ((backfile2 = fopen (backfilename2, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", backfilename2);
+@@ -12006,7 +12006,7 @@
+ 	  }
+         
+ 	if (sample->spectral_is || sample->concentration_is){
+-	  if ((specradfile = fopen (specradfilename, "w")) == NULL) {
++	  if ((specradfile = fopen (specradfilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", specradfilename);
+@@ -12180,7 +12180,7 @@
+ 	for (kc=0; kc<=atmos->Nz; kc++) { 
+ 	  if (sample->sample[kc]) {
+               
+-	    if ((cldprp_file = fopen (cldprp_filename, "w")) == NULL) {
++	    if ((cldprp_file = fopen (cldprp_filename, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", cldprp_filename);
+@@ -12250,7 +12250,7 @@
+ 	sprintf (backfilename,  "%s%s%s", basename, sample->backward_altstr, bacext);
+ 	sprintf (backfilename2, "%s%s%s", basename, sample->backward_altstr, bacext2);
+         
+-	if ((backfile = fopen (backfilename, "w")) == NULL) {
++	if ((backfile = fopen (backfilename, "wb")) == NULL) {
+ 	  perror(NULL);
+ 	  fprintf (stderr, "errno = %d\n", errno);
+ 	  fprintf (stderr, "Error opening %s for writing\n", backfilename);
+@@ -12258,7 +12258,7 @@
+ 	}
+         
+ 	if (sample->std)
+-	  if ((backfile2 = fopen (backfilename2, "w")) == NULL) {
++	  if ((backfile2 = fopen (backfilename2, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", backfilename2);
+@@ -12266,7 +12266,7 @@
+ 	  }
+ 
+ 	if (sample->pan_picture)
+-	  if ((picturefile = fopen (picturefilename, "w")) == NULL) {
++	  if ((picturefile = fopen (picturefilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", picturefilename);
+@@ -12277,7 +12277,7 @@
+ 	  sprintf (backjacfilename,  "%s%s%s", basename, sample->backward_altstr, bacjacext);
+ 	  sprintf (backjacfilename2, "%s%s%s", basename, sample->backward_altstr, bacjacext2);
+         
+-	  if ((backjacfile = fopen (backjacfilename, "w")) == NULL) {
++	  if ((backjacfile = fopen (backjacfilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", backjacfilename);
+@@ -12285,7 +12285,7 @@
+ 	  }
+         
+ 	  if (sample->std)
+-	    if ((backjacfile2 = fopen (backjacfilename2, "w")) == NULL) {
++	    if ((backjacfile2 = fopen (backjacfilename2, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", backjacfilename2);
+@@ -12294,7 +12294,7 @@
+ 	}
+         
+ 	if (sample->spectral_is || sample->concentration_is){
+-	  if ((specradfile = fopen (specradfilename, "w")) == NULL) {
++	  if ((specradfile = fopen (specradfilename, "wb")) == NULL) {
+ 	    perror(NULL);
+ 	    fprintf (stderr, "errno = %d\n", errno);
+ 	    fprintf (stderr, "Error opening %s for writing\n", specradfilename);
+@@ -12796,7 +12796,7 @@
+           sprintf (altfilename,    "%s%d%s", basename, kc, flxext);
+           sprintf (altfilename2,    "%s%d%s", basename, kc, flxext2);
+           
+-          if ((altfile = fopen(altfilename, "w")) == NULL) {
++          if ((altfile = fopen(altfilename, "wb")) == NULL) {
+             perror(NULL);
+             fprintf (stderr, "errno = %d\n", errno);
+             fprintf (stderr, "Error opening %s for writing\n", altfilename);
+@@ -12804,7 +12804,7 @@
+           }
+           
+           if (sample->std)
+-            if ((altfile2 = fopen(altfilename2, "w")) == NULL) {
++            if ((altfile2 = fopen(altfilename2, "wb")) == NULL) {
+               perror(NULL);
+               fprintf (stderr, "errno = %d\n", errno);
+               fprintf (stderr, "Error opening %s for writing\n", altfilename2);
+@@ -12916,7 +12916,7 @@
+           sprintf (altradfilename2, "%s%d%s", basename, kc, radext2);
+           
+           if (write_files) {
+-            if ((altradfile = fopen(altradfilename, "w")) == NULL) {
++            if ((altradfile = fopen(altradfilename, "wb")) == NULL) {
+               perror(NULL);
+               fprintf (stderr, "errno = %d\n", errno);
+               fprintf (stderr, "Error opening %s for writing\n", altradfilename);
+@@ -12924,7 +12924,7 @@
+             }
+             
+             if (sample->std)
+-              if ((altradfile2 = fopen(altradfilename2, "w")) == NULL) {
++              if ((altradfile2 = fopen(altradfilename2, "wb")) == NULL) {
+                 perror(NULL);
+                 fprintf (stderr, "errno = %d\n", errno);
+                 fprintf (stderr, "Error opening %s for writing\n", altradfilename2);
+@@ -12936,7 +12936,7 @@
+ 	if (write_files)
+ 	  if (sample->spectral_is|| sample->concentration_is){
+           
+-	    if ((specradfile = fopen(specradfilename, "w")) == NULL) {
++	    if ((specradfile = fopen(specradfilename, "wb")) == NULL) {
+ 	      perror(NULL);
+ 	      fprintf (stderr, "errno = %d\n", errno);
+ 	      fprintf (stderr, "Error opening %s for writing\n", specradfilename);
+@@ -13196,7 +13196,7 @@
+           sprintf (altrplfilename2, "%s%d%s", basename, kc, rplext2);
+           
+           if (sample->Nd>0)
+-            if ((altrplfile = fopen(altrplfilename, "w")) == NULL) {
++            if ((altrplfile = fopen(altrplfilename, "wb")) == NULL) {
+               perror(NULL);
+               fprintf (stderr, "errno = %d\n", errno);
+               fprintf (stderr, "Error opening %s for writing\n", altrplfilename);
+@@ -13205,7 +13205,7 @@
+         
+           if (sample->std)
+             if (sample->Nd>0)
+-              if ((altrplfile2 = fopen(altrplfilename2, "w")) == NULL) {
++              if ((altrplfile2 = fopen(altrplfilename2, "wb")) == NULL) {
+                 perror(NULL);
+                 fprintf (stderr, "errno = %d\n", errno);
+                 fprintf (stderr, "Error opening %s for writing\n", altrplfilename2);
+@@ -13319,7 +13319,7 @@
+           sprintf (altfilename, "%s%d%s", basename, kc, absext);
+           sprintf (altfilename2, "%s%d%s", basename, kc, absext2);
+           
+-          if ((altfile = fopen(altfilename, "w")) == NULL) {
++          if ((altfile = fopen(altfilename, "wb")) == NULL) {
+             perror (NULL);
+             fprintf (stderr, "errno = %d\n", errno);
+             fprintf (stderr, "Error opening %s for writing\n", altfilename);
+@@ -13328,7 +13328,7 @@
+           
+           
+           if (sample->std)
+-            if ((altfile2 = fopen(altfilename2, "w")) == NULL) {
++            if ((altfile2 = fopen(altfilename2, "wb")) == NULL) {
+               perror (NULL);
+               fprintf (stderr, "errno = %d\n", errno);
+               fprintf (stderr, "Error opening %s for writing\n", altfilename2);

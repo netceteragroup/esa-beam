@@ -1,0 +1,33 @@
+--- ./GUI/widgets.py.orig	2014-09-01 14:47:46.615442068 +0200
++++ ./GUI/widgets.py	2014-12-29 16:45:30.780443053 +0100
+@@ -1042,7 +1042,7 @@
+         self.SetSizer(sizer)
+ 
+         if filename:
+-            f = open(filename, "r")
++            f = open(filename, "rb")
+             self.text.SetLabel(f.read())
+             f.close()
+ 
+@@ -1138,9 +1138,9 @@
+ 
+         exit_value = 0
+ 
+-        process_in = open(self.input_file, "r")
+-        process_out = open(self.output_file, "w")
+-        process_err = open(self.output_file + ".err", "w")
++        process_in = open(self.input_file, "rb")
++        process_out = open(self.output_file, "wb")
++        process_err = open(self.output_file + ".err", "wb")
+         
+         try:
+             process = subprocess.Popen("uvspec", stdin=process_in,
+@@ -1165,7 +1165,7 @@
+                 return
+         
+         process_err.close()
+-        process_err = open(process_err.name, "r")
++        process_err = open(process_err.name, "rb")
+     
+         data = process_err.read()
+         if data.upper().find("ERROR") != -1: # catch errors with return code 0

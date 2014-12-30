@@ -1,0 +1,11 @@
+--- ./examples/GUI/radiance_sentinel/radiance_sentinel_plot.py.orig	2014-09-01 14:47:54.979806565 +0200
++++ ./examples/GUI/radiance_sentinel/radiance_sentinel_plot.py	2014-12-29 16:45:30.764442765 +0100
+@@ -25,7 +25,7 @@
+ from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+ 
+ def read_inp(fname):
+-	f = open(fname, "r")
++	f = open(fname, "rb")
+ 	txt = f.read()
+ 	f.close()
+ 	

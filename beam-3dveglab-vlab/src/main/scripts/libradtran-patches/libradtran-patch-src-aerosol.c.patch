@@ -1,0 +1,19 @@
+--- ./src/aerosol.c.orig	2014-09-01 14:47:47.787493141 +0200
++++ ./src/aerosol.c	2014-12-29 16:45:30.786443160 +0100
+@@ -27,7 +27,16 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <math.h>
++#ifndef WIN32
+ #include <glob.h>
++#else
++/* interface from man page */
++typedef struct {
++  size_t   gl_pathc;
++  char   **gl_pathv;
++  size_t   gl_offs;
++} glob_t;
++#endif
+ 
+ #include "uvspec.h"
+ #include "ascii.h"

@@ -1,0 +1,52 @@
+--- ./src/uvspecfunction.c.orig	2014-09-01 14:47:47.783492970 +0200
++++ ./src/uvspecfunction.c	2014-12-29 16:45:30.795443322 +0100
+@@ -7,8 +7,13 @@
+ #include <math.h>
+ 
+ #include <stdlib.h>
++
++#ifdef WIN32
++#include <process.h>
++#else
+ #include <unistd.h>
+ #include <sys/wait.h>
++#endif
+ 
+ 
+ int calluvspec(char *outfilename);
+@@ -16,6 +21,11 @@
+ 
+ int main(int argc, char **argv)
+ {
++
++#ifdef WIN32
++  fprintf(stderr, "not yet implemented in WIN32 environment\n");
++  return -1;
++#else
+   extern FILE *yyin;
+   FILE *fin=NULL;
+   int i=0, status=0;
+@@ -42,7 +52,7 @@
+ 
+       fprintf (stderr, " ... writing to %s\n", infilename);
+ 
+-      fin = fopen (infilename,"w");
++      fin = fopen (infilename,"wb");
+ 
+       fprintf (fin, "data_files_path ../data/\n");
+       fprintf (fin, "atmosphere_file midlatitude_summer \n");
+@@ -66,7 +76,7 @@
+       
+       fclose(fin);
+ 
+-      yyin = fopen (infilename,"r");
++      yyin = fopen (infilename,"rb");
+       status = calluvspec (outfilename);
+ 
+       if (status!=0)
+@@ -93,4 +103,5 @@
+   }
+ 
+   return status;
++#endif
+ }

@@ -1,0 +1,11 @@
+--- ./src/UVTools.pm.orig	2014-09-01 14:47:47.787493141 +0200
++++ ./src/UVTools.pm	2014-12-29 16:45:30.807443538 +0100
+@@ -75,7 +75,7 @@
+ 
+ BEGIN { 
+     $time_resolution = 1.0;  # in hours
+-    $toolspath       = "../bin/";
++    $toolspath       = "wine ../bin/";
+     $sza2time        = $toolspath."sza2time";
+     $sza2time_out    = "./sza2time_out";
+     $zenith          = $toolspath."zenith";

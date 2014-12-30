@@ -1,0 +1,1179 @@
+--- test/test.pl.in.orig	2014-09-01 14:47:53.235730564 +0200
++++ test/test.pl.in	2014-12-30 11:44:59.175053436 +0100
+@@ -84,7 +84,7 @@
+ 
+ if ( $test eq "everything" && $found_nccmp eq "yes" ) {
+   printf stderr "Optical properties test\n";
+-  system("bash ../examples/run_optical_properties_test.sh");
++  system("bash \"../example files/run_optical_properties_test.sh\"");
+ }
+ 
+ $failure=0;
+@@ -119,242 +119,242 @@
+ 
+ if ( $test eq "uvspec_simple" || $all >= 1 ) {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_SIMPLE.INP";
+-  my $exout  = "../examples/UVSPEC_SIMPLE.OUT";
++  my $exinp  = "../example files/UVSPEC_SIMPLE.INP";
++  my $exout  = "../example files/UVSPEC_SIMPLE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "uvspec simple", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_clear" || $all >= 1 )           {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_CLEAR.INP";
+-  my $exout  = "../examples/UVSPEC_CLEAR.OUT";
++  my $exinp  = "../example files/UVSPEC_CLEAR.INP";
++  my $exout  = "../example files/UVSPEC_CLEAR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort clear sky", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_aerosol" || $all >= 1 )         {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AEROSOL.INP";
+-  my $exout  = "../examples/UVSPEC_AEROSOL.OUT";
++  my $exinp  = "../example files/UVSPEC_AEROSOL.INP";
++  my $exout  = "../example files/UVSPEC_AEROSOL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort aerosol", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_aerosol_moments" || $all >= 1 ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AEROSOL_MOMENTS.INP";
+-  my $exout  = "../examples/UVSPEC_AEROSOL_MOMENTS.OUT";
++  my $exinp  = "../example files/UVSPEC_AEROSOL_MOMENTS.INP";
++  my $exout  = "../example files/UVSPEC_AEROSOL_MOMENTS.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort aerosol moments", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_aerosol_refrac" || $all >= 1 )  { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AEROSOL_REFRAC.INP";
+-  my $exout  = "../examples/UVSPEC_AEROSOL_REFRAC.OUT";
++  my $exinp  = "../example files/UVSPEC_AEROSOL_REFRAC.INP";
++  my $exout  = "../example files/UVSPEC_AEROSOL_REFRAC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort aerosol refractive index", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_aerosol_opac" || $all >= 1 ) && ( $found_opac eq "yes" &&  $found_libnetcdf eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AEROSOL_OPAC.INP";
+-  my $exout  = "../examples/UVSPEC_AEROSOL_OPAC.OUT";
++  my $exinp  = "../example files/UVSPEC_AEROSOL_OPAC.INP";
++  my $exout  = "../example files/UVSPEC_AEROSOL_OPAC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort aerosol opac", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_aerosol_opac_pol" || $all >= 1 ) && ( $found_opac eq "yes" &&  $found_libnetcdf eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AEROSOL_OPAC_POL.INP";
+-  my $exout  = "../examples/UVSPEC_AEROSOL_OPAC_POL.OUT";
++  my $exinp  = "../example files/UVSPEC_AEROSOL_OPAC_POL.INP";
++  my $exout  = "../example files/UVSPEC_AEROSOL_OPAC_POL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "polradtran aerosol opac", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_wc" || $all >= 1 )              { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_WC.INP";
+-  my $exout  = "../examples/UVSPEC_WC.OUT";
++  my $exinp  = "../example files/UVSPEC_WC.INP";
++  my $exout  = "../example files/UVSPEC_WC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_so2" || $all >= 1 )         {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_SO2.INP";
+-  my $exout  = "../examples/UVSPEC_SO2.OUT";
++  my $exinp  = "../example files/UVSPEC_SO2.INP";
++  my $exout  = "../example files/UVSPEC_SO2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort SO2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_radiances" || $all >= 1 )       { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/UVSPEC_RADIANCES.INP";
+-  my $exout  = "../examples/UVSPEC_RADIANCES.OUT";
++  my $exinp  = "../example files/UVSPEC_RADIANCES.INP";
++  my $exout  = "../example files/UVSPEC_RADIANCES.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort radiances", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_scia_approx" || $all >= 1 )  { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/UVSPEC_SCIA_APPROX.INP";
+-  my $exout  = "../examples/UVSPEC_SCIA_APPROX.OUT";
++  my $exinp  = "../example files/UVSPEC_SCIA_APPROX.INP";
++  my $exout  = "../example files/UVSPEC_SCIA_APPROX.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort SCIAMACHY HG approximation", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_scia" || $all >= 1 ) && ( $found_wcmie eq "yes" &&  $found_libnetcdf eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/UVSPEC_SCIA.INP";
+-  my $exout  = "../examples/UVSPEC_SCIA.OUT";
++  my $exinp  = "../example files/UVSPEC_SCIA.INP";
++  my $exout  = "../example files/UVSPEC_SCIA.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort SCIAMACHY simulation", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_wc_mie" || $all >= 1 ) && ( $found_wcmie eq "yes" &&  $found_libnetcdf eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_WC_MIE.INP";
+-  my $exout  = "../examples/UVSPEC_WC_MIE.OUT";
++  my $exinp  = "../example files/UVSPEC_WC_MIE.INP";
++  my $exout  = "../example files/UVSPEC_WC_MIE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort water cloud (Mie)", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_disort" || $all >= 1 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_DISORT.INP";
+-  my $exout  = "../examples/UVSPEC_DISORT.OUT";
++  my $exinp  = "../example files/UVSPEC_DISORT.INP";
++  my $exout  = "../example files/UVSPEC_DISORT.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort aerosol", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_wc_moments" || $all >= 1 )      { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_WC_MOMENTS.INP";
+-  my $exout  = "../examples/UVSPEC_WC_MOMENTS.OUT";
++  my $exinp  = "../example files/UVSPEC_WC_MOMENTS.INP";
++  my $exout  = "../example files/UVSPEC_WC_MOMENTS.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort wc Legendre moments", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_ic_wc" || $all >= 1 )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_IC_WC.INP";
+-  my $exout  = "../examples/UVSPEC_IC_WC.OUT";
++  my $exinp  = "../example files/UVSPEC_IC_WC.INP";
++  my $exout  = "../example files/UVSPEC_IC_WC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort water and ice clouds", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_ic_baum" || $all >= 1 ) && ( $found_baum eq "yes" &&  $found_libnetcdf eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_IC_BAUM.INP";
+-  my $exout  = "../examples/UVSPEC_IC_BAUM.OUT";
++  my $exinp  = "../example files/UVSPEC_IC_BAUM.INP";
++  my $exout  = "../example files/UVSPEC_IC_BAUM.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort ice cloud, Baum et al. (2005)", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( $test eq "uvspec_overlap_random" || $all >= 1 )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_OVERLAP_RAND.INP";
+-  my $exout  = "../examples/UVSPEC_OVERLAP_RAND.OUT";
++  my $exinp  = "../example files/UVSPEC_OVERLAP_RAND.INP";
++  my $exout  = "../example files/UVSPEC_OVERLAP_RAND.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort cloud overlap random", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_overlap_maxrandom" || $all >= 1 )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_OVERLAP_MAXRAND.INP";
+-  my $exout  = "../examples/UVSPEC_OVERLAP_MAXRAND.OUT";
++  my $exinp  = "../example files/UVSPEC_OVERLAP_MAXRAND.INP";
++  my $exout  = "../example files/UVSPEC_OVERLAP_MAXRAND.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort cloud overlap maximum-random", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_overlap_max" || $all >= 1 )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_OVERLAP_MAX.INP";
+-  my $exout  = "../examples/UVSPEC_OVERLAP_MAX.OUT";
++  my $exinp  = "../example files/UVSPEC_OVERLAP_MAX.INP";
++  my $exout  = "../example files/UVSPEC_OVERLAP_MAX.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort cloud overlap maximum", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_himalaja" || $all >= 1) && $found_libnetcdf eq "yes")        {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.007; } 
+-  my $exinp  = "../examples/UVSPEC_HIMALAJA.INP";
+-  my $exout  = "../examples/UVSPEC_HIMALAJA.OUT";
++  my $exinp  = "../example files/UVSPEC_HIMALAJA.INP";
++  my $exout  = "../example files/UVSPEC_HIMALAJA.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort, albedo and altitude map", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_test_brdf" || $all >= 1 )            { 
+   if ( !$global ) { $limit = 0.0005; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_BRDF.INP";
+-  my $exout  = "../examples/UVSPEC_BRDF.OUT";
++  my $exinp  = "../example files/UVSPEC_BRDF.INP";
++  my $exout  = "../example files/UVSPEC_BRDF.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "disort BRDF", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_fdisort2" || $all >= 2 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_FDISORT2.INP";
+-  my $exout  = "../examples/UVSPEC_FDISORT2.OUT";
++  my $exinp  = "../example files/UVSPEC_FDISORT2.INP";
++  my $exout  = "../example files/UVSPEC_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 aerosol", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_sdisort" || $all >= 2 ) {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_SDISORT.INP";
+-  my $exout  = "../examples/UVSPEC_SDISORT.OUT";
++  my $exinp  = "../example files/UVSPEC_SDISORT.INP";
++  my $exout  = "../example files/UVSPEC_SDISORT.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "sdisort aerosol", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_f_twostr" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_FTWOSTR.INP";
+-  my $exout  = "../examples/UVSPEC_FTWOSTR.OUT";
++  my $exinp  = "../example files/UVSPEC_FTWOSTR.INP";
++  my $exout  = "../example files/UVSPEC_FTWOSTR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "twostr aerosol and water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_twostrpp" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_TWOSTRPP.INP";
+-  my $exout  = "../examples/UVSPEC_TWOSTRPP.OUT";
++  my $exinp  = "../example files/UVSPEC_TWOSTRPP.INP";
++  my $exout  = "../example files/UVSPEC_TWOSTRPP.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "twostrpp aerosol and water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_c_twostr" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_TWOSTR.INP";
+-  my $exout  = "../examples/UVSPEC_TWOSTR.OUT";
++  my $exinp  = "../example files/UVSPEC_TWOSTR.INP";
++  my $exout  = "../example files/UVSPEC_TWOSTR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "c_twostr aerosol and water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_rodents" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_RODENTS.INP";
+-  my $exout  = "../examples/UVSPEC_RODENTS.OUT";
++  my $exinp  = "../example files/UVSPEC_RODENTS.INP";
++  my $exout  = "../example files/UVSPEC_RODENTS.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "rodents aerosol and water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_rodents_zout" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_RODENTS_ZOUT.INP";
+-  my $exout  = "../examples/UVSPEC_RODENTS_ZOUT.OUT";
++  my $exinp  = "../example files/UVSPEC_RODENTS_ZOUT.INP";
++  my $exout  = "../example files/UVSPEC_RODENTS_ZOUT.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "rodents aerosol and water cloud, zout", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_rodents_zout_thermal" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_RODENTS_ZOUT_THERMAL.INP";
+-  my $exout  = "../examples/UVSPEC_RODENTS_ZOUT_THERMAL.OUT";
++  my $exinp  = "../example files/UVSPEC_RODENTS_ZOUT_THERMAL.INP";
++  my $exout  = "../example files/UVSPEC_RODENTS_ZOUT_THERMAL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "rodents aerosol and water cloud, zout, thermal", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_sslidar" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_SSLIDAR.INP";
+-  my $exout  = "../examples/UVSPEC_SSLIDAR.OUT";
++  my $exinp  = "../example files/UVSPEC_SSLIDAR.INP";
++  my $exout  = "../example files/UVSPEC_SSLIDAR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "single scattering lidar, water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_sslidar_pol" || $all >= 1) && $found_wcmie eq "yes" )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_SSLIDAR_POL.INP";
+-  my $exout  = "../examples/UVSPEC_SSLIDAR_POL.OUT";
++  my $exinp  = "../example files/UVSPEC_SSLIDAR_POL.INP";
++  my $exout  = "../example files/UVSPEC_SSLIDAR_POL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "single scattering polarized lidar, water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_twostrebe" || $all >= 1 )          { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_TWOSTREBE.INP";
+-  my $exout  = "../examples/UVSPEC_TWOSTREBE.OUT";
++  my $exinp  = "../example files/UVSPEC_TWOSTREBE.INP";
++  my $exout  = "../example files/UVSPEC_TWOSTREBE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "twostrebe aerosol and water cloud", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_polradtran" || $all >= 1 ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/POLRADTRAN.INP";
+-  my $exout  = "../examples/POLRADTRAN.OUT";
++  my $exinp  = "../example files/POLRADTRAN.INP";
++  my $exout  = "../example files/POLRADTRAN.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "polradtran", $answers,$maxdiff,$limit,$valgrind); 
+   `rm -f .scat_file_*`;
+ }
+ if ( $test eq "uvspec_profiles1" || $all >= 1 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_PROFILES1.INP";
+-  my $exout  = "../examples/UVSPEC_PROFILES1.OUT";
++  my $exinp  = "../example files/UVSPEC_PROFILES1.INP";
++  my $exout  = "../example files/UVSPEC_PROFILES1.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 1", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_profiles2" || $all >= 1 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_PROFILES2.INP";
+-  my $exout  = "../examples/UVSPEC_PROFILES2.OUT";
++  my $exinp  = "../example files/UVSPEC_PROFILES2.INP";
++  my $exout  = "../example files/UVSPEC_PROFILES2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_profiles3" || $all >= 1 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_PROFILES3.INP";
+-  my $exout  = "../examples/UVSPEC_PROFILES3.OUT";
++  my $exinp  = "../example files/UVSPEC_PROFILES3.INP";
++  my $exout  = "../example files/UVSPEC_PROFILES3.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 3", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_profiles4" || $all >= 1 )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_PROFILES4.INP";
+-  my $exout  = "../examples/UVSPEC_PROFILES4.OUT";
++  my $exinp  = "../example files/UVSPEC_PROFILES4.INP";
++  my $exout  = "../example files/UVSPEC_PROFILES4.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 4", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_saturate_clouds" || 
+@@ -367,8 +367,8 @@
+ }
+ if ( ($test eq "uvspec_radiosonde" || $all >= 1) && $found_avhrr eq "yes")  {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.004; } 
+-  my $exinp  = "../examples/UVSPEC_RADIOSONDE.INP";
+-  my $exout  = "../examples/UVSPEC_RADIOSONDE.OUT";
++  my $exinp  = "../example files/UVSPEC_RADIOSONDE.INP";
++  my $exout  = "../example files/UVSPEC_RADIOSONDE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "radiosonde", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( $test eq "uvspec_redistribution" || $all >= 1 )  { 
+@@ -377,143 +377,143 @@
+ }
+ if ( ($test eq "uvspec_avhrr_solar_ch1" || $all >= 1) && $found_avhrr eq "yes")  {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_SOLAR_CH1.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_SOLAR_CH1.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_SOLAR_CH1.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_SOLAR_CH1.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 1, solar", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_solar_ch2" || $all >= 1) && $found_avhrr eq "yes")  {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_SOLAR_CH2.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_SOLAR_CH2.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_SOLAR_CH2.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_SOLAR_CH2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 2, solar", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_solar_ch3" || $all >= 1) && $found_avhrr eq "yes")  {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_SOLAR_CH3.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_SOLAR_CH3.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_SOLAR_CH3.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_SOLAR_CH3.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 3, solar", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch3" || $all >= 1) && $found_avhrr eq "yes")     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_THERMAL_CH3.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_THERMAL_CH3.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_THERMAL_CH3.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_THERMAL_CH3.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 3, thermal", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch4" || $all >= 1) && $found_avhrr eq "yes")     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_THERMAL_CH4.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_THERMAL_CH4.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_THERMAL_CH4.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_THERMAL_CH4.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 4, thermal", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch5" || $all >= 1) && $found_avhrr eq "yes")     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_AVHRR_THERMAL_CH5.INP";
+-  my $exout  = "../examples/UVSPEC_AVHRR_THERMAL_CH5.OUT";
++  my $exinp  = "../example files/UVSPEC_AVHRR_THERMAL_CH5.INP";
++  my $exout  = "../example files/UVSPEC_AVHRR_THERMAL_CH5.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 5, thermal", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_kato" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_KATO.INP";
+-  my $exout  = "../examples/UVSPEC_KATO.OUT";
++  my $exinp  = "../example files/UVSPEC_KATO.INP";
++  my $exout  = "../example files/UVSPEC_KATO.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "correlated-k [Kato et al., 1999], twostr", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec__kato2" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_KATO2.INP";
+-  my $exout  = "../examples/UVSPEC_KATO2.OUT";
++  my $exinp  = "../example files/UVSPEC_KATO2.INP";
++  my $exout  = "../example files/UVSPEC_KATO2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "correlated-k, new Kato tables, twostr", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_fuliou" || $all >= 1) && $found_fuliou eq "yes")    {
+   if ( !$global ) { $limit = 0.01; $maxdiff = 0.015; } 
+-  my $exinp  = "../examples/UVSPEC_FULIOU.INP";
+-  my $exout  = "../examples/UVSPEC_FULIOU.OUT";
++  my $exinp  = "../example files/UVSPEC_FULIOU.INP";
++  my $exout  = "../example files/UVSPEC_FULIOU.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "correlated-k [Fu and Liou, 1992/93], disort", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_fuliou_ic" || $all >= 1) && $found_fuliou eq "yes")    {
+   if ( !$global ) { $limit = 0.01; $maxdiff = 0.015; } 
+-  my $exinp  = "../examples/UVSPEC_FULIOU_IC.INP";
+-  my $exout  = "../examples/UVSPEC_FULIOU_IC.OUT";
++  my $exinp  = "../example files/UVSPEC_FULIOU_IC.INP";
++  my $exout  = "../example files/UVSPEC_FULIOU_IC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "correlated-k [Fu and Liou, 1992/93], ice clouds", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_fuliou_thermal" || $all >= 1) && $found_fuliou eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.009; } 
+-  my $exinp  = "../examples/UVSPEC_FULIOU_THERMAL.INP";
+-  my $exout  = "../examples/UVSPEC_FULIOU_THERMAL.OUT";
++  my $exinp  = "../example files/UVSPEC_FULIOU_THERMAL.INP";
++  my $exout  = "../example files/UVSPEC_FULIOU_THERMAL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "Fu and Liou, thermal irradiance, disort", $answers,$maxdiff,$limit,$valgrind);
+   system("rm -f tmpz1 tmpz2");
+ }
+ if ( ($test eq "uvspec_sbdart" || $all >= 1) && $found_lowtran eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.022; } 
+-  my $exinp  = "../examples/UVSPEC_LOWTRAN_SOLAR.INP";
+-  my $exout  = "../examples/UVSPEC_LOWTRAN_SOLAR.OUT";
++  my $exinp  = "../example files/UVSPEC_LOWTRAN_SOLAR.INP";
++  my $exout  = "../example files/UVSPEC_LOWTRAN_SOLAR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "LOWTRAN absorption parameterization", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_sbdart_thermal" || $all >= 1) && $found_lowtran eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.01; }
+-  my $exinp  = "../examples/UVSPEC_LOWTRAN_THERMAL.INP";
+-  my $exout  = "../examples/UVSPEC_LOWTRAN_THERMAL.OUT";
++  my $exinp  = "../example files/UVSPEC_LOWTRAN_THERMAL.INP";
++  my $exout  = "../example files/UVSPEC_LOWTRAN_THERMAL.OUT";
+   $failure+=uvspec_test_sbdart_thermal($exinp,$exout,$answers,$maxdiff,$limit);
+ }
+ if ( ($test eq "uvspec_mystic" || $all >= 1) && $found_mystic eq "yes" && $found_mystic3d eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.03; } 
+-  my $exinp  = "../examples/UVSPEC_MC.INP";
+-  my $exout  = "../examples/UVSPEC_MC.OUT";
++  my $exinp  = "../example files/UVSPEC_MC.INP";
++  my $exout  = "../example files/UVSPEC_MC.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "MYSTIC water cloud", $answers,$maxdiff,$limit,$valgrind);
+   `rm -f mc.flx mc.bin mc.rad randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_polarisation" || $all >= 1) && $found_mystic eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.03; } 
+-  my $exinp  = "../examples/UVSPEC_MC_POL.INP";
+-  my $exout  = "../examples/UVSPEC_MC_POL.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_POL.INP";
++  my $exout  = "../example files/UVSPEC_MC_POL.OUT";
+   $failure+=mystic_run_test($inp, $out, $exinp, $exout, "MYSTIC polarisation", $answers,$maxdiff,$limit);
+   `rm -f mc.flx mc.bin mc.rad randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_bpdf" || $all >= 1) && $found_mystic eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.01; } 
+-  my $exinp  = "../examples/UVSPEC_MC_BPDF.INP";
+-  my $exout  = "../examples/UVSPEC_MC_BPDF.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_BPDF.INP";
++  my $exout  = "../example files/UVSPEC_MC_BPDF.OUT";
+   $failure+=mystic_run_test($inp, $out, $exinp, $exout, "MYSTIC polarized surface reflection (BPDF)", $answers,$maxdiff,$limit);
+   `rm -f mc.flx mc.rad  mc.rad.spc mc.flx.spc randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_spectral" || $all >= 1) && $found_mystic eq "yes" && $found_lidar eq "yes" && $found_opac eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.01; } 
+-  my $exinp  = "../examples/UVSPEC_MC_SPECTRAL.INP";
+-  my $exout  = "../examples/UVSPEC_MC_SPECTRAL.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_SPECTRAL.INP";
++  my $exout  = "../example files/UVSPEC_MC_SPECTRAL.OUT";
+   $failure+=mystic_run_is_IQ_test($inp, $out, $exinp, $exout, "MYSTIC spectral importance sampling", $answers,$maxdiff,$limit);
+   `rm -f mc.flx mc.rad mc.is.spc mc.rad.spc mc.flx.spc mc44.flx mc44.flx randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_vroom" || $all >= 1) && $found_vroom eq "yes" && $found_mystic3d eq "yes" && $found_wcmie eq "yes")    {
+   if ( !$global ) { $limit = 0.000001; $maxdiff = 0.015; } 
+-  my $exinp  = "../examples/UVSPEC_MC_VROOM.INP";
+-  my $exout  = "../examples/UVSPEC_MC_VROOM.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_VROOM.INP";
++  my $exout  = "../example files/UVSPEC_MC_VROOM.OUT";
+   $failure+=mystic_run_test($inp, $out, $exinp, $exout, "MYSTIC vroom", $answers,$maxdiff,$limit);
+   `rm -f mc.flx.spc mc.bin mc.rad mc.rad.spc randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_delta_scaling" || $all >= 1) && $found_vroom eq "yes" && $found_mystic3d eq "yes"&& $found_wcmie eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.01; } 
+-  my $exinp  = "../examples/UVSPEC_MC_DELTASCALING.INP";
+-  my $exout  = "../examples/UVSPEC_MC_DELTASCALING.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_DELTASCALING.INP";
++  my $exout  = "../example files/UVSPEC_MC_DELTASCALING.OUT";
+   $failure+=mystic_run_test($inp, $out, $exinp, $exout, "MYSTIC delta scaling", $answers,$maxdiff,$limit);
+   `rm -f mc.flx.spc mc.bin mc.rad mc.rad.spc randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_sunphotometer" || $all >= 1) && $found_vroom eq "yes" && $found_mystic3d eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.015; } 
+-  my $exinp  = "../examples/UVSPEC_MC_SUNPHOTOMETER.INP";
+-  my $exout  = "../examples/UVSPEC_MC_SUNPHOTOMETER.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_SUNPHOTOMETER.INP";
++  my $exout  = "../example files/UVSPEC_MC_SUNPHOTOMETER.OUT";
+   $failure+=mystic_run_spc_test($inp, $out, $exinp, $exout, "MYSTIC sunphotometer", $answers,$maxdiff,$limit);
+   `rm -f mc.flx.spc mc.bin mc.rad mc.rad.spc randomseed`;
+ }
+ 
+ if ( ($test eq "uvspec_mystic_sunshape" || $all >= 1) && $found_vroom eq "yes" && $found_mystic3d eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.03; } 
+-  my $exinp  = "../examples/UVSPEC_MC_SUNSHAPE.INP";
+-  my $exout  = "../examples/UVSPEC_MC_SUNSHAPE.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_SUNSHAPE.INP";
++  my $exout  = "../example files/UVSPEC_MC_SUNSHAPE.OUT";
+   $failure+=mystic_run_spc_test($inp, $out, $exinp, $exout, "MYSTIC sunshape", $answers,$maxdiff,$limit);
+   `rm -f mc.flx.spc mc.bin mc.rad mc.rad.spc randomseed`;
+ }
+@@ -521,16 +521,16 @@
+ # commented because too slow to test!
+ #if ( ($test eq "uvspec_mystic_blitz" || $all >= 1) && $found_vroom eq "yes")    {
+ #  if ( !$global ) { $limit = 0.00001; $maxdiff = 0.1; } 
+-#  my $exinp  = "../examples/UVSPEC_MC_BLITZ.INP";
+-#  my $exout  = "../examples/UVSPEC_MC_BLITZ.OUT";
++#  my $exinp  = "../example files/UVSPEC_MC_BLITZ.INP";
++#  my $exout  = "../example files/UVSPEC_MC_BLITZ.OUT";
+ #  $failure+=mystic_run_spc_test($inp, $out, $exinp, $exout, "MYSTIC blitz", $answers,$maxdiff,$limit);
+ #  `rm -f mc.flx.spc mc.bin mc.rad mc.rad.spc randomseed`;
+ #}
+ 
+ if ( ($test eq "uvspec_mystic_lidar" || $all >= 1) && $found_lidar eq "yes" && $found_wcmie eq "yes")    {
+   if ( !$global ) { $limit = 1.7e-14; $maxdiff = 0.01; } 
+-  my $exinp  = "../examples/UVSPEC_MC_LIDAR.INP";
+-  my $exout  = "../examples/UVSPEC_MC_LIDAR.OUT";
++  my $exinp  = "../example files/UVSPEC_MC_LIDAR.INP";
++  my $exout  = "../example files/UVSPEC_MC_LIDAR.OUT";
+   $failure+=lidar_run_test($inp, $out, $exinp, $exout, "MYSTIC lidar", $answers,$maxdiff,$limit);
+   `rm -f mc mc.flx.spc mc.flx.std.spc mc.jac_t mc.jac_t.std mc.loc mc.loc.std mc.loc_t mc.loc_t.std mc.rad.spc mc.rad.std.spc randomseed`;
+ }
+@@ -538,8 +538,8 @@
+ #aky250909 sos is not in production mode, hence no test included yet.
+ #aky250909 if ( ($test eq "uvspec_sos" || $all >= 1) && $found_sos eq "yes")       {
+ #aky250909  if ( !$global ) { $limit = 1000.0; $maxdiff = 0.001; } 
+-#aky250909  my $exinp  = "../examples/UVSPEC_SOS.INP";
+-#aky250909  my $exout  = "../examples/UVSPEC_SOS.OUT";
++#aky250909  my $exinp  = "../example files/UVSPEC_SOS.INP";
++#aky250909  my $exout  = "../example files/UVSPEC_SOS.OUT";
+ #aky250909  $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "sos aerosol", $answers,$maxdiff,$limit,$valgrind);
+ #aky250909}
+ 
+@@ -550,253 +550,253 @@
+ 
+ if ( ($test eq "uvspec_ipa_ck" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_IPA_CK.INP";
+-  my $exout  = "../examples/UVSPEC_IPA_CK.OUT";
++  my $exinp  = "../example files/UVSPEC_IPA_CK.INP";
++  my $exout  = "../example files/UVSPEC_IPA_CK.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "IPA and correlated_k", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_cloudcover_ck" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.018; } 
+-  my $exinp  = "../examples/UVSPEC_CLOUDCOVER.INP";
+-  my $exout  = "../examples/UVSPEC_CLOUDCOVER.OUT";
++  my $exinp  = "../example files/UVSPEC_CLOUDCOVER.INP";
++  my $exout  = "../example files/UVSPEC_CLOUDCOVER.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "cloudcover and correlated_k", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_cloudcover_ck_redistribution" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.018; } 
+-  my $exinp  = "../examples/UVSPEC_CLOUDCOVER_REDISTRIBUTION.INP";
+-  my $exout  = "../examples/UVSPEC_CLOUDCOVER.OUT";
++  my $exinp  = "../example files/UVSPEC_CLOUDCOVER_REDISTRIBUTION.INP";
++  my $exout  = "../example files/UVSPEC_CLOUDCOVER.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "cloudcover, correlated_k and redistribution", $answers,$maxdiff,$limit,$valgrind);
+ }
+ # commented the wc_ipa test out because it currently does not work
+ # if ( $test eq "uvspec_test_wc_ipa" || $all >= 1) {
+-#   my $exinp  = "../examples/UVSPEC_WC_IPA.INP";
+-#   my $exout  = "../examples/UVSPEC_WC_IPA.OUT";
++#   my $exinp  = "../example files/UVSPEC_WC_IPA.INP";
++#   my $exout  = "../example files/UVSPEC_WC_IPA.OUT";
+ #   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "wc_ipa", $answers,$maxdiff,$limit,$valgrind);
+ # }
+ if ( ($test eq "uvspec_wc_ipa_files_ck" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.00135; } 
+-  my $exinp  = "../examples/UVSPEC_WC_IPA_FILES.INP";
+-  my $exout  = "../examples/UVSPEC_WC_IPA_FILES.OUT";
++  my $exinp  = "../example files/UVSPEC_WC_IPA_FILES.INP";
++  my $exout  = "../example files/UVSPEC_WC_IPA_FILES.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "wc_ipa_files and correlated_k", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_wc_ipa_files_ck_redistribution" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.00135; } 
+-  my $exinp  = "../examples/UVSPEC_WC_IPA_FILES_REDISTRIBUTION.INP";
+-  my $exout  = "../examples/UVSPEC_WC_IPA_FILES.OUT";
++  my $exinp  = "../example files/UVSPEC_WC_IPA_FILES_REDISTRIBUTION.INP";
++  my $exout  = "../example files/UVSPEC_WC_IPA_FILES.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "wc_ipa_files, correlated_k and redistribution", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( $test eq "uvspec_wc_ic_ipa_files" || $all >= 1) {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_WC_IC_IPA_FILES.INP";
+-  my $exout  = "../examples/UVSPEC_WC_IC_IPA_FILES.OUT";
++  my $exinp  = "../example files/UVSPEC_WC_IC_IPA_FILES.INP";
++  my $exout  = "../example files/UVSPEC_WC_IC_IPA_FILES.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "wc_ipa_files, ic_ipa_files and redistribution", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_wc_ipa_heating" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.0017; } 
+-  my $exinp  = "../examples/UVSPEC_HEATING_IPA.INP";
+-  my $exout  = "../examples/UVSPEC_HEATING_IPA.OUT";
++  my $exinp  = "../example files/UVSPEC_HEATING_IPA.INP";
++  my $exout  = "../example files/UVSPEC_HEATING_IPA.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "heating rates and wc_ipa_files", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_wc_ipa_cooling" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.019; }
+-  my $exinp  = "../examples/UVSPEC_COOLING_IPA.INP";
+-  my $exout  = "../examples/UVSPEC_COOLING_IPA.OUT";
++  my $exinp  = "../example files/UVSPEC_COOLING_IPA.INP";
++  my $exout  = "../example files/UVSPEC_COOLING_IPA.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "cooling rates and wc_ipa_files", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_transmittance_wl_file" || $all >= 1) && $found_libnetcdf eq "yes") {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; }
+-  my $exinp  = "../examples/UVSPEC_TRANSMITTANCE_WL_FILE.INP";
+-  my $exout  = "../examples/UVSPEC_TRANSMITTANCE_WL_FILE.OUT";
++  my $exinp  = "../example files/UVSPEC_TRANSMITTANCE_WL_FILE.INP";
++  my $exout  = "../example files/UVSPEC_TRANSMITTANCE_WL_FILE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "transmittance_wl_file", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( $test eq "uvspec_raman" || $all >= 1) {
+   if ( !$global ) { $limit = 0.1; $maxdiff = 0.001; } # $limit is "large" since output is in numbers of photons
+-  my $exinp  = "../examples/UVSPEC_RAMAN.INP";        # Relatively $limit is thus small.
+-  my $exout  = "../examples/UVSPEC_RAMAN.OUT";
++  my $exinp  = "../example files/UVSPEC_RAMAN.INP";        # Relatively $limit is thus small.
++  my $exout  = "../example files/UVSPEC_RAMAN.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "raman", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( $test eq "uvspec_fluorescence" || $all >= 1) {
+   if ( !$global ) { $limit = 0.1; $maxdiff = 0.001; } # $limit is "large" since output is in numbers of photons
+-  my $exinp  = "../examples/UVSPEC_FLUORESCENCE.INP";        # Relatively $limit is thus small.
+-  my $exout  = "../examples/UVSPEC_FLUORESCENCE.OUT";
++  my $exinp  = "../example files/UVSPEC_FLUORESCENCE.INP";        # Relatively $limit is thus small.
++  my $exout  = "../example files/UVSPEC_FLUORESCENCE.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fluorescence", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_reptran_channel_thermal" || $all >= 1 ) && $found_reptran eq "yes") {
+   if ( !$global ) { $limit = 0.01; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_REPTRAN_CHANNEL_THERMAL.INP";
+-  my $exout  = "../examples/UVSPEC_REPTRAN_CHANNEL_THERMAL.OUT";
++  my $exinp  = "../example files/UVSPEC_REPTRAN_CHANNEL_THERMAL.INP";
++  my $exout  = "../example files/UVSPEC_REPTRAN_CHANNEL_THERMAL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "reptran_channel_thermal", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_reptran_thermal" || $all >= 1) && $found_reptran eq "yes") {
+   if ( !$global ) { $limit = 0.01; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/UVSPEC_REPTRAN_THERMAL.INP";
+-  my $exout  = "../examples/UVSPEC_REPTRAN_THERMAL.OUT";
++  my $exinp  = "../example files/UVSPEC_REPTRAN_THERMAL.INP";
++  my $exout  = "../example files/UVSPEC_REPTRAN_THERMAL.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "reptran_thermal", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_reptran_solar" || $all >= 1) && $found_reptran eq "yes") {
+   if ( !$global ) { $limit = 0.01; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/UVSPEC_REPTRAN_SOLAR.INP";
+-  my $exout  = "../examples/UVSPEC_REPTRAN_SOLAR.OUT";
++  my $exinp  = "../example files/UVSPEC_REPTRAN_SOLAR.INP";
++  my $exout  = "../example files/UVSPEC_REPTRAN_SOLAR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "reptran_solar", $answers,$maxdiff,$limit,$valgrind);
+ }
+ 
+ if ( ($test eq "uvspec_avhrr_solar_ch1_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )  {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH1_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH1_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH1_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH1_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 1, solar, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_solar_ch2_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )  {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH2_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH2_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH2_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH2_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 2, solar, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_solar_ch3_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )  {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH3_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_SOLAR_CH3_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH3_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_SOLAR_CH3_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 3, solar, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch3_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH3_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH3_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH3_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH3_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 3, thermal, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch4_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH4_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH4_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH4_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH4_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 4, thermal, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_avhrr_thermal_ch5_fdisort2" || $all >= 2) && ( $found_avhrr eq "yes" && $found_tests eq "yes" ) )     {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH5_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_AVHRR_THERMAL_CH5_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH5_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_AVHRR_THERMAL_CH5_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "AVHRR [Kratz, 1995], channel 5, thermal, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_test_brdf_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )            { 
+   if ( !$global ) { $limit = 0.0005; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_BRDF_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_BRDF_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_BRDF_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_BRDF_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 BRDF", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_ic_wc_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/tests/UVSPEC_IC_WC_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_IC_WC_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_IC_WC_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_IC_WC_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 water and ice clouds", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_ic_baum_fdisort2" || $all >= 2 ) && ( $found_baum eq "yes" &&  $found_libnetcdf eq "yes" && $found_tests eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_IC_BAUM_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_IC_BAUM_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_IC_BAUM_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_IC_BAUM_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 ice cloud, Baum et al. (2005)", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_overlap_random_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/tests/UVSPEC_OVERLAP_RAND_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_OVERLAP_RAND_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_OVERLAP_RAND_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_OVERLAP_RAND_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 cloud overlap random", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_overlap_maxrandom_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/tests/UVSPEC_OVERLAP_MAXRAND_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_OVERLAP_MAXRAND_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_OVERLAP_MAXRAND_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_OVERLAP_MAXRAND_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 cloud overlap maximum-random", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_overlap_max_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )           { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/tests/UVSPEC_OVERLAP_MAX_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_OVERLAP_MAX_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_OVERLAP_MAX_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_OVERLAP_MAX_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 cloud overlap maximum", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_himalaja_fdisort2" || $all >= 2 ) && ( $found_libnetcdf eq "yes" && $found_tests eq "yes" ) )        {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.007; } 
+-  my $exinp  = "../examples/tests/UVSPEC_HIMALAJA_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_HIMALAJA_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_HIMALAJA_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_HIMALAJA_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2, albedo and altitude map", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_profiles1_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.002; } 
+-  my $exinp  = "../examples/tests/UVSPEC_PROFILES1_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_PROFILES1_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_PROFILES1_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_PROFILES1_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 1, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_profiles2_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_PROFILES2_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_PROFILES2_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_PROFILES2_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_PROFILES2_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 2, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_profiles3_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_PROFILES3_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_PROFILES3_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_PROFILES3_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_PROFILES3_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 3, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_profiles4_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )         { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_PROFILES4_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_PROFILES4_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_PROFILES4_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_PROFILES4_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "profiles 4, fdisort2", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_radiances_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )       { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/tests/UVSPEC_RADIANCES_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_RADIANCES_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_RADIANCES_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_RADIANCES_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 radiances", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_scia_approx_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )  { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/tests/UVSPEC_SCIA_APPROX_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_SCIA_APPROX_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_SCIA_APPROX_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_SCIA_APPROX_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 SCIAMACHY HG approximation", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ 
+ if ( ( $test eq "uvspec_scia_fdisort2" || $all >= 2 ) && ( $found_wcmie eq "yes" &&  $found_libnetcdf eq "yes" && $found_tests eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.003; } 
+-  my $exinp  = "../examples/tests/UVSPEC_SCIA_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_SCIA_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_SCIA_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_SCIA_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 SCIAMACHY simulation", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_transmittance_wl_file_fdisort2" || $all >= 2 ) && ( $found_libnetcdf eq "yes" && $found_tests eq "yes" ) ) {
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; }
+-  my $exinp  = "../examples/tests/UVSPEC_TRANSMITTANCE_WL_FILE_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_TRANSMITTANCE_WL_FILE_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_TRANSMITTANCE_WL_FILE_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_TRANSMITTANCE_WL_FILE_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "transmittance_wl_file, fdisort2", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ( $test eq "uvspec_wc_mie_fdisort2" || $all >= 2 ) && ( $found_wcmie eq "yes" &&  $found_libnetcdf eq "yes" && $found_tests eq "yes" ) ) { 
+   if ( !$global ) { $limit = 0.001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_WC_MIE_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_WC_MIE_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_WC_MIE_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_WC_MIE_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 water cloud (Mie)", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ( $test eq "uvspec_wc_moments_fdisort2" || $all >= 2 ) && $found_tests eq "yes" )      { 
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.001; } 
+-  my $exinp  = "../examples/tests/UVSPEC_WC_MOMENTS_FDISORT2.INP";
+-  my $exout  = "../examples/tests/UVSPEC_WC_MOMENTS_FDISORT2.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_WC_MOMENTS_FDISORT2.INP";
++  my $exout  = "../example files/tests/UVSPEC_WC_MOMENTS_FDISORT2.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "fdisort2 wc Legendre moments", $answers,$maxdiff,$limit,$valgrind); 
+ }
+ if ( ($test eq "uvspec_sbdart_ftwostr" || $all >= 2) && $found_lowtran eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.022; } 
+-  my $exinp  = "../examples/tests/UVSPEC_LOWTRAN_SOLAR_FTWOSTR.INP";
+-  my $exout  = "../examples/tests/UVSPEC_LOWTRAN_SOLAR_FTWOSTR.OUT";
++  my $exinp  = "../example files/tests/UVSPEC_LOWTRAN_SOLAR_FTWOSTR.INP";
++  my $exout  = "../example files/tests/UVSPEC_LOWTRAN_SOLAR_FTWOSTR.OUT";
+   $failure+=uvspec_run_test($inp, $out, $exinp, $exout, "LOWTRAN absorption parameterization", $answers,$maxdiff,$limit,$valgrind);
+ }
+ if ( ($test eq "uvspec_sbdart_thermal_ftwostr" || $all >= 2) && $found_lowtran eq "yes")    {
+   if ( !$global ) { $limit = 0.00001; $maxdiff = 0.01; } 
+-  my $exinp  = "../examples/UVSPEC_LOWTRAN_THERMAL_FTWOSTR.INP";
+-  my $exout  = "../examples/UVSPEC_LOWTRAN_THERMAL_FTWOSTR.OUT";
++  my $exinp  = "../example files/UVSPEC_LOWTRAN_THERMAL_FTWOSTR.INP";
++  my $exout  = "../example files/UVSPEC_LOWTRAN_THERMAL_FTWOSTR.OUT";
+   $failure+=uvspec_test_sbdart_thermal($exinp, $exout,$answers,$maxdiff,$limit);
+ }
+ 
+@@ -831,20 +831,20 @@
+     my $test = "atmospheric reflectivity"; 
+     my $inp = "TMP.INP";
+     my $out = "TMP.OUT1";
+-    my $exinp  = "../examples/UVSPEC_REF1.INP";
++    my $exinp  = "../example files/UVSPEC_REF1.INP";
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     my $ret = system("$UVTools::uvspec < $inp > $out");
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+ 
+-    $exinp  = "../examples/UVSPEC_REF2.INP";
+-    system("cat  $exinp > $inp");
++    $exinp  = "../example files/UVSPEC_REF2.INP";
++    system("cat  \"$exinp\" > $inp");
+     $out = "TMP.OUT2";
+     $ret = system("$UVTools::uvspec < $inp > $out");
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+ 
+-    $exinp  = "../examples/UVSPEC_REF3.INP";
+-    system("cat  $exinp > $inp");
++    $exinp  = "../example files/UVSPEC_REF3.INP";
++    system("cat  \"$exinp\" > $inp");
+     $out = "TMP.OUT3";
+     $ret = system("$UVTools::uvspec < $inp > $out");
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+@@ -883,13 +883,13 @@
+     my $test = "redistribution"; 
+     my $inp  = "TMP.INP";
+     my $out1 = "TMP.OUT1";
+-    my $exinp  = "../examples/UVSPEC_REDISTRIBUTION.INP";
++    my $exinp  = "../example files/UVSPEC_REDISTRIBUTION.INP";
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     my $ret = system("$UVTools::uvspec < $inp > $out1");
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+ 
+-    $exinp  = "../examples/UVSPEC_REDISTRIBUTION.INP";
++    $exinp  = "../example files/UVSPEC_REDISTRIBUTION.INP";
+     open(FPI,$exinp);
+     open(FPT,">".$inp);
+     while (my $lsi = <FPI>) {
+@@ -928,11 +928,11 @@
+  
+     # run column A
+     if ( $test eq "uvspec_test_saturate_clouds" || $test eq "saturate clouds column A" )  {
+-      my $exinp  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_A.INP";
+-      my $exout  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_A.OUT";
++      my $exinp  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_A.INP";
++      my $exout  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_A.OUT";
+       my $test   = "saturate clouds column A";
+       printtest($test,$maxdiff,$limit);
+-      system("cat  $exinp > $inp");
++      system("cat  \"$exinp\" > $inp");
+       my $ret = system("$UVTools::uvspec < $inp > $out");
+       if ($ret != 0) {carp "uvspec failed"; return 1;} 
+       open (COLUMN_A, "$out") || die "couldn't open the file!";
+@@ -950,11 +950,11 @@
+ 
+     # run column B
+     if ( $test eq "uvspec_test_saturate_clouds" || $test eq "saturate clouds column B" )  {
+-      my $exinp  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_B.INP";
+-      my $exout  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_B.OUT";
++      my $exinp  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_B.INP";
++      my $exout  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_B.OUT";
+       my $test   = "saturate clouds column B";
+       printtest($test,$maxdiff,$limit);
+-      system("cat  $exinp > $inp");
++      system("cat  \"$exinp\" > $inp");
+       my $ret = system("$UVTools::uvspec < $inp > $out");
+       if ($ret != 0) {carp "uvspec failed"; return 1;}
+       open (COLUMN_B, "$out") || die "couldn't open the file!";
+@@ -972,11 +972,11 @@
+ 
+     # run column C
+     if ( $test eq "uvspec_test_saturate_clouds" || $test eq "saturate clouds column C" )  {
+-      my $exinp  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_C.INP";
+-      my $exout  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_C.OUT";
++      my $exinp  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_C.INP";
++      my $exout  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_COLUMN_C.OUT";
+       my $test   = "saturate clouds column C";
+       printtest($test,$maxdiff,$limit);
+-      system("cat  $exinp > $inp");
++      system("cat  \"$exinp\" > $inp");
+       my $ret = system("$UVTools::uvspec < $inp > $out");
+       if ($ret != 0) {carp "uvspec failed"; return 1;} 
+       my $nox = "";
+@@ -997,11 +997,11 @@
+ 
+     # run ipa calculation
+     if ( $test eq "uvspec_test_saturate_clouds" || $test eq "saturate clouds ipa" )  { 
+-      my $exinp  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_FILES.INP";
+-      my $exout  = "../examples/UVSPEC_SATURATE_CLOUDS_WC_IC_FILES.OUT";
++      my $exinp  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_FILES.INP";
++      my $exout  = "../example files/UVSPEC_SATURATE_CLOUDS_WC_IC_FILES.OUT";
+       my $test   = "saturate clouds ipa";
+       printtest($test,$maxdiff,$limit);
+-      system("cat  $exinp > $inp");
++      system("cat  \"$exinp\" > $inp");
+       my $ret = system("$UVTools::uvspec < $inp > $out");
+       if ($ret != 0) {carp "uvspec failed"; return 1;} 
+       my $ret = system("cp $out TMP_IPA_ALL.OUT");
+@@ -1029,9 +1029,9 @@
+     printtest($test,$maxdiff,$limit);
+     my $inp = "";
+     my $out = "TMP.OUT";
+-    my $exout  = "../examples/ANGRES.OUT";
+-    my $angfile = "../examples/ANGRES_1_ANG.DAT";
+-    my $raddisfile = "../examples/ANGRES_RADDIS_1.DAT";
++    my $exout  = "../example files/ANGRES.OUT";
++    my $angfile = "../example files/ANGRES_1_ANG.DAT";
++    my $raddisfile = "../example files/ANGRES_RADDIS_1.DAT";
+     my $cmd = "../bin/angres $angfile $raddisfile -a -t 0 -r 0 -s 32 -z 0";
+     open(FP,">".$out) || carp "Could not open file $out";
+     printf FP "# Angular response function made by executing:\n";
+@@ -1053,7 +1053,7 @@
+     printtest($test,$maxdiff,$limit);
+     my $inp = "";
+     my $out = "TMP.OUT";
+-    my $exout  = "../examples/ANGRES_1_ANG.DAT";
++    my $exout  = "../example files/ANGRES_1_ANG.DAT";
+     my $cmd = "../bin/make_angresfunc -t 1 -r 1";
+     open(FP,">".$out) || carp "Could not open file $out";
+     printf FP "# Angular response function made by executing:\n";
+@@ -1073,7 +1073,7 @@
+     printtest($test,$maxdiff,$limit);
+     my $inp = "";
+     my $out = "TMP.OUT";
+-    my $exout  = "../examples/TRI_SLIT.DAT";
++    my $exout  = "../example files/TRI_SLIT.DAT";
+     my $cmd = "../bin/make_slitfunction -f 0.75 -r 0.01 -t 1";
+     open(FP,">".$out) || carp "Could not open file $out";
+     printf FP "# Slit function made by executing:\n";
+@@ -1094,11 +1094,11 @@
+   my $test = "LOWTRAN absorption parameterization, thermal"; 
+   my $inp = "TMP.INP";
+   my $out = "TMP.OUT";
+-  #    my $exinp  = "../examples/UVSPEC_LOWTRAN_THERMAL.INP";
+-  #    my $exout  = "../examples/UVSPEC_LOWTRAN_THERMAL.OUT";
++  #    my $exinp  = "../example files/UVSPEC_LOWTRAN_THERMAL.INP";
++  #    my $exout  = "../example files/UVSPEC_LOWTRAN_THERMAL.OUT";
+ 
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     my $ret = system("$UVTools::uvspec < $inp > TMPA.OUT");
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+ 
+@@ -1126,7 +1126,7 @@
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit, $valgrind) = @_;
+     my $ret = -1;
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     if ($valgrind == 0) { $ret = system("$UVTools::uvspec < $inp > $out"); }
+     else { $ret = system("valgrind --leak-check=no $UVTools::uvspec < $inp > $out"); }
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+@@ -1138,7 +1138,7 @@
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit) = @_;
+     my $ret = -1;
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     if ($valgrind == 0) { $ret = system("$UVTools::uvspec < $inp > dummy"); }
+     else { $ret = system("valgrind --leak-check=no $UVTools::uvspec < $inp > dummy"); } 
+     system("gawk '{print \$3,\$4,\$8}' mc.rad > $out; rm dummy");
+@@ -1151,7 +1151,7 @@
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit) = @_;
+     my $ret = -1;
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     if ($valgrind == 0) { $ret = system("$UVTools::uvspec < $inp > dummy"); }
+     else { $ret = system("valgrind --leak-check=no $UVTools::uvspec < $inp > dummy"); } 
+     system("gawk '{print \$2,\$3,\$5}' mc.rad.spc > $out; rm dummy");
+@@ -1165,7 +1165,7 @@
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit) = @_;
+     my $ret = -1;
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     if ($valgrind == 0) { $ret = system("$UVTools::uvspec < $inp > dummy"); }
+     else { $ret = system("valgrind --leak-check=no $UVTools::uvspec < $inp > dummy"); } 
+     system("gawk '{print \$1,\$4,\$5}' mc.is.spc > $out; rm dummy");
+@@ -1178,7 +1178,7 @@
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit) = @_;
+     my $ret = -1;
+     printtest($test,$maxdiff,$limit);
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     if ($valgrind == 0) { $ret = system("$UVTools::uvspec < $inp > dummy"); }
+     else { $ret = system("valgrind --leak-check=no $UVTools::uvspec < $inp > dummy"); } 
+     if ($ret != 0) {carp "uvspec failed"; return 1;} 
+@@ -1196,8 +1196,8 @@
+     printtest($test,$maxdiff,$limit);
+     my $inp = "TMP.INP";
+     my $out = "TMP.OUT";
+-    my $exinp  = "../examples/J_UVSPEC.INP";
+-    my $exout  = "../examples/J.OUT";
++    my $exinp  = "../example files/J_UVSPEC.INP";
++    my $exout  = "../example files/J.OUT";
+     $uvspec_failure+=calc_j_run_test($inp,$out,$exinp,$exout,$test,$answers,$maxdiff,$limit);
+     `rm -f TMP_J_UVSPEC.OUT randomseed`;
+     $uvspec_failure;
+@@ -1206,7 +1206,7 @@
+ sub calc_j_run_test {
+     my ($inp, $out, $exinp, $exout, $test, $answers, $maxdiff, $limit) = @_;
+     my $diffout= "TMP_DIFF.OUT";
+-    system("cat  $exinp > $inp");
++    system("cat  \"$exinp\" > $inp");
+     my $uvspec_out = "./TMP_J_UVSPEC.OUT";
+     my $ret =  system("$UVTools::uvspec < $inp > $uvspec_out");
+     if ($ret != 0) {carp "uvspec failed";return 1;} 
+@@ -1270,9 +1270,9 @@
+     my $inp = "";
+     my $out = "TMP.OUT";
+     chdir("../src") || carp "Could not change directory to ../src";
+-    $ret = system("perl ../src/airmass.pl --amfX=bro --wvl=352 --sza_file=../examples/AMF_sza_am_1a.dat > $out");
++    $ret = system("perl ../src/airmass.pl --amfX=bro --wvl=352 --sza_file=\"../example files/AMF_sza_am_1a.dat\" > $out");
+    if ($ret != 0) {carp "airmass.pl failed"; return  1;} 
+-    my $exout  = "../examples/AMF_BRO.OUT";
++    my $exout  = "../example files/AMF_BRO.OUT";
+     my $nox = "--nox"; 
+     my $ndiff = report_differences($answers,$out,$exout,$inp,$test,$nox,$maxdiff,$limit);
+     `rm -f $out tmp_*`;
+@@ -1338,15 +1338,15 @@
+     
+     # Add lines for this test:
+     
+-    #  $ls[$#ls+1] = "dens_file O3     ../examples/AMF_o3_pro_1a_uvspec.dat\n";
+-    #  $ls[$#ls+1] = "dens_file NO2    ../examples/AMF_no2_pro_1a_uvspec.dat\n";
+-    $ls[$#ls+1] = "dens_file HCHO   ../examples/AMF_hcho_pro_uvspec.dat\n";
+-    $ls[$#ls+1] = "crs_file O3      ../examples/AMF_o3_025.xs\n";
+-    $ls[$#ls+1] = "crs_file NO2     ../examples/AMF_no2_025.xs\n";
+-    $ls[$#ls+1] = "crs_file HCHO    ../examples/AMF_hcho.xs\n";
++    #  $ls[$#ls+1] = "dens_file O3     \"../example files/AMF_o3_pro_1a_uvspec.dat\"\n";
++    #  $ls[$#ls+1] = "dens_file NO2    \"../example files/AMF_no2_pro_1a_uvspec.dat\"\n";
++    $ls[$#ls+1] = "dens_file HCHO   \"../example files/AMF_hcho_pro_uvspec.dat\"\n";
++    $ls[$#ls+1] = "crs_file O3      \"../example files/AMF_o3_025.xs\"\n";
++    $ls[$#ls+1] = "crs_file NO2     \"../example files/AMF_no2_025.xs\"\n";
++    $ls[$#ls+1] = "crs_file HCHO    \"../example files/AMF_hcho.xs\"\n";
+     $ls[$#ls+1] = "dens_column HCHO 2.0e+17 CM\_2\n";
+     
+-    $ls[$#ls+1] = "atmosphere_file  ../examples/AMF_atmmod.dat\n";
++    $ls[$#ls+1] = "atmosphere_file  \"../example files/AMF_atmmod.dat\"\n";
+     $ls[$#ls+1] = "altitude 1.14\n";
+     
+     open(FP,">$tmpamfpl") || carp "Could not open file $tmpamfpl";
+@@ -1358,7 +1358,7 @@
+     chdir("../src") || carp "Could not change directory to ../src";
+     $ret = system("perl ../src/$tmpamfpl --amfX=hcho --wvl=356 --sza0=65 --sza1=95 --dsza=1 > $out");
+     if ($ret != 0) {carp "airmass.pl failed"; return  1;} 
+-    my $exout  = "../examples/AMF_HCHO.OUT";
++    my $exout  = "../example files/AMF_HCHO.OUT";
+     my $nox = "--nox"; 
+     
+     return report_differences($answers,$out,$exout,$inp,$test,$nox,$maxdiff,$limit);
+@@ -1384,7 +1384,7 @@
+     if ( $answers == 1 ) {
+ 	printf stderr "Replace $exout? [y/n]\n"; my $ans = <STDIN>;
+ 	if ( $ans eq "y\n" ) {
+-	    system("mv $out $exout");
++	    system("mv $out \"$exout\"");
+ 	    if ( -e $inp ) {system("rm -f $inp");}
+ 	    printf stderr " $exout replaced\n";
+ 	}
+@@ -1395,7 +1395,7 @@
+     else {
+ 	if (!-e $exout ) {croak "Example output file $exout not found";}
+ 	if (!-e $out ) {croak "Test  output file $out not found";}
+-	my $ret = system("perl ../src/ndiff $nox --quiet --limit $limit --maxdiff $maxdiff $exout $out > $diffout");
++	my $ret = system("perl ../src/ndiff $nox --quiet --limit $limit --maxdiff $maxdiff \"$exout\" $out > $diffout");
+ 	if ($ret != 0) { carp "ndiff failed"; return 1; }
+ 	open(FILE,$diffout);
+ 	my $line = <FILE>;
+@@ -1417,7 +1417,7 @@
+ 		  $ndiffs, $largest*100, $absval0, $absval1;
+ 	}
+         if ($ndiffs==0) {
+-	  system("rm -f $diffout $inp $out");
++	  system("rm -f \"$diffout\" \"$inp\" \"$out\"");
+         }
+ 	return $ndiffs;
+     }

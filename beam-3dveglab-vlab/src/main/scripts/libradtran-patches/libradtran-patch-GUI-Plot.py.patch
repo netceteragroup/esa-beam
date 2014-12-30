@@ -1,0 +1,11 @@
+--- ./GUI/Plot.py.orig	2014-09-01 14:47:46.615442068 +0200
++++ ./GUI/Plot.py	2014-12-29 16:45:30.780443053 +0100
+@@ -296,7 +296,7 @@
+         self.frame.MainSizer.Insert(1, self._choice, 0, wx.EXPAND|wx.ALL, 10)
+     def getData(self, path):
+         try:
+-            f = open(path, "r")
++            f = open(path, "rb")
+             X, Y, dx, dy = [int(i) for i in f.readline().split()]
+             a = np.loadtxt(f)
+             f.close()

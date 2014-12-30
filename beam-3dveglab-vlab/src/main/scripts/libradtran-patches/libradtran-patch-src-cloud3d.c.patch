@@ -1,0 +1,29 @@
+--- ./src/cloud3d.c.orig	2014-09-01 14:47:47.807494016 +0200
++++ ./src/cloud3d.c	2014-12-29 16:45:30.789443214 +0100
+@@ -282,7 +282,7 @@
+     fprintf (stderr, " ... reading sampling information\n");
+ 
+   /* test if a sample2D.dat is in the current directory */
+-  if ((ftmp=fopen("./sample2D.dat","r"))!=NULL) {
++  if ((ftmp=fopen("./sample2D.dat","rb"))!=NULL) {
+     
+     fprintf (stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+     fprintf (stderr, "!!! ATTENTION: Found an old sample file sample2D.dat. Before October 25, 2008 !!!\n");
+@@ -766,7 +766,7 @@
+     }
+ 
+     /* check if lidar file exists and can be opened for reading */
+-    ftmp = fopen (lidarfilename, "r");
++    ftmp = fopen (lidarfilename, "rb");
+     if (ftmp==NULL) {
+       fprintf (stderr, "Error! Either define the lidar in the input file or provide lidar.dat\n");
+       return -1;
+@@ -1519,7 +1519,7 @@
+       output->mc.sample.surface_area_counter[is] = calloc (output->mc.sample.Ny, sizeof(int));
+     }
+     
+-    f_area=fopen("area2D.dat", "w");
++    f_area=fopen("area2D.dat", "wb");
+     fprintf (stderr, " ... calculating surface area of sample pixels for surface-parallel irradiance  ");
+     
+     /* calculate surface area of each sample pixel */

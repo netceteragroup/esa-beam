@@ -1,0 +1,20 @@
+--- ./src/mie_lex.c.orig	2014-09-01 14:49:14.415268046 +0200
++++ ./src/mie_lex.c	2014-12-29 16:45:59.198954161 +0100
+@@ -2165,7 +2165,7 @@
+ 	YY_BUFFER_STATE b;
+ 	char *buf;
+ 	yy_size_t n;
+-	int i;
++	yy_size_t i;
+     
+ 	/* Get memory for full buffer, including space for trailing EOB's. */
+ 	n = _yybytes_len + 2;
+@@ -2846,7 +2846,7 @@
+ 
+   /* Read the input file */
+   if (strlen(infilename)>0)
+-     yyin = fopen (infilename, "r");
++     yyin = fopen (infilename, "rb");
+   yylex();
+ 
+   if (strlen(infilename)>0)

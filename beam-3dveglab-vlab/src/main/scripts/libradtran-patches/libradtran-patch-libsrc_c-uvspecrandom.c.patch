@@ -1,0 +1,13 @@
+--- ./libsrc_c/uvspecrandom.c.orig	2014-09-01 14:47:53.611746951 +0200
++++ ./libsrc_c/uvspecrandom.c	2014-12-29 16:45:30.785443143 +0100
+@@ -37,6 +37,10 @@
+   gsl_rng *uvspecrng; 
+ #endif
+ 
++#ifdef WIN32
++#define random rand
++#define srandom srand
++#endif
+ 
+ /*****************************************************************/
+ /* uvspec random number generator; either the highly-recommended */

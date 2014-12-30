@@ -1,0 +1,29 @@
+--- ./libsrc_c/yang56.c.orig	2014-09-01 14:47:53.599746428 +0200
++++ ./libsrc_c/yang56.c	2014-12-29 16:45:30.785443143 +0100
+@@ -167,7 +167,7 @@
+     /*extinction coefficient*/
+     sprintf(filename,"%sext56.table",path);
+     
+-    if ((fp=fopen(filename,"r"))==NULL) {
++    if ((fp=fopen(filename,"rb"))==NULL) {
+       fprintf(stderr,"Error, %s not found\n", filename);
+       return EXT56NF;
+     }
+@@ -206,7 +206,7 @@
+     /*single scattering albedo*/
+     sprintf(filename,"%sssa56.table",path);
+     
+-    if ((fp=fopen(filename,"r"))==NULL) {
++    if ((fp=fopen(filename,"rb"))==NULL) {
+       fprintf(stderr,"Error, %s not found\n", filename);
+       return SSA56NF;
+     }
+@@ -223,7 +223,7 @@
+     /*asymetry parameter*/
+     sprintf(filename,"%sg56.table",path);
+     
+-    if ((fp=fopen(filename,"r"))==0) {
++    if ((fp=fopen(filename,"rb"))==0) {
+       fprintf(stderr,"Error, %s not found\n", filename);
+       return G56NF;
+     }

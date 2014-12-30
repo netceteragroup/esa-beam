@@ -1,0 +1,38 @@
+--- ./src/angres.c.orig	2014-09-01 14:47:47.791493319 +0200
++++ ./src/angres.c	2014-12-29 16:45:30.788443197 +0100
+@@ -323,7 +323,7 @@
+       angres[i][j] = aangres[i];
+ 
+   if (pgm) {
+-    if ((pgmfile = fopen("angres_orginal.pgm", "w"))==NULL) {
++    if ((pgmfile = fopen("angres_orginal.pgm", "wb"))==NULL) {
+       fprintf (stderr, "Error opening angres_orginal.pgm for writing\n");
+       return NULL;
+     }
+@@ -461,7 +461,7 @@
+ 
+   if (pgm) {
+ 
+-    if ((pgmfile = fopen("angres_tilted.pgm", "w"))==NULL) {
++    if ((pgmfile = fopen("angres_tilted.pgm", "wb"))==NULL) {
+       fprintf (stderr, "Error opening angres_tilted.pgm for writing\n");
+       return NULL;
+     }
+@@ -783,7 +783,7 @@
+ 
+   if (pgm) {
+ 
+-    if ((pgmfile = fopen("prod.pgm","w"))==NULL) {
++    if ((pgmfile = fopen("prod.pgm","wb"))==NULL) {
+       fprintf (stderr, "Error opening prod.pgm for writing\n");
+       return -1;
+     }
+@@ -805,7 +805,7 @@
+ 
+     fclose(pgmfile); 
+     
+-    if ((pgmfile = fopen("raddis.pgm","w"))==NULL) {
++    if ((pgmfile = fopen("raddis.pgm","wb"))==NULL) {
+       fprintf (stderr, "Error opening raddis.pgm for writing\n");
+       return -1;
+     }

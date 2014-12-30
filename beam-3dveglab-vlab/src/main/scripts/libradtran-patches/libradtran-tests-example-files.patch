@@ -1,0 +1,1446 @@
+--- ./example files/J_UVSPEC.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/J_UVSPEC.INP	2014-12-29 16:45:30.765442783 +0100
+@@ -1,10 +1,10 @@
+ output_format flexstor
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ sza 24.7
+ pressure 828.4
+-albedo_file ../examples/J_UVSPEC.ALB
+-data_files_path ../data/
+-atmosphere_file ../examples/J_ATM.dat
++albedo_file "../example files/J_UVSPEC.ALB"
++data_files_path "../data files/"
++atmosphere_file "../example files/J_ATM.dat"
+ altitude 1.74
+ crs_model o3 Bass_and_Paur
+ mol_modify O3 306.000000 DU
+--- ./example files/POLRADTRAN.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/POLRADTRAN.INP	2014-12-29 16:45:30.765442783 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file.
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ albedo 0.2               # Surface albedo
+ sza 32.0                 # Solar zenith angle
+ 
+--- ./example files/UVSPEC_AEROSOL.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_AEROSOL.INP	2014-12-29 16:45:30.765442783 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_CLEAR.INP
++include "../example files/UVSPEC_CLEAR.INP"
+ 
+ aerosol_vulcan 1               # Aerosol type above 2km
+ aerosol_haze 6                 # Aerosol type below 2km
+@@ -10,5 +10,5 @@
+ aerosol_modify ssa scale 0.85  # Scale the single scattering albedo 
+                                # for all wavelengths
+ aerosol_modify gg set 0.70     # Set the asymmetry factor
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+                                # File with aerosol optical depth profile
+--- ./example files/UVSPEC_AEROSOL_MOMENTS.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_AEROSOL_MOMENTS.INP	2014-12-29 16:45:30.765442783 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_CLEAR.INP
++include "../example files/UVSPEC_CLEAR.INP"
+ 
+ aerosol_vulcan 1          # Aerosol type above 2km
+ aerosol_haze 6            # Aerosol type below 2km
+@@ -10,9 +10,9 @@
+ aerosol_modify ssa scale 0.85    # Scale the single scattering albedo 
+                           # for all wavelengths
+ aerosol_modify gg set 0.70       # Set the asymmetry factor
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+                           # File with aerosol optical depth profile
+-aerosol_file moments ../examples/AERO_MOMENTS.DAT
++aerosol_file moments "../example files/AERO_MOMENTS.DAT"
+                           # File with the moments of the aerosol #
+                           # phase function
+ 
+--- ./example files/UVSPEC_AEROSOL_OPAC.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_AEROSOL_OPAC.INP	2014-12-29 16:45:30.766442801 +0100
+@@ -5,9 +5,9 @@
+ #
+ 	
+                          # Location of atmospheric profile file.
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ albedo 0.2               # Surface albedo
+ sza 32.0                 # Solar zenith angle
+ 
+--- ./example files/UVSPEC_AEROSOL_OPAC_POL.INP.orig	2014-09-01 14:47:56.463871243 +0200
++++ ./example files/UVSPEC_AEROSOL_OPAC_POL.INP	2014-12-29 16:45:30.766442801 +0100
+@@ -5,9 +5,9 @@
+ #
+ 
+                          # Location of atmospheric profile file.
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ albedo 0.2               # Surface albedo
+ sza 32.0                 # Solar zenith angle
+ 
+--- ./example files/UVSPEC_AEROSOL_REFRAC.INP.orig	2014-09-01 14:47:56.463871243 +0200
++++ ./example files/UVSPEC_AEROSOL_REFRAC.INP	2014-12-29 16:45:30.766442801 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_MONO.INP
++include "../example files/UVSPEC_MONO.INP"
+ 
+ aerosol_vulcan 1          # Aerosol type above 2km
+ aerosol_haze 6            # Aerosol type below 2km
+@@ -10,9 +10,9 @@
+ aerosol_modify ssa scale 0.85    # Scale the single scattering albedo 
+                           # for all wavelengths
+ aerosol_modify gg set 0.70       # Set the asymmetry factor
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+                           # File with aerosol optical depth profile
+-aerosol_sizedist_file ../examples/AERO_SIZEDIST.DAT
++aerosol_sizedist_file "../example files/AERO_SIZEDIST.DAT"
+                           # File with aerosol size distribution
+ aerosol_refrac_index 1.45 0.01
+                           # Aerosol refractive index
+--- ./example files/UVSPEC_AVHRR_SOLAR_CH1.INP.orig	2014-09-01 14:47:54.611790534 +0200
++++ ./example files/UVSPEC_AVHRR_SOLAR_CH1.INP	2014-12-29 16:45:30.766442801 +0100
+@@ -8,7 +8,7 @@
+ 
+  
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -28,7 +28,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch1
++filter_function_file "../data files/correlated_k/kratz/filter.ch1"
+ 
+ 
+ output_process sum           # output sum of all wavelength bands
+--- ./example files/UVSPEC_AVHRR_SOLAR_CH2.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_AVHRR_SOLAR_CH2.INP	2014-12-29 16:45:30.766442801 +0100
+@@ -8,7 +8,7 @@
+ 
+  
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -28,7 +28,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch2
++filter_function_file "../data files/correlated_k/kratz/filter.ch2"
+ 
+ 
+ output_process sum           # output sum of all wavelength bands
+--- ./example files/UVSPEC_AVHRR_SOLAR_CH3.INP.orig	2014-09-01 14:47:55.323821563 +0200
++++ ./example files/UVSPEC_AVHRR_SOLAR_CH3.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -8,7 +8,7 @@
+ 
+  
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -28,7 +28,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch3
++filter_function_file "../data files/correlated_k/kratz/filter.ch3"
+ 
+ 
+ output_process sum           # output sum of all wavelength bands
+--- ./example files/UVSPEC_AVHRR_THERMAL_CH3.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_AVHRR_THERMAL_CH3.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -7,9 +7,9 @@
+ # solar irradiance file if 'correlated_k AVHRR_KRATZ' is specified.
+ 
+  
+-data_files_path ../data/ # Location of internal uvspec data files
++data_files_path "../data files/" # Location of internal uvspec data files
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -29,7 +29,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch3
++filter_function_file "../data files/correlated_k/kratz/filter.ch3"
+ 
+ output_process sum               # output sum of all wavelength bands
+ output_quantity brightness               # output brightness temperatures
+--- ./example files/UVSPEC_AVHRR_THERMAL_CH4.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_AVHRR_THERMAL_CH4.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -8,7 +8,7 @@
+ 
+  
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -28,7 +28,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch4
++filter_function_file "../data files/correlated_k/kratz/filter.ch4"
+ 
+ output_process sum               # output sum of all wavelength bands
+ output_quantity brightness               # output brightness temperatures
+--- ./example files/UVSPEC_AVHRR_THERMAL_CH5.INP.orig	2014-09-01 14:47:54.711794890 +0200
++++ ./example files/UVSPEC_AVHRR_THERMAL_CH5.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -8,7 +8,7 @@
+ 
+  
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/MLS70.UVSPEC
++atmosphere_file "../example files/MLS70.UVSPEC"
+ 
+ sza 53.1301
+ 
+@@ -28,7 +28,7 @@
+ 
+ zout 0.0 70.0            # surface and top of the atmosphere
+ 
+-filter_function_file ../data/correlated_k/kratz/filter.ch5
++filter_function_file "../data files/correlated_k/kratz/filter.ch5"
+ 
+ output_process sum               # output sum of all wavelength bands
+ output_quantity brightness               # output brightness temperatures
+--- ./example files/UVSPEC_BRDF.INP.orig	2014-09-01 14:47:54.603790186 +0200
++++ ./example files/UVSPEC_BRDF.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -3,9 +3,9 @@
+ # atmosphere to demonstrate the angular distribution of the 
+ # reflection.
+ 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ sza 30.0                 # Solar zenith angle, from file
+ 
+--- ./example files/UVSPEC_CLEAR.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_CLEAR.INP	2014-12-29 16:45:30.767442819 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU    # Set ozone column
+ day_of_year 170          # Correct for Earth-Sun distance
+ albedo 0.2               # Surface albedo
+@@ -9,7 +9,7 @@
+ rte_solver disort        # Radiative transfer equation solver
+ number_of_streams  6     # Number of streams
+ wavelength 299.0 341.0   # Wavelength range [nm]
+-slit_function_file ../examples/TRI_SLIT.DAT
++slit_function_file "../example files/TRI_SLIT.DAT"
+                          # Location of slit function
+ spline 300 340 1         # Interpolate from first to last in step
+ 
+--- ./example files/UVSPEC_CLOUDCOVER.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_CLOUDCOVER.INP	2014-12-29 16:45:30.768442837 +0100
+@@ -1,5 +1,5 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -12,7 +12,7 @@
+ mol_abs_param Kato          # Integrated solar radiation using Kato et al.
+ wavelength_index 1 32       # Use all 12 solar bands
+ 
+-wc_file 1D ../examples/WC50_A.DAT  # Location of water cloud file
++wc_file 1D "../example files/WC50_A.DAT"  # Location of water cloud file
+ cloudcover wc 0.4           # Fraction of horizontal cloud covered by clouds;
+                             # use independent pixel approximation
+ interpret_as_level wc
+--- ./example files/UVSPEC_CLOUDCOVER_REDISTRIBUTION.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_CLOUDCOVER_REDISTRIBUTION.INP	2014-12-29 16:45:30.768442837 +0100
+@@ -1,4 +1,4 @@
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -11,7 +11,7 @@
+ mol_abs_param Kato          # Integrated solar radiation using Kato et al.
+ wavelength_index 1 32       # Use all 12 solar bands
+ 
+-wc_file 1D ../examples/WC50_A_R.DAT  # Location of water cloud file
++wc_file 1D "../example files/WC50_A_R.DAT"  # Location of water cloud file
+ cloudcover wc 0.4           # Fraction of horizontal cloud covered by clouds;
+                             # use independent pixel approximation
+ interpret_as_level wc
+--- ./example files/UVSPEC_COOLING_IPA.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_COOLING_IPA.INP	2014-12-29 16:45:30.768442837 +0100
+@@ -1,5 +1,5 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -12,7 +12,7 @@
+ 
+ source thermal
+                            
+-wc_file ipa_files  ../examples/WC_IPA_FILES  # use independent pixel approximation
++wc_file ipa_files  "../example files/WC_IPA_FILES"  # use independent pixel approximation
+ 
+ zout 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+ 
+--- ./example files/UVSPEC_DISORT.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_DISORT.INP	2014-12-29 16:45:30.768442837 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_CLEAR.INP
++include "../example files/UVSPEC_CLEAR.INP"
+ 
+ rte_solver disort        # This overrides what is specified in above file
+ disort_intcor moments       # use Legendre coefficients for intensity corrections
+@@ -8,11 +8,11 @@
+ aerosol_default
+ 
+ # define aerosol optical properties of each layer
+-aerosol_file explicit  ../examples/AERO_FILES 
++aerosol_file explicit  "../example files/AERO_FILES"
+ 
+ # over-write the profile of the aerosol extinction coefficient;
+ # the aerosol_tau_file is wavelength-independent
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+ 
+ # create a wavelength dependence by over-writing the total 
+ # aerosol optical thickness with a wavelength-dependent value,
+--- ./example files/UVSPEC_FDISORT2.INP.orig	2014-09-01 14:47:56.463871243 +0200
++++ ./example files/UVSPEC_FDISORT2.INP	2014-12-29 16:45:30.768442837 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_CLEAR.INP
++include "../example files/UVSPEC_CLEAR.INP"
+ 
+ rte_solver fdisort2      # This overrides what is specified in above file
+ disort_intcor moments       # use Legendre coefficients for intensity corrections
+@@ -8,11 +8,11 @@
+ aerosol_default
+ 
+ # define aerosol optical properties of each layer
+-aerosol_file explicit  ../examples/AERO_FILES 
++aerosol_file explicit  "../example files/AERO_FILES"
+ 
+ # over-write the profile of the aerosol extinction coefficient;
+ # the aerosol_tau_file is wavelength-independent
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+ 
+ # create a wavelength dependence by over-writing the total 
+ # aerosol optical thickness with a wavelength-dependent value,
+--- ./example files/UVSPEC_FILTER_SOLAR.INP.orig	2014-09-01 14:47:54.611790534 +0200
++++ ./example files/UVSPEC_FILTER_SOLAR.INP	2014-12-29 17:17:00.303426262 +0100
+@@ -1,13 +1,13 @@
+-data_files_path ../data/ 
++data_files_path "../data files/"
+ 
+ rte_solver disort          # Radiative transfer equation solver
+ 
+-source solar ../data/solar_flux/kurudz_0.1nm.dat per_nm 
++source solar "../data files/solar_flux/kurudz_0.1nm.dat" per_nm
+ 
+ albedo 0                   # set albedo to 0
+ 
+ 	# the file containing the filter function
+-filter_function_file ../data/filter/msg/msg1_seviri_ch006  #normalize # normalize integral of filter function over wavelength 
++filter_function_file "../data files/filter/msg/msg1_seviri_ch006"  #normalize # normalize integral of filter function over wavelength
+ wavelength 485 785         # covers the wavelength range of the filter function
+ 
+ output_process integrate           # integrate over wavelength, considering the filter function
+--- ./example files/UVSPEC_FILTER_THERMAL.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_FILTER_THERMAL.INP	2014-12-29 17:17:08.055565682 +0100
+@@ -1,4 +1,4 @@
+-data_files_path ../data/ 
++data_files_path "../data/"
+ 
+ rte_solver disort          # Radiative transfer equation solver
+ 
+@@ -8,7 +8,7 @@
+ source thermal             # thermal
+ 
+ 	# the file containing the filter function
+-filter_function_file ../data/filter/msg/msg1_seviri_ch039 #normalize # normalize integral of filter function over wavelength
++filter_function_file "../data files/filter/msg/msg1_seviri_ch039" #normalize # normalize integral of filter function over wavelength
+ 
+ wavelength 3040 4800       # covers the wavelength range of the filter function 
+ 
+--- ./example files/UVSPEC_FLUORESCENCE.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/UVSPEC_FLUORESCENCE.INP	2014-12-29 16:45:30.769442855 +0100
+@@ -1,22 +1,22 @@
+ atmosphere_file US-standard
+-data_files_path ../data/
++data_files_path "../data/"
+ 
+ # Note that solar_file and fluorescence_file must have the same units.
+-source solar ../examples/UVSPEC_FLUORESCENCE_kurucz_640.0_810.0.dat_vac_0.01_0.01
++source solar "../example files/UVSPEC_FLUORESCENCE_kurucz_640.0_810.0.dat_vac_0.01_0.01"
+ 
+ # Fluorescence requires that internally the transmittance is calculated
+ # at the same grid as the solar_file. The first wavelength in the 
+ # transmittance_wl_file must be the same as that specified by wavelength.
+-wavelength_grid_file  ../examples/UVSPEC_FLUORESCENCE_kurucz_677_810_trans_0.01
++wavelength_grid_file  "../example files/UVSPEC_FLUORESCENCE_kurucz_677_810_trans_0.01"
+ 
+ # Fluorescence and top of canopy reflectance spectra kindly provided by 
+ # Dr. L. Alonso and Dr. Verrelst, University of Valencia. 
+-fluorescence_file ../examples/UVSPEC_FLUORESCENCE.FLU
+-albedo_file ../examples/UVSPEC_FLUORESCENCE.TOC
++fluorescence_file "../example files/UVSPEC_FLUORESCENCE.FLU"
++albedo_file "../example files/UVSPEC_FLUORESCENCE.TOC"
+ 
+ # Lots of atmospheric lines in this part of the spectrum. Use gas absorption
+ # calculated by arts.
+-mol_tau_file abs ../examples/UVSPEC_FLUORESCENCE_arts-640-810.nc
++mol_tau_file abs "../example files/UVSPEC_FLUORESCENCE_arts-640-810.nc"
+ wavelength 677 697 #  O2-B band
+ sza 30.0
+ 
+--- ./example files/UVSPEC_FTWOSTR.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/UVSPEC_FTWOSTR.INP	2014-12-29 16:45:30.769442855 +0100
+@@ -1,6 +1,6 @@
+-include ../examples/UVSPEC_AEROSOL.INP  # Include's may be nested. 
+-include ../examples/UVSPEC_WC.INP
++include "../example files/UVSPEC_AEROSOL.INP"  # Include's may be nested. 
++include "../example files/UVSPEC_WC.INP"
+ 
+ rte_solver ftwostr  # This override what is specified in above file
+                     # and files included in that file etc.
+-pseudospherical
+\ No newline at end of file
++pseudospherical
+--- ./example files/UVSPEC_FULIOU_IC.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_FULIOU_IC.INP	2014-12-29 16:45:30.769442855 +0100
+@@ -1,10 +1,10 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+ 
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/fu
++source solar "../data files/solar_flux/fu"
+ 
+-albedo_file ../examples/UVSPEC_ALBEDO.DAT
++albedo_file "../example files/UVSPEC_ALBEDO.DAT"
+ 
+ 
+ rte_solver twostr       # Radiative transfer equation solver
+@@ -16,8 +16,8 @@
+ 
+ mol_abs_param FU         # Correlated-k by Fu and Liou [1992/93]
+ 
+-ic_file 1D ../examples/IC.DAT  # Location of the ice cloud file
++ic_file 1D "../example files/IC.DAT"  # Location of the ice cloud file
+ ic_properties fu
+ 
+ 
+-quiet
+\ No newline at end of file
++quiet
+--- ./example files/UVSPEC_FULIOU.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/UVSPEC_FULIOU.INP	2014-12-29 16:45:30.770442873 +0100
+@@ -15,10 +15,10 @@
+ 
+ 
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/KTROP.UVSPEC 
++atmosphere_file "../example files/KTROP.UVSPEC"
+ 
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/fu
++source solar "../data files/solar_flux/fu"
+ 
+ albedo 0.0
+ 
+--- ./example files/UVSPEC_FULIOU_THERMAL.INP.orig	2014-09-01 14:47:55.323821563 +0200
++++ ./example files/UVSPEC_FULIOU_THERMAL.INP	2014-12-29 16:45:30.770442873 +0100
+@@ -1,8 +1,8 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/KTROP.UVSPEC 
++atmosphere_file "../example files/KTROP.UVSPEC"
+ 
+                          # Location of the extraterrestrial spectrum
+-source thermal ../data/solar_flux/fu      # Thermal irradiance
++source thermal "../data files/solar_flux/fu"      # Thermal irradiance
+ 
+ albedo 0.0
+ 
+--- ./example files/UVSPEC_HEATING_IPA.INP.orig	2014-09-01 14:47:54.719795239 +0200
++++ ./example files/UVSPEC_HEATING_IPA.INP	2014-12-29 16:45:30.770442873 +0100
+@@ -1,5 +1,5 @@
+                           # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -10,7 +10,7 @@
+ 
+ mol_abs_param Fu          # Integrated solar radiation using Kato et al.
+                            
+-wc_file ipa_files  ../examples/WC_IPA_FILES  # use independent pixel approximation
++wc_file ipa_files  "../example files/WC_IPA_FILES"  # use independent pixel approximation
+ 
+ zout 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+ 
+--- ./example files/UVSPEC_HIMALAJA.INP.orig	2014-09-01 14:47:54.619790882 +0200
++++ ./example files/UVSPEC_HIMALAJA.INP	2014-12-29 16:45:30.770442873 +0100
+@@ -1,5 +1,5 @@
+ atmosphere_file tropics
+-source solar      ../data/solar_flux/atlas_plus_modtran
++source solar      "../data files/solar_flux/atlas_plus_modtran"
+ 
+ surface_type_map IGBP
+ albedo_library   IGBP
+--- ./example files/UVSPEC_IC_BAUM.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_IC_BAUM.INP	2014-12-29 16:45:30.770442873 +0100
+@@ -1,10 +1,10 @@
+ #data_files_path ../data/
+ 
+                          # Location of atmospheric profile file.
+-atmosphere_file          ../data/atmmod/afglms.dat
++atmosphere_file          "../data files/atmmod/afglms.dat"
+ 
+                          # Location of the extraterrestrial spectrum
+-source solar               ../data/solar_flux/kurudz_0.1nm.dat
++source solar               "../data files/solar_flux/kurudz_0.1nm.dat"
+ 
+ 
+ wavelength 550           # wavelength
+@@ -15,7 +15,7 @@
+ umu 0.1 0.5 1            # viewing angles
+ phi 0 30 60 90
+ 
+-ic_file 1D ../examples/IC.DAT
++ic_file 1D "../example files/IC.DAT"
+ 
+ ic_properties baum interpolate       # Specify Baum parameterization
+ 
+--- ./example files/UVSPEC_IC_WC.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_IC_WC.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170             # Correct for Earth-Sun distance
+ albedo 0.2                  # Surface albedo
+@@ -12,10 +12,10 @@
+ disort_intcor moments          # use Legendre coefficients for intensity corrections
+ wavelength 544.7 544.7# Wavelengths considered
+ 
+-wc_file 1D ../examples/WC.DAT  # Location of the water cloud file
++wc_file 1D "../example files/WC.DAT"  # Location of the water cloud file
+ wc_properties hu
+ 
+-ic_file 1D ../examples/IC.DAT  # Location of the ice cloud file
+-ic_properties ../examples/IC.
++ic_file 1D "../example files/IC.DAT"  # Location of the ice cloud file
++ic_properties "../example files/IC."
+ 
+ quiet
+--- ./example files/UVSPEC_IPA_CK.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_IPA_CK.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/AFGLMS50.DAT
++atmosphere_file "../example files/AFGLMS50.DAT"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170             # Correct for Earth-Sun distance
+ albedo 0.2                  # Surface albedo
+@@ -15,7 +15,7 @@
+ 
+ wavelength_index 1 32       # Use all 12 solar bands
+ 
+-wc_file 1D ../examples/WC50.DAT  # Location of water cloud file
++wc_file 1D "../example files/WC50.DAT"  # Location of water cloud file
+ 
+ cloudcover wc 0.4             # Fraction of horizontal cloud covered by clouds;
+                               # use independent pixel approximation
+--- ./example files/UVSPEC_KATO2.INP.orig	2014-09-01 14:47:56.459871065 +0200
++++ ./example files/UVSPEC_KATO2.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_KATO.INP
++include "../example files/UVSPEC_KATO.INP"
+ 
+ mol_abs_param KATO2        # use updated version of the tables
+ 
+--- ./example files/UVSPEC_KATO.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_KATO.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -5,7 +5,7 @@
+ # Kato et al. plot direct normal irradiance.
+ 
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/AFGLMS50.DAT
++atmosphere_file "../example files/AFGLMS50.DAT"
+                          # Location of the extraterrestrial spectrum
+ 
+ albedo 0.2               # Surface albedo
+--- ./example files/UVSPEC_LOWTRAN_SOLAR.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/UVSPEC_LOWTRAN_SOLAR.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -1,5 +1,5 @@
+-atmosphere_file ../data/atmmod/afglus.dat
+-source solar ../data/solar_flux/kurudz_1.0nm.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
++source solar "../data files/solar_flux/kurudz_1.0nm.dat"
+ 
+ albedo 0.2               # Surface albedo
+ sza 30.0                 # Solar zenith angle
+--- ./example files/UVSPEC_LOWTRAN_THERMAL.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_LOWTRAN_THERMAL.INP	2014-12-29 16:45:30.771442891 +0100
+@@ -1,11 +1,11 @@
+ # uvspec data files
+-data_files_path ../data/
+-atmosphere_file ../examples/AFGLUS.70KM
+-source thermal ../examples/UVSPEC_LOWTRAN_THERMAL.TRANS
++data_files_path "../data files/"
++atmosphere_file "../example files/AFGLUS.70KM"
++source thermal "../example files/UVSPEC_LOWTRAN_THERMAL.TRANS"
+ 
+ rte_solver twostr     # Radiative transfer equation solver
+ pseudospherical
+-wavelength_grid_file ../examples/UVSPEC_LOWTRAN_THERMAL.TRANS
++wavelength_grid_file "../example files/UVSPEC_LOWTRAN_THERMAL.TRANS"
+ 
+ mol_abs_param LOWTRAN  # select LOWTRAN molecular absorption 
+ 
+--- ./example files/UVSPEC_MC_BPDF.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_MC_BPDF.INP	2014-12-29 16:45:30.772442909 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/UVSPEC_MC_ATM.DAT
++atmosphere_file "../example files/UVSPEC_MC_ATM.DAT"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+ sza 58                   # Solar zenith angle
+--- ./example files/UVSPEC_MC_DELTASCALING.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_MC_DELTASCALING.INP	2014-12-29 16:45:30.772442909 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglms.dat
++atmosphere_file "../data files/atmmod/afglms.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ wavelength 400.0          # Wavelength considered
+ 
+@@ -19,10 +19,10 @@
+ rte_solver montecarlo
+ 
+ # MYSTIC input files
+-wc_file 3D ../examples/UVSPEC_MC_WC_VROOM.DAT
++wc_file 3D "../example files/UVSPEC_MC_WC_VROOM.DAT"
+ wc_properties mie interpolate
+ 
+-albedo_file ../data/albedo/gras.dat
++albedo_file "../data files/albedo/gras.dat"
+ 
+ #MYSTIC settings
+ mc_delta_scaling
+--- ./example files/UVSPEC_MC.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_MC.INP	2014-12-29 16:45:30.772442909 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/UVSPEC_MC_ATM.DAT
++atmosphere_file "../example files/UVSPEC_MC_ATM.DAT"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+ albedo 0.2               # Surface albedo
+@@ -14,9 +14,9 @@
+ mc_sample_grid 201 201 1 1  # sample grid, 201 x 201 grid boxes
+ 
+ # MYSTIC input files
+-wc_file 3D    ../examples/UVSPEC_MC_WC.DAT
+-mc_elevation_file ../examples/UVSPEC_MC_ELEV.DAT
+-mc_albedo_file    ../examples/UVSPEC_MC_ALB.DAT
++wc_file 3D    "../example files/UVSPEC_MC_WC.DAT"
++mc_elevation_file "../example files/UVSPEC_MC_ELEV.DAT"
++mc_albedo_file    "../example files/UVSPEC_MC_ALB.DAT"
+ 
+ wavelength 310.0 310.0          # Wavelengths considered
+ 
+--- ./example files/UVSPEC_MC_POL.INP.orig	2014-09-01 14:47:56.459871065 +0200
++++ ./example files/UVSPEC_MC_POL.INP	2014-12-29 16:45:30.772442909 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/UVSPEC_MC_ATM.DAT
++atmosphere_file "../example files/UVSPEC_MC_ATM.DAT"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+ albedo 0.2               # Surface albedo
+--- ./example files/UVSPEC_MC_VROOM.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_MC_VROOM.INP	2014-12-29 16:45:30.772442909 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglms.dat
++atmosphere_file "../data files/atmmod/afglms.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ wavelength 400.0          # Wavelength considered
+ 
+@@ -17,10 +17,10 @@
+ rte_solver montecarlo
+ 
+ # MYSTIC input files
+-wc_file 3D ../examples/UVSPEC_MC_WC_VROOM.DAT
++wc_file 3D "../example files/UVSPEC_MC_WC_VROOM.DAT"
+ wc_properties mie interpolate
+ 
+-albedo_file ../data/albedo/gras.dat
++albedo_file "../data files/albedo/gras.dat"
+ 
+ #MYSTIC settings
+ 
+--- ./example files/UVSPEC_MONO.INP.orig	2014-09-01 14:47:54.611790534 +0200
++++ ./example files/UVSPEC_MONO.INP	2014-12-29 16:45:30.773442927 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+ albedo 0.2               # Surface albedo
+--- ./example files/UVSPEC_OVERLAP_MAX.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_OVERLAP_MAX.INP	2014-12-29 16:45:30.773442927 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170             # Correct for Earth-Sun distance
+ albedo 0.2                  # Surface albedo
+@@ -11,13 +11,13 @@
+ rte_solver disort           # This overrides what is specified in above file
+ wavelength 544.7 544.7      # Wavelengths considered
+ 
+-wc_file 1D ../examples/WC.DAT  # Location of the water cloud file
++wc_file 1D "../example files/WC.DAT"  # Location of the water cloud file
+ wc_properties hu
+ 
+-ic_file 1D ../examples/IC.DAT  # Location of the ice cloud file
++ic_file 1D "../example files/IC.DAT"  # Location of the ice cloud file
+ ic_properties fu
+ 
+-cloud_fraction_file  ../examples/CF.DAT
++cloud_fraction_file  "../example files/CF.DAT"
+ cloud_overlap  max
+ output_user lambda edir edn eup uavgdir uavgdn uavgup tcc
+ 
+--- ./example files/UVSPEC_OVERLAP_MAXRAND.INP.orig	2014-09-01 14:47:56.467871414 +0200
++++ ./example files/UVSPEC_OVERLAP_MAXRAND.INP	2014-12-29 16:45:30.773442927 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170             # Correct for Earth-Sun distance
+ albedo 0.2                  # Surface albedo
+@@ -11,13 +11,13 @@
+ rte_solver disort           # This overrides what is specified in above file
+ wavelength 544.7 544.7      # Wavelengths considered
+ 
+-wc_file 1D ../examples/WC.DAT  # Location of the water cloud file
++wc_file 1D "../example files/WC.DAT"  # Location of the water cloud file
+ wc_properties hu
+ 
+-ic_file 1D ../examples/IC.DAT  # Location of the ice cloud file
++ic_file 1D "../example files/IC.DAT"  # Location of the ice cloud file
+ ic_properties fu
+ 
+-cloud_fraction_file  ../examples/CF.DAT
++cloud_fraction_file  "../example files/CF.DAT"
+ cloud_overlap  maxrand
+ output_user lambda edir edn eup uavgdir uavgdn uavgup tcc
+ 
+--- ./example files/UVSPEC_OVERLAP_RAND.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_OVERLAP_RAND.INP	2014-12-29 16:45:30.773442927 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170             # Correct for Earth-Sun distance
+ albedo 0.2                  # Surface albedo
+@@ -11,13 +11,13 @@
+ rte_solver disort           # This overrides what is specified in above file
+ wavelength 544.7 544.7      # Wavelengths considered
+ 
+-wc_file 1D ../examples/WC.DAT  # Location of the water cloud file
++wc_file 1D "../example files/WC.DAT"  # Location of the water cloud file
+ wc_properties hu
+ 
+-ic_file 1D ../examples/IC.DAT  # Location of the ice cloud file
++ic_file 1D "../example files/IC.DAT"  # Location of the ice cloud file
+ ic_properties fu
+ 
+-cloud_fraction_file  ../examples/CF.DAT
++cloud_fraction_file  "../example files/CF.DAT"
+ cloud_overlap  rand
+ output_user lambda edir edn eup uavgdir uavgdn uavgup tcc
+ 
+--- ./example files/UVSPEC_PROFILES1.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_PROFILES1.INP	2014-12-29 16:45:30.773442927 +0100
+@@ -1,9 +1,9 @@
+-atmosphere_file ../examples/AFGLT50.DAT
+-source solar ../examples/TRANSMITTANCE_WL.DAT
++atmosphere_file "../example files/AFGLT50.DAT"
++source solar "../example files/TRANSMITTANCE_WL.DAT"
+ 
+ rte_solver disort        # Radiative transfer equation solver
+ mol_abs_param LOWTRAN     # select LOWTRAN molecular absorption 
+-wavelength_grid_file ../examples/TRANSMITTANCE_WL.DAT
++wavelength_grid_file "../example files/TRANSMITTANCE_WL.DAT"
+                          # define own wavelengthgrid
+ 
+ albedo 0.3
+--- ./example files/UVSPEC_PROFILES2.INP.orig	2014-09-01 14:47:54.611790534 +0200
++++ ./example files/UVSPEC_PROFILES2.INP	2014-12-29 16:45:30.774442945 +0100
+@@ -1,9 +1,9 @@
+-atmosphere_file ../examples/AFGLT50.DAT
+-source solar ../examples/TRANSMITTANCE_WL.DAT
++atmosphere_file "../example files/AFGLT50.DAT"
++source solar "../example files/TRANSMITTANCE_WL.DAT"
+ 
+ rte_solver disort        # Radiative transfer equation solver
+ mol_abs_param LOWTRAN     # select LOWTRAN molecular absorption 
+-wavelength_grid_file ../examples/TRANSMITTANCE_WL.DAT
++wavelength_grid_file "../example files/TRANSMITTANCE_WL.DAT"
+                          # define own wavelengthgrid
+ 
+ albedo 0.3
+@@ -11,9 +11,9 @@
+ aerosol_default
+ aerosol_vulcan 4
+ 
+-mol_file O3   ../examples/AFGLT_50KM_O3.DAT  
+-mol_file CO2  ../examples/AFGLT_50KM_CO2.DAT
+-mol_file H2O ../examples/AFGLT_50KM_RH.DAT RH
++mol_file O3   "../example files/AFGLT_50KM_O3.DAT"  
++mol_file CO2  "../example files/AFGLT_50KM_CO2.DAT"
++mol_file H2O "../example files/AFGLT_50KM_RH.DAT" RH
+ #dens_column O3     292.81 DU
+ #co2_mixing_ratio   363.31
+ #h2o_mixing_ratio  8526.82
+--- ./example files/UVSPEC_PROFILES3.INP.orig	2014-09-01 14:47:54.619790882 +0200
++++ ./example files/UVSPEC_PROFILES3.INP	2014-12-29 16:45:30.774442945 +0100
+@@ -1,9 +1,9 @@
+-atmosphere_file ../examples/AFGLT50.DAT
+-source solar ../examples/TRANSMITTANCE_WL.DAT
++atmosphere_file "../example files/AFGLT50.DAT"
++source solar "../example files/TRANSMITTANCE_WL.DAT"
+ 
+ rte_solver disort        # Radiative transfer equation solver
+ mol_abs_param LOWTRAN     # select LOWTRAN molecular absorption 
+-wavelength_grid_file ../examples/TRANSMITTANCE_WL.DAT
++wavelength_grid_file "../example files/TRANSMITTANCE_WL.DAT"
+                          # define own wavelengthgrid
+ 
+ albedo 0.3
+@@ -11,9 +11,9 @@
+ aerosol_default
+ aerosol_vulcan 4
+ 
+-mol_file O3   ../examples/AFGLT_50KM_O3.DAT  
+-mol_file CO2  ../examples/AFGLT_50KM_CO2.DAT
+-mol_file H2O ../examples/AFGLT_50KM_RH.DAT RH
++mol_file O3   "../example files/AFGLT_50KM_O3.DAT"
++mol_file CO2  "../example files/AFGLT_50KM_CO2.DAT"
++mol_file H2O "../example files/AFGLT_50KM_RH.DAT" RH
+ mol_modify O3 292.81 DU
+ mixing_ratio CO2 363.31
+ mixing_ratio H2O 8526.82
+--- ./example files/UVSPEC_PROFILES4.INP.orig	2014-09-01 14:47:54.719795239 +0200
++++ ./example files/UVSPEC_PROFILES4.INP	2014-12-29 16:45:30.774442945 +0100
+@@ -1,9 +1,9 @@
+-atmosphere_file ../examples/AFGLT50.DAT
+-source solar ../examples/TRANSMITTANCE_WL.DAT
++atmosphere_file "../example files/AFGLT50.DAT"
++source solar "../example files/TRANSMITTANCE_WL.DAT"
+ 
+ rte_solver disort        # Radiative transfer equation solver
+ mol_abs_param LOWTRAN     # select LOWTRAN molecular absorption 
+-wavelength_grid_file ../examples/TRANSMITTANCE_WL.DAT
++wavelength_grid_file "../example files/TRANSMITTANCE_WL.DAT"
+                          # define own wavelengthgrid
+ 
+ albedo 0.3
+@@ -11,9 +11,9 @@
+ aerosol_default
+ aerosol_vulcan 4
+ 
+-mol_file O3   ../examples/AFGLT_50KM_O3_MOD.DAT  
+-mol_file CO2  ../examples/AFGLT_50KM_CO2_MOD.DAT
+-mol_file H2O ../examples/AFGLT_50KM_RH_MOD.DAT RH
++mol_file O3   "../example files/AFGLT_50KM_O3_MOD.DAT"
++mol_file CO2  "../example files/AFGLT_50KM_CO2_MOD.DAT"
++mol_file H2O "../example files/AFGLT_50KM_RH_MOD.DAT" RH
+ #dens_column O3     292.81 DU
+ #co2_mixing_ratio   363.31
+ #h2o_mixing_ratio  8526.82
+--- ./example files/UVSPEC_RADIANCES.INP.orig	2014-09-01 14:47:56.463871243 +0200
++++ ./example files/UVSPEC_RADIANCES.INP	2014-12-29 16:45:30.774442945 +0100
+@@ -1,5 +1,5 @@
+ 
+-include ../examples/UVSPEC_AEROSOL.INP # Include's may be nested. 
++include "../example files/UVSPEC_AEROSOL.INP" # Include's may be nested. 
+ 
+ rte_solver disort  # This override what is specified in above file
+                    # and files included in that file etc.
+--- ./example files/UVSPEC_RADIOSONDE.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_RADIOSONDE.INP	2014-12-29 16:45:30.774442945 +0100
+@@ -1,6 +1,6 @@
+-atmosphere_file  ../data/atmmod/afglt.dat
++atmosphere_file  "../data files/atmmod/afglt.dat"
+ #atmosphere_file ../data/atmmod/afglus.dat
+-source solar       ../data/solar_flux/kurudz_1.0nm.dat
++source solar       "../data files/solar_flux/kurudz_1.0nm.dat"
+ 
+ albedo 0.2               # Surface albedo
+ sza 30.0                 # Solar zenith angle
+@@ -14,8 +14,8 @@
+ aerosol_default        
+ aerosol_visibility 20
+ 
+-radiosonde  ../examples/radiosonde_afglt_rh.dat H2O RH 
+-#radiosonde ../examples/radiosonde_afglus.dat
++radiosonde  "../example files/radiosonde_afglt_rh.dat" H2O RH 
++#radiosonde ../example files/radiosonde_afglus.dat
+ 
+ quiet
+ #verbose
+--- ./example files/UVSPEC_RAMAN.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_RAMAN.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -17,7 +17,7 @@
+ #    afterwards. Slow, but accurate. Do not use the spline option.
+ #
+ atmosphere_file US-standard
+-source solar ../data/solar_flux/atlas_plus_modtran_ph
++source solar "../data files/solar_flux/atlas_plus_modtran_ph"
+ mol_modify O3 300 DU
+ wavelength 346.15 346.15
+ sza 45
+@@ -35,7 +35,7 @@
+ 
+ zout toa
+ albedo 0.05
+-wc_file 1D ../examples/UVSPEC_RAMAN_WC.dat
++wc_file 1D "../example files/UVSPEC_RAMAN_WC.dat"
+ wc_modify tau set 10.0
+ wc_modify gg set   0.7
+ # To do this calculation without raman, simply comment line below.
+--- ./example files/UVSPEC_REDISTRIBUTION.INP.orig	2014-09-01 14:47:54.623791052 +0200
++++ ./example files/UVSPEC_REDISTRIBUTION.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../examples/AFGLMS50.DAT
++atmosphere_file "../example files/AFGLMS50.DAT"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+@@ -22,11 +22,11 @@
+                           # using Angstrom alpha and beta
+                           # coefficients
+ 
+-wc_file 1D ../examples/WC_REDISTRIBUTION.DAT  # Location of the water cloud file
++wc_file 1D "../example files/WC_REDISTRIBUTION.DAT"  # Location of the water cloud file
+ wc_properties hu
+ 
+-ic_file 1D ../examples/IC_REDISTRIBUTION.DAT  # Location of the ice cloud file
+-ic_properties ../examples/IC.
++ic_file 1D "../example files/IC_REDISTRIBUTION.DAT"  # Location of the ice cloud file
++ic_properties "../example files/IC."
+ 
+ altitude 0.0 
+ 
+--- ./example files/UVSPEC_REF1.INP.orig	2014-09-01 14:47:54.711794890 +0200
++++ ./example files/UVSPEC_REF1.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -1,8 +1,8 @@
+-data_files_path ../data/ # Location of internal uvspec data files
++data_files_path "../data files/" # Location of internal uvspec data files
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../examples/UNIT_SUN.DAT
++source solar "../example files/UNIT_SUN.DAT"
+ mol_modify O3 300. DU
+ albedo 0.0               # Surface albedo
+ wavelength 300.0 320.0   # Wavelengths considered, 
+--- ./example files/UVSPEC_REF2.INP.orig	2014-09-01 14:47:56.463871243 +0200
++++ ./example files/UVSPEC_REF2.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -1,8 +1,8 @@
+-data_files_path ../data/ # Location of internal uvspec data files
++data_files_path "../data files/" # Location of internal uvspec data files
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../examples/UNIT_SUN.DAT
++source solar "../example files/UNIT_SUN.DAT"
+ mol_modify O3 300. DU
+ albedo 0.0               # Surface albedo
+ wavelength 300.0 320.0          # Wavelengths considered, 
+--- ./example files/UVSPEC_REF3.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_REF3.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -1,8 +1,8 @@
+-data_files_path ../data/ # Location of internal uvspec data files
++data_files_path "../data files/" # Location of internal uvspec data files
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../examples/UNIT_SUN.DAT
++source solar "../example files/UNIT_SUN.DAT"
+ mol_modify O3 300. DU
+ albedo 1.0               # Surface albedo
+ wavelength 300.0 320.0          # Wavelengths considered, 
+--- ./example files/UVSPEC_REPTRAN_CHANNEL_THERMAL.INP.orig	2014-09-01 14:47:56.467871414 +0200
++++ ./example files/UVSPEC_REPTRAN_CHANNEL_THERMAL.INP	2014-12-29 16:45:30.775442963 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_REPTRAN_THERMAL.INP
++include "../example files/UVSPEC_REPTRAN_THERMAL.INP"
+ 
+                      # Satellite channel using representative wavel.
+ mol_abs_param reptran_channel msg1_seviri_ch039
+--- ./example files/UVSPEC_RODENTS.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_RODENTS.INP	2014-12-29 16:45:30.776442981 +0100
+@@ -1,5 +1,5 @@
+-include ../examples/UVSPEC_AEROSOL.INP  # Include's may be nested. 
+-include ../examples/UVSPEC_WC.INP
++include "../example files/UVSPEC_AEROSOL.INP"  # Include's may be nested. 
++include "../example files/UVSPEC_WC.INP"
+ 
+ rte_solver rodents  # This override what is specified in above file
+                     # and files included in that file etc.
+--- ./example files/UVSPEC_RODENTS_ZOUT.INP.orig	2014-09-01 14:47:54.619790882 +0200
++++ ./example files/UVSPEC_RODENTS_ZOUT.INP	2014-12-29 16:45:30.776442981 +0100
+@@ -1,3 +1,3 @@
+-include ../examples/UVSPEC_RODENTS.INP  # Include's may be nested. 
++include "../example files/UVSPEC_RODENTS.INP"  # Include's may be nested. 
+ 
+ zout sur 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 5 6 7 8 9 10 20 30 40 toa
+--- ./example files/UVSPEC_RODENTS_ZOUT_THERMAL.INP.orig	2014-09-01 14:47:56.479871938 +0200
++++ ./example files/UVSPEC_RODENTS_ZOUT_THERMAL.INP	2014-12-29 16:45:30.776442981 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source thermal ../data/solar_flux/atlas_plus_modtran
++source thermal "../data files/solar_flux/atlas_plus_modtran"
+ 
+ wavelength_index 7 18     # Wavelength range [nm]
+ mol_abs_param fu
+@@ -16,10 +16,10 @@
+ aerosol_modify ssa scale 0.85    # Scale the single scattering albedo 
+                           # for all wavelengths
+ aerosol_modify gg set 0.70       # Set the asymmetry factor
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+                           # File with aerosol optical depth profile
+ 
+-wc_file 1D ../examples/WCSIMPLE.DAT  # Location of water cloud file
++wc_file 1D "../example files/WCSIMPLE.DAT"  # Location of water cloud file
+ wc_modify tau set 15.                    # Set total water cloud optical depth
+ 
+ rte_solver rodents    # This override what is specified in above file
+--- ./example files/UVSPEC_SCIA_APPROX.INP.orig	2014-09-01 14:47:56.467871414 +0200
++++ ./example files/UVSPEC_SCIA_APPROX.INP	2014-12-29 16:45:30.776442981 +0100
+@@ -1,7 +1,7 @@
+-atmosphere_file ../data/atmmod/afglus.dat
+-source solar ../data/solar_flux/atlas_plus_modtran
++atmosphere_file "../data files/atmmod/afglus.dat"
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+-wc_file 1D ../examples/WC_THIN.DAT
++wc_file 1D "../example files/WC_THIN.DAT"
+ 
+ albedo 0.1
+ 
+@@ -18,8 +18,8 @@
+ # correctly sample NO2 absorption; slit function 
+ # triangle with FWHM 0.44 nm, sampling distance 0.22 nm
+ 
+-wavelength_grid_file ../examples/SCIA_TRANS.DAT
+-slit_function_file ../examples/SCIA_SLIT.DAT
++wavelength_grid_file "../example files/SCIA_TRANS.DAT"
++slit_function_file "../example files/SCIA_SLIT.DAT"
+ spline 425 450 0.22
+ 
+ output_quantity reflectivity
+--- ./example files/UVSPEC_SCIA.INP.orig	2014-09-01 14:47:54.611790534 +0200
++++ ./example files/UVSPEC_SCIA.INP	2014-12-29 16:45:30.776442981 +0100
+@@ -1,7 +1,7 @@
+-atmosphere_file ../data/atmmod/afglus.dat
+-source solar ../data/solar_flux/atlas_plus_modtran
++atmosphere_file "../data files/atmmod/afglus.dat"
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+-wc_file 1D ../examples/WC_THIN.DAT
++wc_file 1D "../example files/WC_THIN.DAT"
+ wc_properties mie interpolate
+ 
+ albedo 0.1
+@@ -19,8 +19,8 @@
+ # correctly sample NO2 absorption; slit function 
+ # triangle with FWHM 0.44 nm, sampling distance 0.22 nm
+ 
+-wavelength_grid_file ../examples/SCIA_TRANS.DAT
+-slit_function_file ../examples/SCIA_SLIT.DAT
++wavelength_grid_file "../example files/SCIA_TRANS.DAT"
++slit_function_file "../example files/SCIA_SLIT.DAT"
+ spline 425 450 0.22
+ 
+ output_quantity reflectivity
+--- ./example files/UVSPEC_SDISORT.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_SDISORT.INP	2014-12-29 16:45:30.777442999 +0100
+@@ -1,3 +1,3 @@
+-include ../examples/UVSPEC_AEROSOL.INP
++include "../example files/UVSPEC_AEROSOL.INP"
+ 
+ rte_solver sdisort    # This overrides what is specified in above file
+--- ./example files/UVSPEC_SIMPLE.INP.orig	2014-09-01 14:47:54.627791229 +0200
++++ ./example files/UVSPEC_SIMPLE.INP	2014-12-29 16:45:30.777442999 +0100
+@@ -1,8 +1,8 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+ 
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ wavelength 310.0 310.0   # Wavelength range [nm]
+ 
+--- ./example files/UVSPEC_SO2.INP.orig	2014-09-01 14:47:54.711794890 +0200
++++ ./example files/UVSPEC_SO2.INP	2014-12-29 16:45:30.777442999 +0100
+@@ -1,19 +1,19 @@
+-atmosphere_file ../examples/AFGLT50.DAT
+-source solar ../data/solar_flux/kurudz_0.1nm.dat
++atmosphere_file "../example files/AFGLT50.DAT"
++source solar "../data files/solar_flux/kurudz_0.1nm.dat"
+ 
+ albedo 0.3
+ 
+ # Since I do not have a SO2 profile available, use the NO2 profiles
+ # provided with libRadtran. To be changed as NO2 has a different behaviour
+ # than SO2.  Arve 20111229.
+-mol_file SO2  ../data/atmmod/afglus_no2.dat
++mol_file SO2  "../data files/atmmod/afglus_no2.dat"
+ 
+ umu -1
+ 
+ # Internally uvspec does the spectral calculations with a 0.5 nm resolution
+ # wavelength grid. This is too coarse to grab all the details of the SO2
+ # cross section. Hence, increase the resolution by the following option.
+-wavelength_grid_file ../examples/UVSPEC_SO2_TRANS
++wavelength_grid_file "../example files/UVSPEC_SO2_TRANS"
+ 
+ wavelength 290 320
+ 
+--- ./example files/UVSPEC_SSLIDAR.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_SSLIDAR.INP	2014-12-29 16:45:30.777442999 +0100
+@@ -1,9 +1,9 @@
+ # included parts of UVSPEC_CLEAR.INP
+ 
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ albedo 0.2               # Surface albedo
+ 
+@@ -19,12 +19,12 @@
+ aerosol_modify ssa scale 0.85    # Scale the single scattering albedo 
+                           # for all wavelengths
+ aerosol_modify gg set 0.70       # Set the asymmetry factor
+-aerosol_file tau ../examples/AERO_TAU.DAT
++aerosol_file tau "../example files/AERO_TAU.DAT"
+                           # File with aerosol optical depth profile
+ 
+ # included from UVSPEC_WC.INP
+ 
+-wc_file 1D ../examples/WCSIMPLE.DAT  # Location of water cloud file
++wc_file 1D "../example files/WCSIMPLE.DAT"  # Location of water cloud file
+ 
+ # sslidar specifics
+ 
+--- ./example files/UVSPEC_SSLIDAR_POL.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_SSLIDAR_POL.INP	2014-12-29 16:45:30.777442999 +0100
+@@ -1,15 +1,15 @@
+ # included parts of UVSPEC_CLEAR.INP
+ 
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ albedo 0.2               # Surface albedo
+ 
+ # included from UVSPEC_WC.INP
+ 
+-wc_file 1D ../examples/WCSIMPLE.DAT  # Location of water cloud file
++wc_file 1D "../example files/WCSIMPLE.DAT"  # Location of water cloud file
+ wc_properties mie interpolate
+ 
+ 
+--- ./example files/UVSPEC_TRANSMITTANCE_WL_FILE.INP.orig	2014-09-01 14:47:54.607790356 +0200
++++ ./example files/UVSPEC_TRANSMITTANCE_WL_FILE.INP	2014-12-29 16:45:30.778443017 +0100
+@@ -1,9 +1,9 @@
+ atmosphere_file midlatitude_summer
+-source solar ../data/solar_flux/kurudz_1.0nm.dat
++source solar "../data files/solar_flux/kurudz_1.0nm.dat"
+ 
+ wavelength 1064
+-mol_tau_file abs ../examples/UVSPEC_TRANSMITTANCE_MOL_TAU_FILE_AFGLMS.09000.3wvn.cdf
+-wavelength_grid_file ../examples/UVSPEC_TRANSMITTANCE_WL.DAT
++mol_tau_file abs "../example files/UVSPEC_TRANSMITTANCE_MOL_TAU_FILE_AFGLMS.09000.3wvn.cdf"
++wavelength_grid_file "../example files/UVSPEC_TRANSMITTANCE_WL.DAT"
+ 
+ rte_solver disort         # Radiative transfer equation solver
+ quiet
+--- ./example files/UVSPEC_TWOSTREBE.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_TWOSTREBE.INP	2014-12-29 16:45:30.778443017 +0100
+@@ -1,5 +1,5 @@
+-include ../examples/UVSPEC_AEROSOL.INP  # Include's may be nested. 
+-include ../examples/UVSPEC_WC.INP
++include "../example files/UVSPEC_AEROSOL.INP"  # Include's may be nested. 
++include "../example files/UVSPEC_WC.INP"
+ 
+ rte_solver twostrebe  # This override what is specified in above file
+                       # and files included in that file etc.
+--- ./example files/UVSPEC_TWOSTR.INP.orig	2014-09-01 14:47:56.475871763 +0200
++++ ./example files/UVSPEC_TWOSTR.INP	2014-12-29 16:45:30.778443017 +0100
+@@ -1,7 +1,7 @@
+-include ../examples/UVSPEC_AEROSOL.INP  # Include's may be nested. 
+-include ../examples/UVSPEC_WC.INP
++include "../example files/UVSPEC_AEROSOL.INP"  # Include's may be nested. 
++include "../example files/UVSPEC_WC.INP"
+ 
+ rte_solver twostr  # This override what is specified in above file
+                    # and files included in that file etc.
+ 
+-pseudospherical
+\ No newline at end of file
++pseudospherical
+--- ./example files/UVSPEC_TWOSTRPP.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_TWOSTRPP.INP	2014-12-29 16:45:30.778443017 +0100
+@@ -1,5 +1,5 @@
+-include ../examples/UVSPEC_AEROSOL.INP  # Include's may be nested. 
+-include ../examples/UVSPEC_WC.INP
++include "../example files/UVSPEC_AEROSOL.INP"  # Include's may be nested. 
++include "../example files/UVSPEC_WC.INP"
+ 
+ rte_solver twostr   # This override what is specified in above file
+                      # and files included in that file etc.
+--- ./example files/UVSPEC_WC_IC_IPA_FILES.INP.orig	2014-09-01 14:47:56.459871065 +0200
++++ ./example files/UVSPEC_WC_IC_IPA_FILES.INP	2014-12-29 16:45:30.778443017 +0100
+@@ -1,7 +1,7 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ 
+ mol_modify O3 300. DU
+ albedo 0.2                  # Surface albedo
+@@ -17,10 +17,10 @@
+ # Note that water and ice files must have the same ipa weights and that
+ # they must appear in the same order.
+ 
+-wc_file ipa_files  ../examples/WC_IPA_FILES # use independent pixel approximation for water  cloud
++wc_file ipa_files  "../example files/WC_IPA_FILES" # use independent pixel approximation for water  cloud
+ interpret_as_level wc
+ 
+-ic_file ipa_files  ../examples/IC_IPA_FILES_R # use independent pixel approximation ice clouds
++ic_file ipa_files  "../example files/IC_IPA_FILES_R" # use independent pixel approximation ice clouds
+ ic_properties key
+ ic_habit plate
+ 
+--- ./example files/UVSPEC_WC.INP.orig	2014-09-01 14:47:56.459871065 +0200
++++ ./example files/UVSPEC_WC.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,4 +1,4 @@
+-include ../examples/UVSPEC_CLEAR.INP
++include "../example files/UVSPEC_CLEAR.INP"
+ 
+-wc_file 1D ../examples/WCSIMPLE.DAT # Location of water cloud file
++wc_file 1D "../example files/WCSIMPLE.DAT" # Location of water cloud file
+ wc_modify tau set 15.               # Set total water cloud optical depth
+--- ./example files/UVSPEC_WC_IPA_FILES.INP.orig	2014-09-01 14:47:54.619790882 +0200
++++ ./example files/UVSPEC_WC_IPA_FILES.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,6 +1,6 @@
+ 
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -13,7 +13,7 @@
+ 
+ wavelength_index 1 32       # Use all 12 solar bands
+                            
+-wc_file ipa_files  ../examples/WC_IPA_FILES  # use independent pixel approximation
++wc_file ipa_files  "../example files/WC_IPA_FILES"  # use independent pixel approximation
+ interpret_as_level wc
+ 
+ quiet
+--- ./example files/UVSPEC_WC_IPA_FILES_REDISTRIBUTION.INP.orig	2014-09-01 14:47:54.603790186 +0200
++++ ./example files/UVSPEC_WC_IPA_FILES_REDISTRIBUTION.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,5 +1,5 @@
+                             # Location of atmospheric profile file. 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+ 
+ mol_modify O3 300. DU
+ 
+@@ -12,7 +12,7 @@
+ 
+ wavelength_index 1 32       # Use all 12 solar bands
+                            
+-wc_file ipa_files  ../examples/WC_IPA_FILES_R  # use independent pixel approximation
++wc_file ipa_files  "../example files/WC_IPA_FILES_R"  # use independent pixel approximation
+ interpret_as_level wc
+ 
+ quiet
+--- ./example files/UVSPEC_WC_IPA.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_WC_IPA.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,7 +1,7 @@
+ 
+-atmosphere_file ../examples/ATMOSPHERE_IPA.DAT
++atmosphere_file "../example files/ATMOSPHERE_IPA.DAT"
+                             # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ 
+ albedo 0.2                  # Surface albedo
+@@ -12,7 +12,7 @@
+ 
+ wavelength 400 400
+                             # use independent pixel approximation
+-wc_ipa   ../examples/WCLOUD3D.IPA.DAT   # 3D cloud info, see libRadtran documentation for description
++wc_ipa   "../example files/WCLOUD3D.IPA.DAT"   # 3D cloud info, see libRadtran documentation for description
+ 
+ quiet
+ 
+--- ./example files/UVSPEC_WC_MIE.INP.orig	2014-09-01 14:47:54.715795061 +0200
++++ ./example files/UVSPEC_WC_MIE.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,10 +1,10 @@
+ #data_files_path ../data/
+ 
+                          # Location of atmospheric profile file.
+-atmosphere_file          ../data/atmmod/afglms.dat
++atmosphere_file          "../data files/atmmod/afglms.dat"
+ 
+                          # Location of the extraterrestrial spectrum
+-source solar               ../data/solar_flux/kurudz_0.1nm.dat
++source solar               "../data files/solar_flux/kurudz_0.1nm.dat"
+ 
+ 
+ wavelength 350           # wavelength
+@@ -15,7 +15,7 @@
+ umu -1 -0.5 -0.1         # viewing angles
+ phi 0 30 60 90
+ 
+-wc_file 1D ../examples/WC.DAT
++wc_file 1D "../example files/WC.DAT"
+ 
+ wc_properties mie interpolate        # Specify Mie optical properties
+ 
+--- ./example files/UVSPEC_WC_MOMENTS.INP.orig	2014-09-01 14:47:54.615790704 +0200
++++ ./example files/UVSPEC_WC_MOMENTS.INP	2014-12-29 16:45:30.779443034 +0100
+@@ -1,7 +1,7 @@
+                          # Location of atmospheric profile file. 
+-atmosphere_file ../data/atmmod/afglus.dat
++atmosphere_file "../data files/atmmod/afglus.dat"
+                          # Location of the extraterrestrial spectrum
+-source solar ../data/solar_flux/atlas_plus_modtran
++source solar "../data files/solar_flux/atlas_plus_modtran"
+ mol_modify O3 300. DU
+ day_of_year 170          # Correct for Earth-Sun distance
+ albedo 0.2               # Surface albedo
+@@ -14,7 +14,7 @@
+ wavelength 544.7 544.7   # Wavelengths considered
+ 
+ 
+-wc_file 1D ../examples/WC.DAT  # Location of water cloud file
+-wc_properties ../examples/WC.
++wc_file 1D "../example files/WC.DAT"  # Location of water cloud file
++wc_properties "../example files/WC."
+ 
+ quiet

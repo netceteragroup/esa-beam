@@ -1,0 +1,50 @@
+--- ./src/molecular.c.orig	2014-09-01 14:47:47.795493489 +0200
++++ ./src/molecular.c	2014-12-29 16:45:30.791443251 +0100
+@@ -2242,6 +2242,8 @@
+                            char *filename,
+                            int ***molabs_src)
+ {
++
++#if HAVE_LIBNETCDF
+   
+   int i,j,i_mol;
+ 
+@@ -2340,6 +2342,16 @@
+ 
+   return 0;
+ 
++#else
++
++  fprintf (stderr, " ******************************************************************\n");
++  fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot       *\n");
++  fprintf (stderr, " * use the ECMWF data file option. Please get netcdf and rebuild. *\n");
++  fprintf (stderr, " ******************************************************************\n");
++  return -1;
++
++#endif
++
+ }
+ 
+ 
+@@ -2359,6 +2371,7 @@
+                           crs_out_struct *crs_out)
+ {
+ 
++#if HAVE_LIBNETCDF
+   double *wvl;
+   int *wvl_index;
+   double *pressure;
+@@ -2634,4 +2647,13 @@
+ 
+   }
+ 
++#else
++
++  fprintf (stderr, " ******************************************************************\n");
++  fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot       *\n");
++  fprintf (stderr, " * use the ECMWF data file option. Please get netcdf and rebuild. *\n");
++  fprintf (stderr, " ******************************************************************\n");
++  return -1;
++
++#endif
+ }

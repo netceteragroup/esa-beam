@@ -1,0 +1,11 @@
+--- ./libsrc_c/wcloud3d.c.orig	2014-09-01 14:47:53.607746776 +0200
++++ ./libsrc_c/wcloud3d.c	2014-12-29 16:45:30.785443143 +0100
+@@ -238,7 +238,7 @@
+     string = line;
+   
+     /* open file */
+-    if ( (file = fopen(filename, "r")) == NULL)  
++    if ( (file = fopen(filename, "rb")) == NULL)  
+       return ASCIIFILE_NOT_FOUND;
+   
+ 

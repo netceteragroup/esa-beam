@@ -1,0 +1,186 @@
+--- ./src/ancillary.c.orig	2014-09-01 14:47:47.803493838 +0200
++++ ./src/ancillary.c	2014-12-29 16:45:30.788443197 +0100
+@@ -28,13 +28,18 @@
+ #include <string.h>
+ #include <math.h>
+ #include <float.h>
++
++#if HAVE_LIBNETCDF
+ #include <netcdf.h>
++#endif
+ 
+ #include "uvspec.h"
+ #include "cdisort.h"
+ #include "ckdfu.h"
+ #include "ascii.h"
++#if HAVE_LIBNETCDF
+ #include "netCDF_functions.h"
++#endif
+ #include "numeric.h"
+ #include "solver.h"
+ #include "errors.h"
+@@ -98,6 +103,20 @@
+ double polarizability_anisotropy_O2 (double nu);
+ int pfraction_reptran(wl_out_struct *wl_out);
+ 
++#ifdef WIN32
++int setenv(char *name, char *value, int overwrite) {
++  int len = strlen(name)+1+strlen(value)+1;
++  /* apparent leaking memory is required */
++  char *str = malloc(len);
++  sprintf(str, "%s=%s", name, value);
++  putenv(str);
++  return (0);
++}
++int unsetenv(char *name) {
++  int retval = setenv(name, "", 1);
++  return retval;
++}
++#endif
+ 
+ /********************************************/
+ /* Setup the transmittance wavelength grid. */
+@@ -1999,6 +2018,7 @@
+                                              wl_out_struct *wl_out) 
+ {
+ 
++#if HAVE_LIBNETCDF
+   int status=0;
+   int nbands=0;
+   int max_len_band_name=0;
+@@ -2190,6 +2210,15 @@
+   free(wvlmax);
+ 
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ /*****************************************************************************/
+@@ -2199,6 +2228,8 @@
+                                    output_struct *output) 
+ {
+ 
++#if HAVE_LIBNETCDF
++
+   int status=0;
+   int nbands=0;
+   int nwvl=0;
+@@ -2388,6 +2419,16 @@
+ 
+   return 0;
+ 
++#else
++
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++
++#endif
++
+ }
+ 
+ /**************************************************************/
+@@ -4618,7 +4659,7 @@
+       strcpy (extfilename, input.rte.mc.filename[FN_MC_BASENAME]);
+       strcat (extfilename, ".ext_r");
+       if ((
+-	   extfile = fopen(extfilename, "w")
++	   extfile = fopen(extfilename, "wb")
+ 	   ) == NULL) return -1;
+     }
+ 
+@@ -4946,7 +4987,7 @@
+       /* Legendre moments of the scattering phase function is added later -           */
+       /* therefore don't close yet!                                                   */
+       if (input.rte.solver == SOLVER_POLRADTRAN) {
+-        if ((fpol = fopen(&output->atm.pol_scat_files[lc*64], "w")) == NULL) return 1;
++        if ((fpol = fopen(&output->atm.pol_scat_files[lc*64], "wb")) == NULL) return 1;
+         fprintf (fpol,"%e\n",bext_tot);
+         fprintf (fpol,"%e\n",bsca_tot);
+         fprintf (fpol,"%e\n",bsca_tot/bext_tot);
+@@ -5776,8 +5817,10 @@
+ 
+   free(ip_act);
+ 
++
+   // write optical properties to file for test suite //
+   if (input.test_optical_properties) {
++#if HAVE_LIBNETCDF
+     status = 0;
+ 
+    int ncid, retval;
+@@ -5841,7 +5884,15 @@
+    if ((retval = nc_close(ncid)))
+       ERR(retval);
+ 
++#else
++
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++#endif
+   }
++
+   // finish writing optical properties to file for test suite //
+ 
+ 
+@@ -6465,13 +6516,13 @@
+   }
+   
+   if (doflx==1) {
+-    if ((fflx = fopen (flxfilename, "w"))==NULL) {
++    if ((fflx = fopen (flxfilename, "wb"))==NULL) {
+       fprintf (stderr, "Error opening %s for writing in %s (%s)\n", flxfilename, function_name, file_name);
+       return -1;
+     }
+   }
+ 
+-  if ((frad = fopen (radfilename, "w"))==NULL) {
++  if ((frad = fopen (radfilename, "wb"))==NULL) {
+     fprintf (stderr, "Error opening %s for writing in %s (%s)\n", radfilename, function_name, file_name);
+     return -1;
+   }
+@@ -6479,13 +6530,13 @@
+   /* variances */
+   if (input.rte.mc.std){
+     if (doflx==1) {
+-      if ((fflxvar = fopen (flxvarfilename, "w"))==NULL) {
++      if ((fflxvar = fopen (flxvarfilename, "wb"))==NULL) {
+ 	fprintf (stderr, "Error opening %s for writing in %s (%s)\n", flxvarfilename, function_name, file_name);
+ 	return -1;
+       }
+     }
+     
+-    if ((fradvar = fopen (radvarfilename, "w"))==NULL) {
++    if ((fradvar = fopen (radvarfilename, "wb"))==NULL) {
+       fprintf (stderr, "Error opening %s for writing in %s (%s)\n", radvarfilename, function_name, file_name);
+       return -1;
+     }
+@@ -6553,14 +6604,14 @@
+ 
+   if (output->mc.sample.passback3D && (input.rte.mc.absorption!=MCFORWARD_ABS_NONE || input.rte.mc.backward.absorption)) {
+ 
+-    if ((fabs = fopen (absfilename, "w"))==NULL) {
++    if ((fabs = fopen (absfilename, "wb"))==NULL) {
+       fprintf (stderr, "Error opening %s for writing in %s (%s)\n", absfilename, function_name, file_name);
+       return -1;
+     }
+ 
+     /* 27.02.2013 **CK **BM: added for thermal backward heating rates std */
+     if (input.rte.mc.std)
+-      if ((fabsvar = fopen (absvarfilename, "w"))==NULL) {
++      if ((fabsvar = fopen (absvarfilename, "wb"))==NULL) {
+ 	fprintf (stderr, "Error opening %s for writing in %s (%s)\n", radvarfilename, function_name, file_name);
+ 	return -1;
+       }

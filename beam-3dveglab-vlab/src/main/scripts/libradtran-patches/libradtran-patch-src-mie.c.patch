@@ -1,0 +1,11 @@
+--- ./src/mie.c.orig	2014-09-01 14:47:47.791493319 +0200
++++ ./src/mie.c	2014-12-29 16:45:30.790443233 +0100
+@@ -2068,7 +2068,7 @@
+       strcat (outputfile, ".mie");
+       fprintf (stderr, " ... generating file: %s\n", outputfile);
+           
+-      if ((output->ptr_output = fopen (outputfile, "w")) == NULL) {
++      if ((output->ptr_output = fopen (outputfile, "wb")) == NULL) {
+         fprintf (stderr, "Error, cannot open file: %s in write_output! \n", outputfile);   
+         return -1;         
+       }

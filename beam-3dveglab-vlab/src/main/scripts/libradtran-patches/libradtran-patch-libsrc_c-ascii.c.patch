@@ -1,0 +1,20 @@
+--- ./libsrc_c/ascii.c.orig	2014-09-01 14:47:53.419738587 +0200
++++ ./libsrc_c/ascii.c	2014-12-29 16:45:30.781443071 +0100
+@@ -249,7 +249,7 @@
+   string = line;
+ 
+   
+-  if ( (f = fopen(filename, "r")) == NULL) { 
++  if ( (f = fopen(filename, "rb")) == NULL) { 
+     fprintf (stderr, "Error, file '%s' not found!\n", filename);
+     return ASCIIFILE_NOT_FOUND;
+   }
+@@ -1558,7 +1558,7 @@
+   string = line;
+ 
+   
+-  if ( (f = fopen(filename, "r")) == NULL)  
++  if ( (f = fopen(filename, "rb")) == NULL)  
+     return ASCIIFILE_NOT_FOUND;
+   
+ 

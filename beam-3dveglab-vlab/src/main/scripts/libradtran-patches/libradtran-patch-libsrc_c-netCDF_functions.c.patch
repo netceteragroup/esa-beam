@@ -1,0 +1,249 @@
+--- ./libsrc_c/netCDF_functions.c.orig	2014-09-01 14:47:53.419738587 +0200
++++ ./libsrc_c/netCDF_functions.c	2014-12-29 16:45:30.785443143 +0100
+@@ -1641,6 +1641,9 @@
+ /***********************************************************************************/
+ 
+ int write_netcdf_int(int ncid, int value, char *var_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+   int varid, retval;
+ 
+@@ -1655,9 +1658,21 @@
+   if ((retval = nc_put_var_int(ncid, varid, &value)))	ERR(retval);
+ 
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_float(int ncid, float value, char *var_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+   int varid, retval;
+ 
+@@ -1667,9 +1682,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value)))	ERR(retval);
+ 
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_1Dint(int ncid, int *value, int rows, char *var_name, char *row_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+   int retval, varid, row_dimid;
+ 
+@@ -1681,9 +1708,21 @@
+   if ((retval = nc_put_var_int(ncid, varid, &value[0])))	ERR(retval);
+ 
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_1Dfloat(int ncid, float *value, int rows, char *var_name, char *row_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+   int retval, varid, row_dimid;
+ 
+@@ -1696,9 +1735,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value[0])))	ERR(retval);
+ 
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_2Dint(int ncid, int **value, int rows, int columns, char *var_name, char *row_name, char *column_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   int value_data[rows][columns];
+@@ -1719,9 +1770,21 @@
+   if ((retval = nc_put_var_int(ncid, varid, &value_data[0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_2Dfloat(int ncid, float **value, int rows, int columns, char *var_name, char *row_name, char *column_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   float value_data[rows][columns];
+@@ -1742,9 +1805,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value_data[0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_2Ddouble(int ncid, double **value, int rows, int columns, char *var_name, char *row_name, char *column_name) {
++
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   double value_data[rows][columns];
+@@ -1765,11 +1840,22 @@
+   if ((retval = nc_put_var_double(ncid, varid, &value_data[0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ 
+ int write_netcdf_3Dfloat(int ncid, float ***value, int rows, int columns, int length, char *var_name, char *row_name, char *column_name, char *length_name) {
+ 
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   float value_data[rows][columns][length];
+@@ -1793,10 +1879,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value_data[0][0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_3Dirr_row_float(int ncid, float ***value, int rows, int columns, int *length, char *var_name, char *row_name, char *column_name, char *length_name) {
+ 
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   /**** Maximum length of value; in case of regular grid, length_max == length ****/
+@@ -1829,10 +1926,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value_data[0][0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_3Dirrfloat(int ncid, float ***value, int rows, int columns, int **length, char *var_name, char *row_name, char *column_name, char *length_name) {
+ 
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   /**** Maximum length of value; in case of regular grid, length_max == length ****/
+@@ -1868,10 +1976,21 @@
+   if ((retval = nc_put_var_float(ncid, varid, &value_data[0][0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ int write_netcdf_3Dirrdouble(int ncid, double ***value, int rows, int columns, int **length, char *var_name, char *row_name, char *column_name, char *length_name) {
+ 
++#if HAVE_LIBNETCDF
++
+   if (ncid == 0) return -1;
+ 
+   /**** Maximum length of value; in case of regular grid, length_max == length ****/
+@@ -1907,6 +2026,15 @@
+   if ((retval = nc_put_var_double(ncid, varid, &value_data[0][0][0])))      ERR(retval);
+  
+   return 0;
++
++#else
++    fprintf (stderr, " ***********************************************************************\n");
++    fprintf (stderr, " * You have built uvspec without libnetcdf and hence cannot            *\n");
++    fprintf (stderr, " * use any netCDF option. Please get netcdf and rebuild.               *\n");
++    fprintf (stderr, " ***********************************************************************\n");
++    return -1;
++#endif
++
+ }
+ 
+ 
