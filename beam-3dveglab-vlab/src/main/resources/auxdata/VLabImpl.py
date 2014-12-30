@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (12 Dec 2014)'
+  VERSION_STRING     = '1.0 (30 Dec 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -1335,13 +1335,16 @@ used."""
     else:
       q['solar_file'] = sfile
 
+    if " " in q['rpv_file']:
+      q['rpv_file'] = '"' + q['rpv_file'] + '"'
+
     sdata = """
-solar_file         %s
-correlated_k       LOWTRAN
-rte_solver         cdisort
+source solar       %s
+mol_abs_param      LOWTRAN
+rte_solver         disort
 rpv_file           %s
 deltam             on
-nstr               6
+number_of_streams  6
 zout               TOA
 output_user        lambda uu
 quiet
@@ -1351,11 +1354,11 @@ quiet
       sdata += "aerosol_default\n"
       sdata += "aerosol_haze       %s\n" % (q['aerosol'])
     if 'O3' in q:
-      sdata += "dens_column        O3 %s\n" % (q['O3'])
+      sdata += "mol_modify         O3 %s DU\n" % (q['O3'])
     if 'CO2' in q:
-      sdata += "co2_mixing_ratio   %s\n" % (q['CO2'])
+      sdata += "mixing_ratio       CO2 %s\n" % (q['CO2'])
     if 'H2O' in q:
-      sdata += "h2o_mixing_ratio   %s\n" % (q['H2O'])
+      sdata += "mixing_ratio       H2O %s\n" % (q['H2O'])
     if 'umu' in q:
       sdata += "umu                %s\n" % (q['umu'])
     if 'phi' in q:
