@@ -20,6 +20,9 @@ sudo yum -y install patch
 sudo yum -y install elinks
 sudo yum -y install flex
 sudo yum -y install file
+sudo yum -y install wget
+sudo yum -y install numpy
+sudo yum -y install wine
 
 download_code_and_patches() {
   rm -f libRadtran-${VERSION}.tar.gz
@@ -57,9 +60,9 @@ build_for_linux() {
   make
 
   # needed at runtime
-  for d in libgfortran.so.3 libquadmath.so.0 libgcc_s.so.1; do
-    cp /lib64/$d lib
-  done
+  cp /usr/lib64/libgfortran.so.3 lib
+  cp /usr/lib64/libquadmath.so.0 lib
+  cp /lib64/libgcc_s.so.1 lib
 
   cd ..
   mv libRadtran-${VERSION} ${LINNAME}
