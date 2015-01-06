@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (30 Dec 2014)'
+  VERSION_STRING     = '1.0 (01 Jan 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -3855,10 +3855,11 @@ class Librat_plot:
       coords = VLAB.awhere(coords)
       result[coords[0][0]] = refl
     dataset = VLAB.make_dataset()
-    for b in [3, 7]:
+    # was 3 and 7 - but 7 can be out of bounds
+    for b in [1, 3]:
       VLAB.plot(dataset, ang[0], [i[b] for i in result],
            "waveband: %.1f" % wb [b])
-    chart = VLAB.make_chart("plot.py out", "view zenith angle (deg.)",
+    chart = VLAB.make_chart("band %d" % (b), "view zenith angle (deg.)",
                             u"\u03A1", dataset)
     VLAB.logger.info('%s: plotting brdf to: %s\n'%(sys.argv[0], opplot))
     VLAB.logger.info('%s: saving brdf data to: %s\n'%(sys.argv[0], opdat))
@@ -3974,7 +3975,7 @@ class Librat_rpv_invert:
         dataset = VLAB.make_dataset()
         VLAB.plot(dataset, invdata[0], invdata[4], "original")
         VLAB.plot(dataset, invdata[0], r, "inverted")
-        chart = VLAB.make_chart("", "vza (deg)", u"\u03A1", dataset)
+        chart = VLAB.make_chart("band %i (%f)" % (wbNum, band), "vza (deg)", u"\u03A1", dataset)
         dataset = None
         VLAB.save_chart(chart, opplot)
         chart = None
@@ -4378,6 +4379,7 @@ class LIBRAT:
     for a in args:
       if a == 'Sensor':
         q['sensor'] = args[a]
+        q[a]        = args[a]
         if args[a] == VLAB.K_SENTINEL2:
           q['wb'] = 'wb.MSI.dat'
           q['wbfile'] = 'wb.MSI.dat'
@@ -4410,6 +4412,7 @@ class LIBRAT:
         q['opdir'] = args[a]
       elif a == '3dScene':
         q['scene'] = VLAB.P_3dScene
+        q[a]       = VLAB.P_3dScene
         if args[a] == VLAB.K_RAMI:
           q['obj'] = 'HET01_DIS_UNI_NIR_20.obj'
           q['lat'] = 0
