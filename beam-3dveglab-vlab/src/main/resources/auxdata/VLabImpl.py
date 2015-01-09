@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (01 Jan 2014)'
+  VERSION_STRING     = '1.0 (09 Jan 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -1311,19 +1311,17 @@ used."""
     elif args['aerosol'] == VLAB.K_TROPOSPHERIC:
       q['aerosol'] = '6'
 
-    # TODO: verify these
-    if args['sensor'] ==   VLAB.K_SENTINEL2:
-      q['wavelength'] = '443 2190'
-    elif args['sensor'] == VLAB.K_SENTINEL3:
-      q['wavelength'] = '400 2400'
-    elif args['sensor'] == VLAB.K_MODIS:
-      q['wavelength'] = '405 2155'
-    elif args['sensor'] == VLAB.K_MERIS:
-      q['wavelength'] = '412 900'
-    elif args['sensor'] == VLAB.K_LANDSAT_OLI:
-      q['wavelength'] = '433 2300'
-    elif args['sensor'] == VLAB.K_LANDSAT_ETM:
-      q['wavelength'] = '450 2300'
+    # determine wavelength min/max from rpv_file
+    rpv_vals = VLAB.valuesfromfile(q['rpv_file'])
+    (wmin, wmax) = (99999, 0)
+    for r_entry in rpv_vals:
+      wavelen = float(r_entry[0])
+      if wavelen < wmin:
+        wmin = int(round(wavelen))
+      if wavelen > wmax:
+        wmax = int(round(wavelen))
+    q['wavelength'] = '%d %d' % (wmin, wmax)
+    VLAB.logger.info('%s: wavelength param "%s"' % (VLAB.me(), q['wavelength']))
 
     if VLAB.osName().startswith('Windows'):
       sfile = VLAB.expandEnv('%HOMEDRIVE%%HOMEPATH%\\.beam\\beam-vlab\\auxdata\\libRadtran_win32\\data\\solar_flux\\NewGuey2003.dat')
