@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (09 Jan 2014)'
+  VERSION_STRING     = '1.0 (12 Jan 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -1296,11 +1296,11 @@ used."""
       q[k] = args[k]
 
     if args['scene'] == VLAB.K_LAEGERN:
-      q['latitude']  = '47.481667'
-      q['longitude'] = '-8.394722,17'
+      q['latitude']  = 'N 47.4817'
+      q['longitude'] = 'E  8.3947'
     elif args['scene'] == VLAB.K_THARANDT:
-      q['latitude']  = '50.9676498'
-      q['longitude'] = '-13.520354'
+      q['latitude']  = 'N 50.9579'
+      q['longitude'] = 'E 13.5250'
 
     if args['aerosol'] == VLAB.K_RURAL:
       q['aerosol'] = '1'
