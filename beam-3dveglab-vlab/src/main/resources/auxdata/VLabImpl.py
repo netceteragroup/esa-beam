@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (12 Jan 2014)'
+  VERSION_STRING     = '1.0 (15 Jan 2014)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
@@ -3329,7 +3329,7 @@ class Librat_dobrdf:
       'lightfile'       : 'light.dat',
       'camfile'         : 'camera.dat',
       'wbfile'          : 'wb.test.dat',
-      'anglefile'       : 'angles.dat',
+      'angfile'         : 'angles.dat',
       'objfile'         : 'veglab_test.obj',
 
       'blacksky'        : '',
@@ -3370,7 +3370,7 @@ class Librat_dobrdf:
       elif a == 'wb':
         q['wbfile'] = args[a]
       elif a == 'angles':
-        q['anglefile'] = args[a]
+        q['angfile'] = args[a]
       elif a == 'obj':
         q['objfile'] = args[a]
       else:
@@ -3378,12 +3378,12 @@ class Librat_dobrdf:
 
     VLAB.mkDirPath('%s/%s' %(LIBRAT.SDIR, q['opdir']))
 
-    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    angfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['angfile']))
     wbfp  = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['wbfile']))
     objfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['objfile']))
 
     # vz va sz sa
-    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['anglefile']))
+    ang = VLAB.valuesfromfile('%s/%s' % (LIBRAT.SDIR, q['angfile']))
 
     if 'lookFile' in q:
       lookfp = VLAB.checkFile('%s/%s' % (LIBRAT.SDIR, q['lookFile']))
@@ -3393,7 +3393,7 @@ class Librat_dobrdf:
       q['look_xyz'] = ((q['look_xyz']),)
 
     if len(ang) < 4 or (len(ang) > 4 and len(ang[0]) != 4):
-      VLAB.logger.info("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['anglefile']))
+      VLAB.logger.info("%s: wrong number of fields (%i) in %s - should be 4\n"%(me, len(ang[1]), q['angfile']))
       raise Exception()
 
     if len(ang) == 4:
@@ -3519,7 +3519,7 @@ class Librat_dolibradtran:
     if q['v']:
       # only do all angles if time not specified, if time specified use that to get sza and phi0
       if q['lat'] and ['lon'] and ['time']:
-        VLAB.logger.info("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['anglefile']))
+        VLAB.logger.info("%s: doing lat lon time, not using sun angles in file %s\n" % (sys.argv[0], q['angfile']))
 
     # check for op file if required
     if not VLAB.fileExists('%s/%s' % (LIBRAT.SDIR, q['plotfile'])):
@@ -4417,12 +4417,12 @@ class LIBRAT:
           q['lon'] = 0
         elif args[a] == VLAB.K_LAEGERN:
           q['obj'] = 'laegeren.obj'
-          q['lat'] = '47.4817'
-          q['lon'] = '-8.3947'
+          q['lat'] = 'N 47.4817'
+          q['lon'] = 'E  8.3947'
         elif args[a] == VLAB.K_THARANDT:
           q['obj'] = 'HET01_DIS_UNI_NIR_20.obj' # FIXME: define when file is available
-          q['lat'] = '50.9833'
-          q['lon'] = '-13.5808'
+          q['lat'] = 'N 50.9579'
+          q['lon'] = 'E 13.5250'
         elif args[a] == VLAB.K_USER_DEFINED:
           q['obj'] = 'UserDefined.obj'
           # What about q['lat'] and q['lon']?
