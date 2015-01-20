@@ -2644,15 +2644,13 @@ class Dart_DartImages :
       # Recover the number of Spectral Band
       spectralBands = simulation.getSpectralBands()
 
-      # Recover the Directions
-      if args['ii_isUsrDir']:
-        directions = sequence.getUserDirections()
-      else:
-        directions = simulation.getDiscretizedDirection()
+      # Recover the viewing direction
+      direction = simulation.getUserDirections()[0] # the 3DVegLab plugin allow only one viewing direction
+      print direction
 
       # Recover the images in the defined direction for each spectral band
       for band in spectralBands:
-        imagesList.append(simulation.getImageInDirection( directions[ args['ii_dirNum'] ], band.index, args['ii_dType'], args['ii_iLevel'], args['ii_iter'],  args['ii_projPlane'] ))
+        imagesList.append(simulation.getImageInDirection( direction, band.index, args['ii_dType'], args['ii_iLevel'], args['ii_iter'],  args['ii_projPlane'] ))
         spectralBandsList.append( band )
 
     VLAB.logger.info('imagesList has %d entries' % len(imagesList))
