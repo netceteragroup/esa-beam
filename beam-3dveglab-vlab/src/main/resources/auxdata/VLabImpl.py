@@ -3886,7 +3886,7 @@ class Librat_rpv_invert:
     q = {
 	'dataf' : 'rpv.rami.2/result.HET01_DIS_UNI_NIR_20.obj.brdf.dat',
 	'wbfile' : 'wb.MSI.dat',
-	'wbNum' : 3, # 665 nm in this case
+	#'wbNum' : 3, # 665 nm in this case
 	'verbose' : 1,
 	'plot' : 1,
 	'show' : 0
@@ -3948,7 +3948,7 @@ class Librat_rpv_invert:
 
       invdata = [[0. for i in xrange(len(data))] for i in xrange(5)]
       invdata[0:4] = data[0:4]
-      invdata[4] = data[4 + q['wbNum']]
+      invdata[4] = data[4 + wbNum]
 
       # invdata = [[0. for i in xrange(15)] for i in xrange(5)]
       # invdata[0:4] = [i[0:15] for i in data[0:4]]
