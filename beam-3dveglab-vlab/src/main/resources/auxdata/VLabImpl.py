@@ -209,6 +209,10 @@ class VLAB:
       import os
       os.linesep
   lineSeparator = staticmethod(lineSeparator)
+  def isBigEndian():
+    """ Return True if the system use Big-endian ordering """
+    return sys.byteorder == 'big'
+  isBigEndian = staticmethod(isBigEndian)
   def listdir(path):
     """list files in the directory given by path"""
     if sys.platform.startswith('java'):
@@ -2445,7 +2449,8 @@ class Dart_DARTSimulation :
           for x in range(sizeX):
             line = []
             for y in range(sizeY):
-              line.append(struct.unpack('d', mpSharpFile.read(8))[0])
+              s = mpSharpFile.read(8)
+              line.append(struct.unpack('<d', s)[0]) ## '<': little-endian and 'd': double
             data.append(line)
           mpSharpFile.close()
     return data
@@ -2666,6 +2671,8 @@ class Dart_DartImages :
     VLAB.logger.info('writing output bsq %s' % (fname))
     fout = open( fname, 'wb')
     flatarray = array('f', self.flatten( imagesList ))
+    if VLAB.isBigEndian():
+      flatarray.byteswap()
     flatarray.tofile(fout)
     fout.close()
 
