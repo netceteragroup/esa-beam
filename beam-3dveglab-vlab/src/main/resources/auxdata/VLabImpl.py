@@ -2646,7 +2646,6 @@ class Dart_DartImages :
 
       # Recover the viewing direction
       direction = simulation.getUserDirections()[0] # the 3DVegLab plugin allow only one viewing direction
-      print direction
 
       # Recover the images in the defined direction for each spectral band
       for band in spectralBands:
@@ -2655,11 +2654,11 @@ class Dart_DartImages :
 
     VLAB.logger.info('imagesList has %d entries' % len(imagesList))
     VLAB.logger.info('spectralBandsList has %d entries' % len(spectralBandsList))
-    return imagesList, spectralBandsList
+    return imagesList, spectralBandsList, direction
 
   def writeDataCube( self, args ) :
 
-    imagesList, spectralBandsList = self.getImagesBandsAsList( args )
+    imagesList, spectralBandsList, direction = self.getImagesBandsAsList( args )
 
     # write BSQ binary file
     if (len(args['OutputDirectory']) == 0):
@@ -2705,7 +2704,7 @@ class Dart_DartImages :
     VLAB.logger.info('writing output hdr %s' % (fname))
     fout = open( fname, 'w')
     fout.writelines( 'ENVI ' + '\n' )
-    fout.writelines( 'description = { ' + args['hi_desc'] + ' }' + '\n' )
+    fout.writelines( 'description = { ' + args['hi_desc'] + ' ; viewing direction (' + str(direction.theta) + ', ' + str(direction.phi) + ') }' + '\n' )
     fout.writelines( 'samples = ' + str( samples ) + '\n' )
     fout.writelines( 'lines = ' + str( lines ) + '\n' )
     fout.writelines( 'bands = ' + str( bands ) + '\n' )
@@ -2905,7 +2904,6 @@ class DART:
     q['scene'] = args[VLAB.P_3dScene]
     q['aerosol'] = args[VLAB.P_AtmosphereAerosol]
     q['sensor'] = args[VLAB.P_Sensor]
-
 
     # 1. Create the DART scene
     # 1. a. Copy DART original input file to a new folder
@@ -3130,7 +3128,7 @@ class DART:
       'ii_dType'     : Dart_DataUnit.RADIANCE,
       'ii_iter'      : 'last',
       'ii_projPlane' : Dart_ProjectionPlane.SENSOR_PLANE,
-      'hi_desc'      : 'some text',
+      'hi_desc'      : 'DART data cube',
       'hi_sensor'    : 'APEX',
       'hi_projName'  : 'Arbitrary',
       'hi_xRefPixl'  : 1,
