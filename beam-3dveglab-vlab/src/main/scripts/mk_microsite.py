@@ -393,7 +393,7 @@ pagesites = '''
 	<form enctype="text/html" method="post" action="http://www.etc.ch/bin/cgiwrap/jason/registration">
 	Please provide your email address so that we may keep you informed of the
 	latest updates to 3D Vegetation Lab activities.<br><br>
-	<input type="email" name="regemail" placeholder="E-mail">
+	<input type="email" name="regemail" placeholder="E-mail" required>
 	<input type="submit" value="Go to Download Page  &#9654;">
 	<input type="hidden" name="cmd" value="register">
 	</form>
