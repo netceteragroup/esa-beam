@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)
+ * Copyright (C) 2010-2015 Netcetera Switzerland (info@netcetera.com)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

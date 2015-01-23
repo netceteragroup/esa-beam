@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)
+# Copyright (C) 2010-2015 Netcetera Switzerland (info@netcetera.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (20 Jan 2014)'
+  VERSION_STRING     = '1.0 (22 Jan 2015)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 

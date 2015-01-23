@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 Netcetera Switzerland (info@netcetera.com)
+ * Copyright (C) 2010-2015 Netcetera Switzerland (info@netcetera.com)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see http://www.gnu.org/licenses/
  *
- * @(#) $Id: $
  */
 
 package com.netcetera.vlab;
