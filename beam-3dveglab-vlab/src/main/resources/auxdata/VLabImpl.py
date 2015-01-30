@@ -1069,6 +1069,10 @@ class VLAB:
     """Return the element-wise cos() of 'arcs' array given in degrees."""
     return map(lambda x : math.cos(VLAB.d2r(x)), arcs)
   cosa = staticmethod(cosa)
+  def cos(arcs):
+    """Return the element-wise cos() of 'arcs' array given in radians."""
+    return map(lambda x : math.cos(x), arcs)
+  cos = staticmethod(cos)
   def replacerectinarray(array, replacement, xul, yul, xlr, ylr):
     """Replace the array with the specified rectangle substituted with
     replacement.
@@ -4005,7 +4009,7 @@ class Librat_rpv_invert:
                        map(VLAB.d2r, data[3]))
     relphi = map(lambda x : {True : 2 * math.pi - x, False : x}
                  [x > math.pi], relphi)
-    cosp = map(lambda x : -1. * x, VLAB.cosa(relphi))
+    cosp = map(lambda x : -1. * x, VLAB.cos(relphi))
     tans = VLAB.diva(sins, coss)
     tanv = VLAB.diva(sinv, cosv)
     csmllg = VLAB.adda(VLAB.mula(coss, cosv),
@@ -4020,12 +4024,12 @@ class Librat_rpv_invert:
       f1 = VLAB.mula(VLAB.powa(VLAB.mula(coss, cosv), expon),
                      VLAB.powa(VLAB.adda(coss, cosv), expon))
     else:
-      fi = [1. for i in coss]
+      f1 = [1. for i in coss]
     denom = VLAB.powa(map(lambda x : 1. + bgthsq + 2. * bigtet * x, csmllg),
                       1.5)
     f2 = list(denom)
     f2 = map(lambda x : {True : (lambda : (1.0 - bgthsq) * 1e20),
-                         False : (lambda : (1.0 - bgthsq) / x)}[x == 0.](), relphi)
+                         False : (lambda : (1.0 - bgthsq) / x)}[x == 0.](), denom)
     f3 = map(lambda x : 1.0 + (1 - rhoc) / (1. + x), bigg)
     return map(lambda x : rho0 * x, VLAB.mula(VLAB.mula(f1, f2), f3))
 
