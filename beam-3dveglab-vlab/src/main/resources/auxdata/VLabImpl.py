@@ -892,7 +892,15 @@ class VLAB:
       fmt = '%s'
     for row in b:
       for element in row:
-        fh.write(fmt % element + ' ')
+        # jython can be annoying
+        if sys.platform.startswith('java'):
+          from java.lang import Float
+          if Float.isNaN(element):
+            fh.write('nan ')
+          else:
+            fh.write(fmt % element + ' ')
+        else:
+          fh.write(fmt % element + ' ')
       fh.write('\n')
     fh.close()
   savetxt = staticmethod(savetxt)
@@ -1053,7 +1061,8 @@ class VLAB:
 
     """
     fp = open(path)
-    values = [line.strip().split() for line in fp
+    # jython can be annoying
+    values = [line.replace('nan','NaN').strip().split() for line in fp
               if not line.startswith('#')]
     fp.close()
     values = [[float(value) for value in row] for row in values]
