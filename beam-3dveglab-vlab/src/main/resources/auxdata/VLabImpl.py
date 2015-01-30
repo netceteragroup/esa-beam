@@ -48,7 +48,7 @@ class VLAB:
   PROCESSOR_SNAME    = 'beam-vlab'
   REQUEST_TYPE       = 'VLAB'
   UI_TITLE           = 'VLab - Processor'
-  VERSION_STRING     = '1.0 (22 Jan 2015)'
+  VERSION_STRING     = '1.0 (30 Jan 2015)'
   DEFAULT_LOG_PREFIX = 'vlab'
   LOGGER_NAME        = 'beam.processor.vlab'
 
