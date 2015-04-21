@@ -12,6 +12,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see http://www.gnu.org/licenses/
 # 
+# @(#) $Id: $
+#
 # small script to generate static content pages for the microsite
 #
 
@@ -124,8 +126,9 @@ template = '''
         <a href="http://www.geo.uzh.ch/microsite/3dveglab/index.html">Project</a>
         <a href="consortium">Consortium</a>
         <a href="people">People</a>
-        <a href="documents">Documents</a>
+        <a href="documents">Docs</a>
         <a href="sites">Sites</a>
+        <a href="eod">EO Data</a>
         <a href="software">Software</a>
       </td>
     </tr>
@@ -184,16 +187,15 @@ template = '''
 '''
 
 pageindex = '''
-    <h2 class="abstract">An integrated BEAM-plugin for ground-validated 3D vegetation
-     modeling</h2>
+    <h2 class="abstract">3D Vegetation Laboratory - reference site and benchmarking tool</h2>
 	<figure class="abstract">
-       <img alt="3d Reconstruction" src= "http://www.geo.uzh.ch/microsite/3dveglab/graphics/3D_forest_reconstruction.jpg" />
+       <img alt="3d Reconstruction" src= "http://www.geo.uzh.ch/microsite/3dveglab/graphics/stand_2.jpg" />
 	</figure>
-    
+
 	<div class="document abstract">
-        <i>From: Schneider, F.; Leiterer, R.; Morsdorf, F.; Gastellu-Etchegorry, J.-P.; Lauret, N.; Pfeifer, N. and Schaepman, M. E. <a href="http://dx.doi.org/10.1016/j.rse.2014.06.015">Simulating imaging spectrometer data: 3D forest modeling based on<br> LiDAR and in situ data</a> Remote Sensing of Environment, Vol 152, pg 235-250, Sept 2014.</i>
+        <i>Watch our video illustrating the 3d reconstruction! Download it <a href="http://www.geo.uzh.ch/microsite/3dveglab/VirtualForest.mov"> here </a></i>
      </div>
-  
+                
 	<h3>Abstract</h3>
 	The up-coming generation of ESA operational missions - the Sentinels -
 	will enhance the capability to observe the vegetated surfaces of the
@@ -207,29 +209,42 @@ pageindex = '''
 	upcoming missions we need detailed knowledge about the observed medium
 	and the processes governing the radiative transfer. The combination of
 	a realistic description of the medium in high detail together with a
-	validated radiative transfer model will create a virtual lab mimicking
+	validated radiative transfer model was used to create a virtual lab mimicking
 	reality which is capable to assess the potential of novel observation
 	systems as well as to develop new algorithms and understand scaling
 	issues from point measurements to the landscape. The advancement of
-	ground based LiDAR systems now provides information that helps
+	ground based LiDAR systems provided information that contributed to
 	describing and reconstructing forest stands in 3D down to the
 	leaf/shoot level. Such detailed representations of the canopy
 	structure and the distribution of leaves/branches within a 3D
-	radiative transfer model will thus allow the simulation of current and
+	radiative transfer model now allow for the simulation of current and
 	future missions in a controlled but realistic environment. It would
 	thus offer an opportunity to test and develop dedicated applications
-	to integrate EO into Earth system modeling.  The 3D-VegtationLab will
-	develop a concept for land surface reference sites, which will be
+	to integrate EO into Earth system modeling.  The 3D-VegtationLab has
+	developed a concept for land surface reference sites, which was
 	demonstrated for two selected pilot super-sites as a scientific
-	support tool. The tool will include a standardized and comprehensive
+	support tool. The tool includes a standardized and comprehensive
 	multi-temporal and multi-scale benchmark dataset together with a
 	scientific toolbox based on a radiative transfer model. The
-	3D-Vegetation Lab will provide the scientific community with a common
+	3D-Vegetation Lab provides the scientific community with a common
 	benchmarking tool to develop, validate and compare biophysical EO
 	products from space-borne missions with special attention to prepare
-	for upcoming Sentinels.  The 3D-VegetationLab is financed by ESA's
-	STSE funding scheme, and partners are University College of London
-	(UK), TU Wien (AUT), CESBIO Toulouse (FR) and Netcetera (CH).
+	for upcoming Sentinels.  The 3D-VegetationLab was financed by ESA's
+	STSE funding scheme, and partners were University College of London
+	(UK), TU Wien (AUT), CESBIO Toulouse (FR) and Netcetera (CH). The main project outcomes are described in the final report (PDF) and presentation  linked below. The main achievements of the project can be found under the tabs Sites <a href="sites">Sites</a>(3d world files), <a href="eod">EO Data</a> (multi-scale and -temporal EO data) and <a href="software">Software</a> (BEAM plugin encapsuling the RT models librat and DART).
+	<h3>Important Documents</h3>
+<div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegLab_FinalReport.pdf"  target="_blank">
+          Final Report (PDF)</a>
+     </div>
+    
+     <div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegetationLaboratory_ProjectSummary.pdf"  target="_blank">
+          Project Summary (Presentation)</a>
+     </div>
+
 '''
 
 pageconsortium = '''
@@ -265,6 +280,11 @@ pageconsortium = '''
 		   <td><a href="http://www.ipf.tuwien.ac.at/">Technische Universit&auml;t Wien</a></td>
 		   <td><img alt="TU Wien" align="left" height="40" src=
 		   "http://www.tuwien.ac.at/fileadmin/t/tuwien/downloads/cd/CD_NEU_2009/TU_Logos_2009/TU-Signet.png" /></td>
+		  </tr>
+<tr>
+		   <td><a href="http://tu-dresden.de/die_tu_dresden/fakultaeten/fakultaet_forst_geo_und_hydrowissenschaften/fachrichtung_geowissenschaften/ipf">Technische Universit&auml;t Dresden</a></td>
+		   <td><img alt="TU Dresden" align="left" height="40" src=
+		   "logo_blau.png" /></td>
 		  </tr>
 		  <tr>
 		   <td><a href="http://www.netcetera.com">Netcetera AG</a></td>
@@ -323,6 +343,7 @@ pagepeople = '''
 
       <tr> <td>Jan Clevers</td> <td>WUR</td> </tr>
       <tr> <td>Hans-Gerd Maas</td> <td>TU Dresden</td> </tr>
+      <tr> <td>Anne Bienert</td> <td>TU Dresden</td> </tr>
       <tr> <td>Jean-Luc Widlowski</td> <td>IES</td> </tr>
 
       <tr> <td colspan="2">&nbsp;</td> </tr>
@@ -336,50 +357,74 @@ pagedocuments = '''
     <style type="text/css" media="screen, print, projection">
         .menu a[href*="documents"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
     </style>
+     <h2>Publications</h2>
+     <div class="document">
+     <a href="http://www.sciencedirect.com/science/article/pii/S0034425714002284"  target="_blank">Simulating imaging spectrometer data: 3D forest modeling based on LiDAR and in situ data</a>
+          <i>Remote Sensing of Environment, Volume 152, September 2014, Pages 235-250</i>
+          Fabian D. Schneider, Reik Leiterer, Felix Morsdorf, Jean-Philippe Gastellu-Etchegorry, Nicolas Lauret, Norbert Pfeifer, Michael E. Schaepman 
+     </div>
+     <div class="document">
+          <a href="http://www.mdpi.com/2072-4292/5/11/5424"  target="_blank">A Practical Approach for Extracting Tree Models in Forest Environments Based on Equirectangular Projections of Terrestrial Laser Scans</a>
+          <i>Remote Sensing 2013, 5(11), 5424-5448; doi:10.3390/rs5115424</i> Lothar Eysn, Norbert Pfeifer, Camillo Ressl, Markus Hollaus, Andreas Grafl and Felix Morsdorf
+
+     </div>
+
+     <div class="document">
+          <a href=
+          "https://www.schweizerbart.de/papers/pfg/detail/2013/79992/Operational_forest_structure_monitoring_using_airborne_laser_scanning"  target="_blank">
+
+Operational forest structure monitoring using airborne laser scanning </a>
+          <i>Photogrammetrie, Fernerkundung, Geoinformation, 2013, 3, 173-184</i>
+          Reik Leiterer, Werner Muecke, Felix Morsdorf, Markus Hollaus, Norbert Pfeifer & Michael E. Schaepman 
+          
+     </div>
+
+
+     <div class="document">
+     <a href="http://www.sciencedirect.com/science/article/pii/S0034425713002319"  target="_blank">Radiative transfer modeling in the Earth-Atmosphere system with DART model </a>
+          <i>Remote Sensing of Environment , 2013, 139, 149 - 170</i>
+Elay Grau & J.-P. Gastellu-Etchegorry 
+     </div>
+
+
+
+<div class="document">
+     <a href="http://www.sciencedirect.com/science/article/pii/S0034425714004568"  target="_blank">Advanced radiometry measurements and Earth science applications with the Airborne Prism Experiment (APEX) </a>
+          <i>Remote Sensing of Environment , 2015, 158, 207 - 219</i>
+Schaepman, M. E.; Jehle, M.; Hueni, A.; D'Odorico, P.; Damm, A.; Weyermann, J.; Schneider, F. D.; Laurent, V.; Popp, C.; Seidel, F. C.; Lenhard, K.; Gege, P.; Kuechler, C.; Brazile, J.; Kohler, P.; Vos, L. D.; Meuleman, K.; Meynart, R.; Schlaepfer, D.; Kneubuehler, M. & Itten, K. I. 
+     </div>
+
+
+   
+     <h2>Presentation</h2>
+ 
+     <div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegetationLaboratory_ProjectSummary.pdf"  target="_blank">
+          Project Summary </a>
+     </div>
+
      <h2>Documents</h2>
-     <div class="document">
-          <a href="http://discovery.ucl.ac.uk/1371132/"  target="_blank">Novel reference site
-          approach to prototyping, calibrating, and validating Earth observation
-          data and products</a>
-          <i>AGU Proceedings, San Francisco, California, USA
-          (2012)</i>
-          M Schaepman, F Morsdorf, R Leiterer, N Pfeifer, M Hollaus, MI Disney,
-          P Lewis, JP Gastellu-Etchegorry, J Brazile, B Koetz
-     </div>
 
-     <div class="document">
-          <a href="http://discovery.ucl.ac.uk/1371129/"  target="_blank">A scientific support
-          tool for accuracy assessment and prototyping of EO data and
-          products</a>
-          <i>ForestSAT Proceeedings, Corvallis, Oregon, USA,
-          (2012)</i>
-          F Morsdorf, R Leiterer, M Schaepman, N Pfeifer, M Hollaus, MI Disney,
-          P Lewis, JP Gastellu-Etchegorry, J Brazile, B Koetz          
+      <div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegLab_FinalReport.pdf"  target="_blank">
+          Final Report </a>
      </div>
-
+      <div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegLab_FP.pdf"  target="_blank">
+          Field Protocol </a>
+     </div>
      <div class="document">
           <a href=
-          "http://www.geo.uzh.ch/microsite/rsl-documents/research/publications/other-sci-communications/Leiterer2012VegetationskartierungWaldstrukturmonitoring-2904624640/Leiterer2012VegetationskartierungWaldstrukturmonitoring.pdf"  target="_blank">
-          3D Vegetationskartierung: flugzeuggest&uuml;tztes Laserscanning
-          f&uuml;r ein operationelles Waldstrukturmonitoring</a>
-          <i>Tagung des Arbeitskreises f&uuml;r Fernerkundung,
-          Bochum, Deutschland; "Proceedings AK Fernerkundung 2012 Bochum",
-          (2012)</i>
-          R Leiterer, F Morsdorf, ME Schaepman, W M&uuml;cke, N Pfeifer, M
-          Hollaus          
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegLab_EOD.pdf"  target="_blank">
+          Earth Observation data sets description</a>
      </div>
-
      <div class="document">
           <a href=
-          "http://pub-geo.tuwien.ac.at/showentry.php?ID=203992&amp;lang=6&amp;nohtml=1"  target="_blank">
-          3D-VegetationLab - a concept for land surface reference
-          sites</a>
-          <i>Poster: Sentinel Potential Science Products for
-          Cryosphere, Ocean, Land and Solid Earth Research Assessment &amp;
-          Consolidation Workshop, Frascati, Italy, (2011)</i>
-          F. Morsdorf, J. Brazile, M. Disney, J. Gastellu-Etchegorry, P. Lewis,
-          Z. Malenovsky, N. Pfeifer, M. Schaepman, B. Koetz, M. Drusch, K.
-          Scipal, D. Fernandez-Prieto
+          "http://www.geo.uzh.ch/microsite/3dveglab/documents/3DVegLab_ISD.pdf"  target="_blank">
+          In-situ dataset description</a>
      </div>
 '''
 
@@ -397,6 +442,26 @@ pagesites = '''
 	</form>
 '''
 
+pageeod = '''
+    <style type="text/css" media="screen, print, projection">
+        .menu a[href*="eod"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
+    </style>
+	<h2>Earth Observation Data</h2>
+	<figure class="abstract">
+        <img alt="EO Data Scales" src= "http://www.geo.uzh.ch/microsite/3dveglab/graphics/eod_scales.png" />
+	</figure>
+                    
+	<h3>Description</h3>
+	The project gathered a large number of EO datasets of the two different sites of the project which vary in their spatial and spectral characteristics. The aim is to facilitate cross- and up-scaling using the RT models of the toolbox. A subset of the EO data (~30MB) can be downloaded using the link below. If you are interested in the full data set (>70GB), please contact the PI of the project.
+
+
+      <div class="document">
+          <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/eod/EOD_Laegern.zip"  target="_blank">
+          Earth Observation Dataset </a>
+     </div>
+'''
+
 pagesoftware = '''
     <style type="text/css" media="screen, print, projection">
         .menu a[href*="software"] { color: #C27638 !important; border-bottom: 3px solid #C27638;  !important; }
@@ -411,7 +476,8 @@ pagesoftware = '''
      href="http://www.brockmann-consult.de/cms/web/beam/">ESA BEAM Earth
      Observation Toolbox and Development Platform</a>
      <br>
-     <b>Note:</b> This software plugin is functional <i><b>technically</b>, but validation is ongoing.</i>
+     <b>Note:</b> This software plugin is functional <i><b>technically</b>, and was tested to work with both librat and DART under Windows and UNIX environments. The use of a 64bit operating system is recommended. More details on the testing and recommendations for running the toolbox examples can be found in our           <a href=
+          "http://www.geo.uzh.ch/microsite/3dveglab/software/3DVegLab_Toolbox_TestingProtocol.pdf"  target="_blank">testing protocol </a> </i>
      </blockquote>
 
      <h3>Binary Installation</h3>Binary installation of the 3D Vegetation
@@ -467,6 +533,7 @@ pages = (
  ('people/index.html',     pagepeople),
  ('documents/index.html',  pagedocuments),
  ('sites/index.html',      pagesites),
+ ('eod/index.html',      pageeod),
  ('software/index.html',   pagesoftware)
 )
 
